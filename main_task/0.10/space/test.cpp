@@ -7,7 +7,7 @@
 
 using MyPoint = Point<double>;
 using MyVector = Vector<double>;
-using MyPart = PartOfFunction<double>;
+using MyPart = PartOfFunction<double, double>;
 
 //actually not test
 

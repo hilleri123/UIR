@@ -3,6 +3,8 @@
 
 #include <stdexcept>
 #include <cmath>
+#include <iostream>
+#include <string>
 
 #include "metrics.h"
 
@@ -56,8 +58,19 @@ public:
 	}
 	bool operator!=(Point<scalar>&& point) const { return !this->operator==(point); }
 	
-	
-	static scalar norm(const Point<scalar>& first, const Point<scalar> second)
+
+	friend std::ostream& operator<<(std::ostream& stream, const Point<scalar>& point) {
+		stream << "(" << point._x << " " << point._y << " " << point._z << ")";
+		return stream;
+	}
+
+	friend std::ostream& operator<<(std::ostream& stream, Point<scalar>&& point) {
+		stream << "(" << point._x << " " << point._y << " " << point._z << ")";
+		return stream;
+	}
+
+
+	static scalar norm(const Point<scalar>& first, const Point<scalar>& second)
 	{
 		return sqrt(pow(second.x() - first.x(), 2) + pow(second.y() - first.y(), 2) + pow(second.z() - first.z(), 2));
 	}
