@@ -29,7 +29,7 @@ std::vector<std::pair<Point<scalar>, velocity>>& csv_parser_read(const char* fil
 		std::vector<std::string> parts;
 		auto begin = buf.begin();
 		auto end = buf.begin();
-		for (end; end < buf.end(); end++) {
+		for (; end < buf.end(); end++) {
 			//std::cout << *end << std::endl;
 			if (*end == ',') {			// csv
 				std::string tmp(begin, end);

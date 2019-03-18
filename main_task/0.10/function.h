@@ -50,7 +50,7 @@ public:
 #if 0
 			_function.push_back( std::make_pair<PartOfFunction<scalar, t>, std::pair<t, t>>(*i, std::make_pair<t, t>(time_b, time_e)) );
 #endif
-			auto& interval = *new Interval<t>(time_b, time_e);
+			//auto& interval = *new Interval<t>(time_b, time_e);
 			//_function.push_back( std::make_pair<PartOfFunction<scalar, t>&, Interval<t>&>(*i, std::ref(Interval<t>(time_b, time_e))) );
 			//_function.push_back( std::make_pair<PartOfFunction<scalar, t>&, Interval<t>&>(std::ref(*i), std::ref(interval)) );
 			//auto pair = std::make_pair(*i, interval);
