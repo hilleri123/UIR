@@ -22,6 +22,6 @@ include_directories ("0.10/")
 
 #set (CMAKE_CURRENT_SOURCE_DIR build/)
 
-set (SOURCES 0.10/test.cpp)
+set (SOURCES 0.10/main.cpp)
 
 add_executable (${PROJECT_NAME} ${SOURCES})
