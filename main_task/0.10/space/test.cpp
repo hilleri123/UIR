@@ -13,8 +13,14 @@ using MyPart = PartOfFunction<double, double>;
 
 int main(int argc, char** argv)
 {
-	MyPoint point;
-	MyVector vector;
-	MyPart part;
+	{
+		MyPoint point;
+		MyVector vector;
+		MyPart part;
+	}
+	{
+		MyPoint zero(0,0,0);
+		MyVector vector(zero, zero);
+	}
 	return 0;
 };

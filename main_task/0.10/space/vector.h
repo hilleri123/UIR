@@ -10,7 +10,7 @@
 
 
 template <typename scalar>
-class Vector
+class Vector : base_init
 {
 public:
 	explicit Vector(const Point<scalar>& first = *std::unique_ptr<Point<scalar>>(new Point<scalar>()), const Point<scalar>& second = *std::unique_ptr<Point<scalar>>(new Point<scalar>()))

@@ -7,9 +7,10 @@
 
 #include "point.h"
 #include "vector.h"
+#include "init.h"
 
 template <typename scalar, typename t>
-class PartOfFunction
+class PartOfFunction : base_init
 {
 public:
 	explicit PartOfFunction(const Point<scalar>& first = *std::unique_ptr<Point<scalar>>(new Point<scalar>), const Point<scalar>& second = *std::unique_ptr<Point<scalar>>(new Point<scalar>), scalar v = 1)
@@ -24,6 +25,17 @@ public:
 		//std::cout << "first = " << first << " second = " << second << std::endl;
 		_direction_f = Vector<scalar>(_begin, _end);
 	}
+
+	
+	virtual bool init() const override
+	{
+		if (_begin == _end) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
 	
 	//template <typename t>
 	virtual Point<scalar>& operator()(t time) const
@@ -60,7 +72,6 @@ public:
 	{
 		return static_cast<t>(Point<scalar>::norm(_begin, _end) / _velocity);
 	}
-
 
 protected:
 	Point<scalar>& _begin = *new Point<scalar>();

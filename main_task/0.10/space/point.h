@@ -7,11 +7,12 @@
 #include <string>
 
 #include "metrics.h"
+#include "init.h"
 
 
 
 template <typename scalar>
-class Point
+class Point : base_init
 {
 public:
 	explicit Point(scalar x = 0, scalar y = 0, scalar z = 0)
