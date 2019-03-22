@@ -24,5 +24,6 @@ public:
 		return true;
 	}
 
+	virtual ~base_init() {}
 
 };
