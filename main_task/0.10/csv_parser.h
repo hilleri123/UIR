@@ -18,11 +18,13 @@ std::vector<std::pair<Point<scalar>, velocity>>& csv_parser_read(const char* fil
 	auto& result = *new std::vector<std::pair<Point<scalar>, velocity>>();
 	std::cout << "init" << std::endl;
 	
-	std::ifstream stream(file);
-	if (!stream.is_open()) {
-		std::cout << "not open" << std::endl;
-		throw ;
-	}
+	std::ifstream stream;
+	stream.exceptions(std::ios_base::failbit);
+	stream.open(file);
+	//if (!stream.is_open()) {
+		//std::cout << "not open" << std::endl;
+		//throw std::ifstream::failure;
+	//}
 	std::string buf;
 	
 	while (std::getline(stream, buf)) {
@@ -61,7 +63,7 @@ std::vector<std::pair<Point<scalar>, velocity>>& csv_parser_read(const char* fil
 		} else {
 			// bad data
 			std::cout << "bad data" << std::endl;
-			throw ;
+			throw ;			//!!!
 		}
 
 		//

@@ -17,9 +17,9 @@ public:
 		//: _begin(first), _end(second), _velocity(v)
 		: _velocity(v)
 	{
-		if (v == 0) {
+		//if (v == 0) {
 			//throw ;
-		}
+		//}
 		_begin = first;
 		_end = second;
 		//std::cout << "first = " << first << " second = " << second << std::endl;
@@ -29,7 +29,7 @@ public:
 	
 	virtual bool init() const override
 	{
-		if (_begin == _end) {
+		if (_begin == _end || _velocity == 0) {
 			return false;
 		} else {
 			return true;
