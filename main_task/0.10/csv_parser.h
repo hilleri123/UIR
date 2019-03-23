@@ -19,15 +19,18 @@ std::vector<std::pair<Point<scalar>, velocity>>& csv_parser_read(const char* fil
 	std::cout << "init" << std::endl;
 	
 	std::ifstream stream;
-	stream.exceptions(std::ios_base::failbit);
+	//stream.exceptions(std::ios_base::failbit | std::ios_base::eofbit);
+	//stream.exceptions(std::ios_base::failbit | std::ios_base::badbit);
 	stream.open(file);
-	//if (!stream.is_open()) {
+	if (!stream.is_open()) {
 		//std::cout << "not open" << std::endl;
-		//throw std::ifstream::failure;
-	//}
+		throw std::ifstream::failure("not open");
+	}
 	std::string buf;
 	
-	while (std::getline(stream, buf)) {
+	while (std::getline(stream, buf) ) {
+	//while (!stream.eof()) {
+		//std::getline(stream, buf);
 		std::vector<std::string> parts;
 		auto begin = buf.begin();
 		auto end = buf.begin();
