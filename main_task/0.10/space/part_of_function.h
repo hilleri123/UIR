@@ -9,11 +9,11 @@
 #include "vector.h"
 #include "init.h"
 
-template <typename scalar, typename t>
+template <typename scalar, class velocity, typename t>
 class PartOfFunction : base_init
 {
 public:
-	explicit PartOfFunction(const Point<scalar>& first = *std::unique_ptr<Point<scalar>>(new Point<scalar>), const Point<scalar>& second = *std::unique_ptr<Point<scalar>>(new Point<scalar>), scalar v = 1)
+	explicit PartOfFunction(const Point<scalar>& first = *std::unique_ptr<Point<scalar>>(new Point<scalar>), const Point<scalar>& second = *std::unique_ptr<Point<scalar>>(new Point<scalar>), velocity v = 1)
 		//: _begin(first), _end(second), _velocity(v)
 		: _velocity(v)
 	{

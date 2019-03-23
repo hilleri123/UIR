@@ -90,5 +90,5 @@ protected:
 	auto& _function = *new std::vector<std::pair<PartOfFunction<scalar, t>, std::pair<t, t>>>();
 #endif
 
-	std::vector<std::pair<PartOfFunction<scalar, t>, Interval<t>>>& _function = *new std::vector<std::pair<PartOfFunction<scalar, t>, Interval<t>>>();
+	std::vector<std::pair<PartOfFunction<scalar, velocity, t>, Interval<t>>>& _function = *new std::vector<std::pair<PartOfFunction<scalar, velocity, t>, Interval<t>>>();
 };
