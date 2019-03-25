@@ -26,4 +26,6 @@ include_directories ("0.10/")
 
 set (SOURCES 0.10/main.cpp)
 
+add_library ( _uir SHARED ${SOURCES})
+
 add_executable (${PROJECT_NAME} ${SOURCES})
