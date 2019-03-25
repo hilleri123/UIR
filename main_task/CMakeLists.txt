@@ -1,16 +1,13 @@
 
 cmake_minimum_required (VERSION 3.7)
 
-project (a VERSION 0.10 LANGUAGES CXX)
+project (a VERSION 0.20 LANGUAGES CXX)
 
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
 
 set (CMAKE_VERBOSE_MAKEFILE on)
 
-#add_subdirectory ("0.10")
-
-#include_directories ("0.10/" "0.10/space")
-include_directories ("0.10/")
+include_directories ("program/")
 
 #configure_file (
 #"0.10/csv_parser.h"
@@ -24,7 +21,7 @@ include_directories ("0.10/")
 
 #set (CMAKE_CURRENT_SOURCE_DIR build/)
 
-set (SOURCES 0.10/main.cpp)
+set (SOURCES program/main.cpp)
 
 add_library ( _uir SHARED ${SOURCES})
 
