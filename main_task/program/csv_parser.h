@@ -15,8 +15,6 @@
 template <typename scalar, class velocity>
 std::vector<std::pair<Point<scalar>, velocity>>& csv_parser_read(const char* file)
 {
-	auto& result = *new std::vector<std::pair<Point<scalar>, velocity>>();
-	std::cout << "init" << std::endl;
 	
 	std::ifstream stream;
 	//stream.exceptions(std::ios_base::failbit | std::ios_base::eofbit);
@@ -26,6 +24,7 @@ std::vector<std::pair<Point<scalar>, velocity>>& csv_parser_read(const char* fil
 		//std::cout << "not open" << std::endl;
 		throw std::ifstream::failure("not open");
 	}
+	auto& result = *new std::vector<std::pair<Point<scalar>, velocity>>();
 	std::string buf;
 	
 	while (std::getline(stream, buf) ) {
@@ -58,7 +57,7 @@ std::vector<std::pair<Point<scalar>, velocity>>& csv_parser_read(const char* fil
 			double z = std::stod(parts[2]);
 			double s = std::stod(parts[3]);
 
-			auto pair = std::make_pair(*new Point<scalar>(x, y, z), s);
+			auto pair = std::make_pair(Point<scalar>(x, y, z), s);
 
 			//std::cout << std::get<0>(pair) << std::endl;
 
@@ -66,6 +65,7 @@ std::vector<std::pair<Point<scalar>, velocity>>& csv_parser_read(const char* fil
 		} else {
 			// bad data
 			std::cout << "bad data" << std::endl;
+			delete &result;
 			throw ;			//!!!
 		}
 

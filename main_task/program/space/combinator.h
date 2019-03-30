@@ -18,6 +18,7 @@ std::vector<PartOfFunction<scalar, velocity, t>>& combine(const std::vector<std:
 	for (auto i = points.begin(); i+1 < points.end(); i++) {
 		INIT (part, PF, std::get<0>(*i), std::get<0>(*(i+1)) );
 		result.push_back(*part);
+		delete part;
 	}
 	return result;
 }

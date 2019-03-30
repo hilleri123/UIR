@@ -57,13 +57,14 @@ public:
 			//std::cout << "push_back" << std::endl;
 			//_function.push_back(std::make_pair(*i, interval));
 			//_function.emplace_back(pair);
-			_function.emplace_back(*i, *new Interval<t>(time_b, time_e));
+			_function.emplace_back(*i, Interval<t>(time_b, time_e));
 			//std::cout << "pushed_back" << std::endl;
 			time_b += max_time;
 		}
+		delete &trajectory;
 	}
 	
-	Point<scalar>& operator()(t time) const
+	Point<scalar> operator()(t time) const
 	{
 		for (auto i = _function.begin(); i < _function.end(); i++) {
 #if 0
@@ -78,6 +79,11 @@ public:
 			}
 		}
 		return std::get<0>(_function.back())(time);
+	}
+
+	~Function()
+	{
+		delete &_function;
 	}
 
 protected:
