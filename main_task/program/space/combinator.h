@@ -16,7 +16,7 @@ std::vector<PartOfFunction<scalar, velocity, t>>& combine(const std::vector<std:
 //std::vector<Rotate<scalar, Velocity<velocity>, t>>& combine(const std::vector<std::pair<Point<scalar>, velocity>>& points)
 {
 	using PF = PartOfFunction<scalar, velocity, t>;
-	//using PF = Rotate<scalar, velocity, t>;
+	//using RF = Rotate<scalar, velocity, t>;
 	auto& result = *new std::vector<PF>();
 	PF* part;
 	//Vector<scalar> vector(Point<scalar>(), std::get<0>(*points.begin()));

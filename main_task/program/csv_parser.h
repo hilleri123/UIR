@@ -58,11 +58,20 @@ std::vector<std::pair<Point<scalar>, Velocity<velocity>>>& csv_parser_read(const
 			double z = std::stod(parts[2]);
 			double s = std::stod(parts[3]);
 
-			auto pair = std::make_pair(Point<scalar>(x, y, z), Velocity<velocity>(s));
+			
+			Velocity<velocity>* v = nullptr;
+			INIT (v, Velocity<velocity>, s);
+			if (v != nullptr) {
+				auto pair = std::make_pair(Point<scalar>(x, y, z), *v);
+				//std::cout << std::get<0>(pair) << std::endl;
+				result.push_back(pair);
+			} else {
+				// bad data
+				std::cout << "bad data" << std::endl;
+				delete &result;
+				throw ;			//!!!
+			}
 
-			//std::cout << std::get<0>(pair) << std::endl;
-
-			result.push_back(pair);
 		} else {
 			// bad data
 			std::cout << "bad data" << std::endl;

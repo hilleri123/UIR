@@ -11,7 +11,7 @@ template <typename scalar>
 class Velocity : base_init
 {
 public:
-	explicit Velocity(scalar velocity = 1, double max_rotate = asin(1/2))
+	explicit Velocity(scalar velocity = 1, double max_rotate = asin(1./2.))
 		: _velocity(velocity), _max_rotate(max_rotate)
 	{}
 	
@@ -24,7 +24,7 @@ public:
 
 	virtual bool init() const override
 	{
-		if (_velocity == 0 || _max_rotate == 0) {
+		if (_velocity == 0 || _max_rotate == 0) {	//!!!
 			return false;
 		} else {
 			return true;
