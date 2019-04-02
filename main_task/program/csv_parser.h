@@ -10,10 +10,11 @@
 #include <iostream>
 
 #include "space/point.h"
+#include "space/velocity.h"
 
 
 template <typename scalar, class velocity>
-std::vector<std::pair<Point<scalar>, velocity>>& csv_parser_read(const char* file)
+std::vector<std::pair<Point<scalar>, Velocity<velocity>>>& csv_parser_read(const char* file)
 {
 	
 	std::ifstream stream;
@@ -24,7 +25,7 @@ std::vector<std::pair<Point<scalar>, velocity>>& csv_parser_read(const char* fil
 		//std::cout << "not open" << std::endl;
 		throw std::ifstream::failure("not open");
 	}
-	auto& result = *new std::vector<std::pair<Point<scalar>, velocity>>();
+	auto& result = *new std::vector<std::pair<Point<scalar>, Velocity<velocity>>>();
 	std::string buf;
 	
 	while (std::getline(stream, buf) ) {
@@ -57,7 +58,7 @@ std::vector<std::pair<Point<scalar>, velocity>>& csv_parser_read(const char* fil
 			double z = std::stod(parts[2]);
 			double s = std::stod(parts[3]);
 
-			auto pair = std::make_pair(Point<scalar>(x, y, z), s);
+			auto pair = std::make_pair(Point<scalar>(x, y, z), Velocity<velocity>(s));
 
 			//std::cout << std::get<0>(pair) << std::endl;
 

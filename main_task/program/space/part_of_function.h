@@ -13,9 +13,10 @@ template <typename scalar, class velocity, typename t>
 class PartOfFunction : base_init
 {
 public:
-	explicit PartOfFunction(const Point<scalar>& first = *std::unique_ptr<Point<scalar>>(new Point<scalar>), const Point<scalar>& second = *std::unique_ptr<Point<scalar>>(new Point<scalar>), velocity v = 1)
+	explicit PartOfFunction(const Point<scalar>& first = *std::unique_ptr<Point<scalar>>(new Point<scalar>), const Point<scalar>& second = *std::unique_ptr<Point<scalar>>(new Point<scalar>),
+		       	velocity v = velocity(), const Vector<scalar>& direction = *std::unique_ptr<Vector<scalar>>(new Vector<scalar>))
 		//: _begin(first), _end(second), _velocity(v)
-		: _velocity(v)
+		: _velocity(v), _direction(direction)
 	{
 		//if (v == 0) {
 			//throw ;
@@ -67,6 +68,7 @@ protected:
 	Point<scalar> _begin;
 	Point<scalar> _end;
 	velocity _velocity;
+	Vector<scalar> _direction;
 
 private:
 	Vector<scalar> _direction_f;

@@ -3,6 +3,7 @@
 
 #include "function.h"
 #include "csv_parser.h"
+#include "space/velocity.h"
 
 using MyFunction = Function<double, double, double>;
 

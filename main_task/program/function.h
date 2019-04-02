@@ -9,6 +9,7 @@
 #include "space/combinator.h"
 #include "space/part_of_function.h"
 #include "space/point.h"
+#include "space/velocity.h"
 
 
 
@@ -37,10 +38,10 @@ template <typename scalar, class velocity, typename t>
 class Function
 {
 public:
-	explicit Function(const std::vector<std::pair<Point<scalar>, velocity>>& points)
+	explicit Function(const std::vector<std::pair<Point<scalar>, Velocity<velocity>>>& points)
 	{
 		std::cout << "constructor" << std::endl;
-		auto& trajectory = combine<scalar, velocity, t>(points);
+		auto& trajectory = combine<scalar, Velocity<velocity>, t>(points);
 		std::cout << "trajectory size = " << trajectory.size() << std::endl;
 		t time_b = 0;
 		t time_e = 0;
@@ -96,5 +97,5 @@ protected:
 	auto& _function = *new std::vector<std::pair<PartOfFunction<scalar, t>, std::pair<t, t>>>();
 #endif
 
-	std::vector<std::pair<PartOfFunction<scalar, velocity, t>, Interval<t>>>& _function = *new std::vector<std::pair<PartOfFunction<scalar, velocity, t>, Interval<t>>>();
+	std::vector<std::pair<PartOfFunction<scalar, Velocity<velocity>, t>, Interval<t>>>& _function = *new std::vector<std::pair<PartOfFunction<scalar, Velocity<velocity>, t>, Interval<t>>>();
 };
