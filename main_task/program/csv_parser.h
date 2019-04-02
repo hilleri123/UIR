@@ -65,6 +65,7 @@ std::vector<std::pair<Point<scalar>, Velocity<velocity>>>& csv_parser_read(const
 				auto pair = std::make_pair(Point<scalar>(x, y, z), *v);
 				//std::cout << std::get<0>(pair) << std::endl;
 				result.push_back(pair);
+				delete v;
 			} else {
 				// bad data
 				std::cout << "bad data" << std::endl;
