@@ -2,20 +2,21 @@
 #pragma once
 
 #include <cmath>
+#include <iostream>
 
 #include "point.h"
 #include "vector.h"
-#include "part_of_function.h"
 #include "velocity.h"
+#include "init.h"
 
 
 template <typename scalar, class velocity, typename t>
-class Rotate : PartOfFunction<scalar, velocity, t>
+class Rotate : base_init
 {
 public:
 	explicit Rotate(const Point<scalar>& first = *std::unique_ptr<Point<scalar>>(new Point<scalar>), const Point<scalar>& second = *std::unique_ptr<Point<scalar>>(new Point<scalar>),
-		       	velocity v = velocity(), const Vector<scalar>& direction = *std::unique_ptr<Vector<scalar>>(new Vector<scalar>))
-		: PartOfFunction<scalar, velocity, t>(first, second, v, direction)
+		       	velocity v = velocity(), const Vector<scalar>& direction = *std::unique_ptr<Vector<scalar>>(new Vector<scalar>(Point<scalar>(0,0,0), Point<scalar>(1,0,0))))
+		: _begin(first), _end(second), _velocity(v), _direction(direction)
 	{
 		// A - start point
 		// a - start vector
@@ -23,77 +24,81 @@ public:
 		// b - end vector
 		// O - center
 		// R - radius
-		auto& a = v.direction().projection(Vector<scalar>(Point<scalar>(0, 0, 1)));
-		Point<scalar>& B = *new Point<scalar>(second.x(), second.y(), first.z());		//!!!
-		auto& AB = Vector<scalar>(first, B);
-		double alpha = a^Vector<scalar>(Point<scalar>(1, 0, 0));
-		auto& x = AB.rotate_z(alpha);
-		_sign = 1;
-		if ((AB + Point<scalar>(0, 0, 0)).y() < 0) {
-			_sign = -1;
-		}
-
-		_R = v.v() / v.max_rotate();
-
-		auto& AO = a.rotate_z(atan(1)*2*_sign);
-		_center = AO + first;
-		auto& OB = Vector<scalar>(_center, B);
-		double beta = acos(_R / Vector<scalar>::norm(OB));
-		auto& OC = OB.rotate_z(beta*(-_sign));
-		auto& C = (OB * (_R / Vector<scalar>::norm(OB))) + _center;
-		
-		auto gamma = AO^OC;
-		if (a^Vector<scalar>(first, C) > atan(1)*2) {
-			gamma += atan(1)*2;
+		auto a = direction;
+		if (Vector<scalar>::norm(a) == 0) {
+			_err = true;
 		} else {
-			gamma = atan(1)*2 - gamma;
-		}
-		_end_rotate = (1 / v.max_rotate()) * ( gamma / ( atan(1) * 8));
-		
-		_end_part = PartOfFunction<scalar, velocity, t>(C, second, v);
+			Point<scalar> B = second;
+			auto AB = Vector<scalar>(first, B);
 
-		delete &B;
+			scalar R = v.v() / v.max_rotate();
+
+			std::cout << "R " << R << " first " << first.z() << " " << B.z() << std::endl;
+	
+			auto AO = a.rotate_z(copysign(2*atan(1), a.xy_angle(AB))) * (R / Vector<scalar>::norm(a));
+			_center = AO + first;
+
+			std::cout << "center " << _center.x() << " " << _center.y() << " " << _center.z() << std::endl;
+
+			auto OB = Vector<scalar>(_center, B);
+			double beta = acos(R / Vector<scalar>::norm(OB));
+			auto OC = OB.rotate_z(copysign(beta, AB.xy_angle(a)));
+			auto C = (OC * (R / Vector<scalar>::norm(OC))) + _center;
+		
+			_end_point = C;
+			_end_rotate = (1 / v.max_rotate()) * ( (AO^OC) / ( atan(1) * 8));
+
+			std::cout << "end point " << C.x() << " " << C.y() << " " << C.z() << std::endl;
+		}
 	}
+
+	Rotate(const Rotate<scalar, velocity, t>&) = default;
+	Rotate(Rotate<scalar, velocity, t>&&) = default;
+	Rotate<scalar, velocity, t>& operator=(const Rotate<scalar, velocity, t>&) = default;
+	Rotate<scalar, velocity, t>& operator=(Rotate<scalar, velocity, t>&&) = default;
 
 	virtual bool init() const override
 	{
-		if (err || PartOfFunction<scalar, velocity, t>::init()) {
+		if (_err || _begin == _end || _velocity == 0) {
 			return false;
 		} else {
 			return true;
 		}
 	}
 
-	virtual Point<scalar> operator()(t time) const override
+	virtual Point<scalar> operator()(t time) const 
 	{
 		if (time > max_time()) {
-			return PartOfFunction<scalar, velocity, t>::_end;
+			return _end_point;
 		} else if (time < 0) {
-			return PartOfFunction<scalar, velocity, t>::_begin;
+			return _begin;
 		}
-		if (time > _end_rotate) {
-			return _end_part(time - _end_rotate);
-		} else {
-			auto r_vector = Vector<scalar>(_center, PartOfFunction<scalar, velocity, t>::_begin);
-			r_vector = r_vector.rotate_z(time * PartOfFunction<scalar, velocity, t>::_velocity.max_rotate() * _sign);
-			return r_vector + _center;
-		}
+		auto r_vector = Vector<scalar>(_center, _begin);
+		r_vector = r_vector.rotate_z(copysign(time * _velocity.max_rotate(), r_vector.xy_angle(Vector<scalar>(_center, _end_point))));
+		return r_vector + _center;
 	}
 
-	virtual t max_time() const override
+	virtual t max_time() const 
 	{
-		return 1;
+		return _end_rotate;
+	}
+
+	virtual Point<scalar> end_point() const
+	{
+		return _end_point;
 	}
 
 	virtual ~Rotate() override
 	{}
 protected:
 private:
-	bool err = false;
-	int _sign;
+	bool _err = false;
 	t _end_rotate;
-	scalar _R;
-	PartOfFunction<scalar, velocity, t> _end_part;
+	Point<scalar> _begin;
+	Point<scalar> _end;
+	Point<scalar> _end_point;
 	Point<scalar> _center;
+	velocity _velocity;
+	Vector<scalar> _direction;
 }; 
 

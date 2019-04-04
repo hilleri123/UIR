@@ -7,6 +7,7 @@
 
 #include <iostream>
 
+#include "init.h"
 #include "point.h"
 
 
@@ -16,14 +17,8 @@ class Vector : base_init
 public:
 	explicit Vector(const Point<scalar>& first = *std::unique_ptr<Point<scalar>>(new Point<scalar>()), const Point<scalar>& second = *std::unique_ptr<Point<scalar>>(new Point<scalar>()))
 	{
-		//for (std::size_t i = 0; i < 3; i++) {
-			//_direction[i] = second[i] - first[i];
-		//}
 		_direction = Point<scalar>(second.x()-first.x(), second.y()-first.y(), second.z()-first.z());
 	}
-	Vector(const Point<scalar>& direction) 
-		: _direction(direction)
-	{}
 
 	Vector(const Vector<scalar>& ) = default;
 	Vector(Vector<scalar>&& ) = default;
@@ -86,20 +81,36 @@ public:
 	}
 	Vector<scalar> operator+=(Vector<scalar>&& vector) { this->operator=( this->operator+(vector) ); return *this; }
 
-	Point<scalar> operator+(const Point<scalar>& point) const
+	//Point<scalar> operator+(const Point<scalar>& point) const
+	//{
+		//auto result = Point<scalar>(_direction.x() + point.x(), _direction.y() + point.y(), _direction.z() + point.z());
+		//return result;
+	//}
+	//Point<scalar> operator+(Point<scalar>& point) const
+	//{
+		//auto result = Point<scalar>(_direction.x() + point.x(), _direction.y() + point.y(), _direction.z() + point.z());
+		//return result;
+	//}
+	friend Point<scalar> operator+(const Vector<scalar>& vector, const Point<scalar>& point)
 	{
-		auto result = Point<scalar>(_direction.x() + point.x(), _direction.y() + point.y(), _direction.z() + point.z());
+		auto result = Point<scalar>(vector._direction.x() + point.x(), vector._direction.y() + point.y(), vector._direction.z() + point.z());
 		return result;
 	}
-	Point<scalar> operator+(Point<scalar>& point) const
+	friend Point<scalar> operator+(const Vector<scalar>& vector, Point<scalar>&& point)
 	{
-		auto result = Point<scalar>(_direction.x() + point.x(), _direction.y() + point.y(), _direction.z() + point.z());
+		auto result = Point<scalar>(vector._direction.x() + point.x(), vector._direction.y() + point.y(), vector._direction.z() + point.z());
 		return result;
 	}
-	//friend Point<scalar> operator+(const Vector<scalar>& vector, const Point<scalar>& point) { return vector + point; }
-	//friend Point<scalar> operator+(const Vector<scalar>& vector, Point<scalar>&& point) { return vector + point; }
-	friend Point<scalar> operator+(Vector<scalar>&& vector, const Point<scalar>& point) { return vector + point; }
-	friend Point<scalar> operator+(Vector<scalar>&& vector, Point<scalar>&& point) { return vector + point; }
+	friend Point<scalar> operator+(Vector<scalar>&& vector, const Point<scalar>& point)
+	{
+		auto result = Point<scalar>(vector._direction.x() + point.x(), vector._direction.y() + point.y(), vector._direction.z() + point.z());
+		return result;
+	}
+	friend Point<scalar> operator+(Vector<scalar>&& vector, Point<scalar>&& point)
+	{
+		auto result = Point<scalar>(vector._direction.x() + point.x(), vector._direction.y() + point.y(), vector._direction.z() + point.z());
+		return result;
+	}
 	//		end +
 
 	//		begin -
@@ -139,9 +150,40 @@ public:
        	//angle operator^(Vector<scalar>&& vector) const
        	double operator^(Vector<scalar>&& vector) const
 	{
-		scalar s = _direction.x() * vector._direction.x() + _direction.y() * vector._directon.y() + _direction.z() * vector._direction.z();
+		scalar s = _direction.x() * vector._direction.x() + _direction.y() * vector._direction.y() + _direction.z() * vector._direction.z();
 		return acos( s / Vector<scalar>::norm(*this) / Vector<scalar>::norm(vector));
 	}
+
+	double xy_angle(const Vector<scalar>& vector) const
+	{
+		return Vector<scalar>::angle_in_2d(_direction.x(), _direction.y(), vector._direction.x(), vector._direction.y());
+	}
+
+	double xy_angle(Vector<scalar>&& vector) const
+	{
+		return Vector<scalar>::angle_in_2d(_direction.x(), _direction.y(), vector._direction.x(), vector._direction.y());
+	}
+
+	double xz_angle(const Vector<scalar>& vector) const
+	{
+		return Vector<scalar>::angle_in_2d(_direction.x(), _direction.z(), vector._direction.x(), vector._direction.z());
+	}
+
+	double xz_angle(Vector<scalar>&& vector) const
+	{
+		return Vector<scalar>::angle_in_2d(_direction.x(), _direction.z(), vector._direction.x(), vector._direction.z());
+	}
+
+	double yz_angle(const Vector<scalar>& vector) const
+	{
+		return Vector<scalar>::angle_in_2d(_direction.y(), _direction.z(), vector._direction.y(), vector._direction.z());
+	}
+
+	double yz_angle(Vector<scalar>&& vector) const
+	{
+		return Vector<scalar>::angle_in_2d(_direction.y(), _direction.z(), vector._direction.y(), vector._direction.z());
+	}
+
 	//		end^
 
 	//		begin rotate
@@ -152,7 +194,7 @@ public:
 		scalar x = _direction.x();
 		scalar y = _direction.y() * cos(alpha) - _direction.z() * sin(alpha);
 		scalar z = _direction.y() * sin(alpha) + _direction.z() * cos(alpha);
-		auto result = Vector<scalar>(point(Point<scalar>(x, y, z)));
+		auto result = Vector<scalar>(Point<scalar>(0,0,0), Point<scalar>(x, y, z));
 		return result;
 	}
 
@@ -163,7 +205,7 @@ public:
 		scalar x = _direction.x() * cos(alpha) + _direction.z() * sin(alpha);
 		scalar y = _direction.y();
 		scalar z = _direction.x() * (-sin(alpha)) + _direction.z() * cos(alpha);
-		auto result = Vector<scalar>(point(Point<scalar>(x, y, z)));
+		auto result = Vector<scalar>(Point<scalar>(0,0,0), Point<scalar>(x, y, z));
 		return result;
 	}
 
@@ -174,7 +216,7 @@ public:
 		scalar x = _direction.x() * cos(alpha) - _direction.y() * sin(alpha);
 		scalar y = _direction.x() * sin(alpha) + _direction.y() * cos(alpha);
 		scalar z = _direction.z();
-		auto result = Vector<scalar>(point(Point<scalar>(x, y, z)));
+		auto result = Vector<scalar>(Point<scalar>(0,0,0), Point<scalar>(x, y, z));
 		return result;
 	}
 
@@ -184,7 +226,7 @@ public:
 	{
 		auto angle = this->operator^(plane);
 		auto& vector = *new Vector<scalar>(plane);
-		if (plane < atan(1)*2) {
+		if (angle < atan(1)*2) {
 			vector *= -1;
 		}
 		return this->operator+(vector * sin(angle) * (Vector<scalar>::norm(*this) / Vector<scalar>::norm(vector)));
@@ -194,7 +236,7 @@ public:
 	{
 		auto angle = this->operator^(plane);
 		auto& vector = *new Vector<scalar>(plane);
-		if (plane < atan(1)*2) {
+		if (angle < atan(1)*2) {
 			vector *= -1;
 		}
 		return this->operator+(vector * sin(angle) * (Vector<scalar>::norm(*this) / Vector<scalar>::norm(vector)));
@@ -204,7 +246,22 @@ public:
 	static scalar norm(const Vector<scalar>& vector) { return Point<scalar>::norm(Point<scalar>(0,0,0), vector._direction); }
 	static scalar norm(Vector<scalar>&& vector) { return Point<scalar>::norm(Point<scalar>(0,0,0), vector._direction); }
 
+	virtual ~Vector()
+	{}
+
 protected:
+	static double angle_in_2d(scalar x0, scalar y0, scalar x1, scalar y1) 
+	{
+		double a0 = atan(y0 / x0);
+		double a1 = atan(y1 / x1);
+		if (x0 < 0) {
+			a0 += atan(1)*2;
+		}
+		if (x1 < 0) {
+			a1 += atan(1)*2;
+		}
+		return a1 - a0;
+	}
 
 	//Point<scalar>& _direction = *new Point<scalar>();
 	Point<scalar> _direction;
