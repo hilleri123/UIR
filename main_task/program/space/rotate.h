@@ -24,31 +24,40 @@ public:
 		// b - end vector
 		// O - center
 		// R - radius
+		//std::cout << "!" << std::endl;
 		auto a = direction;
-		if (Vector<scalar>::norm(a) == 0) {
+		Point<scalar> B = second;
+		auto AB = Vector<scalar>(first, B);
+		//std::cout << "a^AB = " << (a^AB) << std::endl;
+		if (false) {
 			_err = true;
+		} else if (is_null<scalar>(Vector<scalar>::norm(a)) || is_null<double>(a^AB)) {
+			//std::cout << "do nothing" << std::endl;
+			_end_point = first;
+			_end_rotate = 0;
+			//std::cout << "end point " << _end_point.x() << " " << _end_point.y() << " " << _end_point.z() << " end rotate " << _end_rotate << std::endl;
 		} else {
-			Point<scalar> B = second;
-			auto AB = Vector<scalar>(first, B);
+			//Point<scalar> B(second.x(), second.y(), first.z());
 
 			scalar R = v.v() / v.max_rotate();
 
-			std::cout << "R " << R << " first " << first.z() << " " << B.z() << std::endl;
+			//std::cout << "R " << R << " first " << first.z() << " " << B.z() << std::endl;
 	
-			auto AO = a.rotate_z(copysign(2*atan(1), a.xy_angle(AB))) * (R / Vector<scalar>::norm(a));
+			//auto AO = a.rotate_z(copysign(2*atan(1), a.xy_angle(AB))) * (R / Vector<scalar>::norm(a));
+			auto AO = a.rotate(AB, 2*atan(1)) * (R / Vector<scalar>::norm(a));
 			_center = AO + first;
 
-			std::cout << "center " << _center.x() << " " << _center.y() << " " << _center.z() << std::endl;
+			//std::cout << "center " << _center.x() << " " << _center.y() << " " << _center.z() << std::endl;
 
 			auto OB = Vector<scalar>(_center, B);
 			double beta = acos(R / Vector<scalar>::norm(OB));
-			auto OC = OB.rotate_z(copysign(beta, AB.xy_angle(a)));
+			auto OC = OB.rotate(AO, beta);
 			auto C = (OC * (R / Vector<scalar>::norm(OC))) + _center;
 		
 			_end_point = C;
 			_end_rotate = (1 / v.max_rotate()) * ( (AO^OC) / ( atan(1) * 8));
 
-			std::cout << "end point " << C.x() << " " << C.y() << " " << C.z() << std::endl;
+			//std::cout << "end point " << C.x() << " " << C.y() << " " << C.z() << " end rotate " << _end_rotate << std::endl;
 		}
 	}
 
@@ -59,7 +68,8 @@ public:
 
 	virtual bool init() const override
 	{
-		if (_err || _begin == _end || _velocity == 0) {
+		if (_err || _velocity == 0) {
+			//std::cout << "rotate init" << std::endl;
 			return false;
 		} else {
 			return true;

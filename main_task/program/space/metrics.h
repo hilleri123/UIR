@@ -67,3 +67,8 @@ bool more(scalar a, scalar b)
 	if (comparison::compare<scalar>(a, b) == comparison::more) { return true; } else { return false; }
 }
 
+template <typename scalar>
+bool is_null(scalar a)
+{
+	return equal(a, static_cast<scalar>(0));
+}

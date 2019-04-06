@@ -40,12 +40,13 @@ class Function
 public:
 	explicit Function(const std::vector<std::pair<Point<scalar>, Velocity<velocity>>>& points)
 	{
-		std::cout << "constructor" << std::endl;
+		//std::cout << "constructor" << std::endl;
 		auto& trajectory = combine<scalar, Velocity<velocity>, t>(points);
-		std::cout << "trajectory size = " << trajectory.size() << std::endl;
+		//std::cout << "trajectory size = " << trajectory.size() << std::endl;
 		t time_b = 0;
 		t time_e = 0;
 		for (auto i = trajectory.begin(); i < trajectory.end(); i++) {
+			//std::cout << "!" << std::endl;
 			t max_time = i->max_time();
 			time_e += max_time;
 #if 0
@@ -58,6 +59,7 @@ public:
 			//std::cout << "push_back" << std::endl;
 			//_function.push_back(std::make_pair(*i, interval));
 			//_function.emplace_back(pair);
+			//std::cout << "begin " << time_b << " end " << time_e << std::endl;
 			_function.emplace_back(*i, Interval<t>(time_b, time_e));
 			//std::cout << "pushed_back" << std::endl;
 			time_b += max_time;

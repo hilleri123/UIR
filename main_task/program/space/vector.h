@@ -220,6 +220,26 @@ public:
 		return result;
 	}
 
+	Vector<scalar> rotate(const Vector<scalar>& vector, double alpha) const
+	{
+		scalar norm_first = Vector<scalar>::norm(*this);
+		scalar norm_second = Vector<scalar>::norm(vector);
+		scalar k = sin(alpha) / (norm_first * sin(alpha) + norm_second * sin(this->operator^(vector)));
+		auto result = ((*this) + (vector - (*this)) * k);
+		result = result * (norm_first / Vector<scalar>::norm(result));
+		return result;
+	}
+
+	Vector<scalar> rotate(Vector<scalar>&& vector, double alpha) const
+	{
+		scalar norm_first = Vector<scalar>::norm(*this);
+		scalar norm_second = Vector<scalar>::norm(vector);
+		scalar k = sin(alpha) / (norm_first * sin(alpha) + norm_second * sin(this->operator^(vector)));
+		auto result = ((*this) + (vector - (*this)) * k);
+		result = result * (norm_first / Vector<scalar>::norm(result));
+		return result;
+	}
+
 	//		end rotate
 	
 	Vector<scalar> projection(const Vector<scalar>& plane) const

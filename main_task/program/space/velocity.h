@@ -61,13 +61,13 @@ public:
 	inline friend bool operator>(const Velocity<scalar>& a, const Velocity<scalar>& v) {return v.v() > a.v(); }
 
 	scalar operator+(scalar a) const { return v() + a; }
-	inline friend scalar operator+(scalar a, const Velocity<scalar>& b) { return b + a; }
+	inline friend scalar operator+(scalar a, const Velocity<scalar>& b) { return a + b; }
 	scalar operator-(scalar a) const { return v() - a; }
-	inline friend scalar operator-(scalar a, const Velocity<scalar>& b) { return b - a; }
+	inline friend scalar operator-(scalar a, const Velocity<scalar>& b) { return a - b._velocity; }
 	scalar operator*(scalar a) const { return v() * a; }
-	inline friend scalar operator*(scalar a, const Velocity<scalar>& b) { return b * a; }
+	inline friend scalar operator*(scalar a, const Velocity<scalar>& b) { return a * b; }
 	scalar operator/(scalar a) const { return v() / a; }
-	inline friend scalar operator/(scalar a, const Velocity<scalar>& b) { return b / a; }
+	inline friend scalar operator/(scalar a, const Velocity<scalar>& b) { return a / b._velocity; }
 
 	virtual ~Velocity() override
 	{}
