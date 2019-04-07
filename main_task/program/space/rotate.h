@@ -32,10 +32,10 @@ public:
 		if (false) {
 			_err = true;
 		} else if (is_null<scalar>(Vector<scalar>::norm(a)) || is_null<double>(a^AB)) {
-			//std::cout << "do nothing" << std::endl;
+			std::cout << "do nothing" << std::endl;
 			_end_point = first;
 			_end_rotate = 0;
-			//std::cout << "end point " << _end_point.x() << " " << _end_point.y() << " " << _end_point.z() << " end rotate " << _end_rotate << std::endl;
+			std::cout << "end point " << _end_point.x() << " " << _end_point.y() << " " << _end_point.z() << " end rotate " << _end_rotate << std::endl;
 		} else {
 			//Point<scalar> B(second.x(), second.y(), first.z());
 
@@ -47,17 +47,18 @@ public:
 			auto AO = a.rotate(AB, 2*atan(1)) * (R / Vector<scalar>::norm(a));
 			_center = AO + first;
 
-			//std::cout << "center " << _center.x() << " " << _center.y() << " " << _center.z() << std::endl;
+			std::cout << "center " << _center.x() << " " << _center.y() << " " << _center.z() << " R " << R << std::endl;
 
 			auto OB = Vector<scalar>(_center, B);
 			double beta = acos(R / Vector<scalar>::norm(OB));
-			auto OC = OB.rotate(AO, beta);
+			auto OC = OB.rotate(-1 * AO, beta);
 			auto C = (OC * (R / Vector<scalar>::norm(OC))) + _center;
 		
 			_end_point = C;
-			_end_rotate = (1 / v.max_rotate()) * ( (AO^OC) / ( atan(1) * 8));
+			//_end_rotate = ((2 * (4 * atan(1))) / v.max_rotate()) * ( (2 * (4 * atan(1)) ) / ((-1 * AO)^OC));
+			_end_rotate = ((-1 * AO)^OC) / v.max_rotate();
 
-			//std::cout << "end point " << C.x() << " " << C.y() << " " << C.z() << " end rotate " << _end_rotate << std::endl;
+			std::cout << "end point " << C.x() << " " << C.y() << " " << C.z() << " end rotate " << _end_rotate << std::endl;
 		}
 	}
 
@@ -84,7 +85,7 @@ public:
 			return _begin;
 		}
 		auto r_vector = Vector<scalar>(_center, _begin);
-		r_vector = r_vector.rotate_z(copysign(time * _velocity.max_rotate(), r_vector.xy_angle(Vector<scalar>(_center, _end_point))));
+		r_vector = r_vector.rotate(Vector<scalar>(_center, _end), time * _velocity.max_rotate());
 		return r_vector + _center;
 	}
 

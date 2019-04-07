@@ -56,13 +56,14 @@ public:
 		}
 		scalar part = static_cast<scalar>(time) * (_velocity / Point<scalar>::norm(_rotate.end_point(), _end));
 		auto&& vector = _direction_f * part;
-		return Point<scalar>(vector + _rotate.end_point());
+		//return Point<scalar>(vector + _rotate.end_point());
+		return vector + _rotate.end_point();
 	}
 
 	//template <typename t>
 	virtual t max_time() const
 	{
-		auto a = _rotate.end_point();
+		//auto a = _rotate.end_point();
 		//std::cout << "!" << (Point<scalar>::norm(a, _end) / _velocity) << std::endl;
 		//std::cout << "max time " << static_cast<t>(Point<scalar>::norm(a, _end) / _velocity) << " between " << a.x() << " " << a.y() << " " << a.z() << " and " << _end.x() << " " << _end.y() << " " << _end.z() << std::endl;
 		return static_cast<t>(Point<scalar>::norm(_rotate.end_point(), _end) / _velocity) + _rotate.max_time();

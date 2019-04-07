@@ -224,7 +224,8 @@ public:
 	{
 		scalar norm_first = Vector<scalar>::norm(*this);
 		scalar norm_second = Vector<scalar>::norm(vector);
-		scalar k = sin(alpha) / (norm_first * sin(alpha) + norm_second * sin(this->operator^(vector)));
+		//scalar k = sin(alpha) / (norm_first * sin(alpha) + norm_second * sin(fabs(this->operator^(vector) - alpha)));
+		scalar k = sin(alpha) / (norm_first * sin(alpha) + norm_second * sin(this->operator^(vector) - alpha));
 		auto result = ((*this) + (vector - (*this)) * k);
 		result = result * (norm_first / Vector<scalar>::norm(result));
 		return result;
@@ -234,7 +235,8 @@ public:
 	{
 		scalar norm_first = Vector<scalar>::norm(*this);
 		scalar norm_second = Vector<scalar>::norm(vector);
-		scalar k = sin(alpha) / (norm_first * sin(alpha) + norm_second * sin(this->operator^(vector)));
+		//scalar k = sin(alpha) / (norm_first * sin(alpha) + norm_second * sin(fabs(this->operator^(vector) - alpha)));
+		scalar k = sin(alpha) / (norm_first * sin(alpha) + norm_second * sin(this->operator^(vector) - alpha));
 		auto result = ((*this) + (vector - (*this)) * k);
 		result = result * (norm_first / Vector<scalar>::norm(result));
 		return result;

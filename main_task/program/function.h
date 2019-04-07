@@ -59,7 +59,7 @@ public:
 			//std::cout << "push_back" << std::endl;
 			//_function.push_back(std::make_pair(*i, interval));
 			//_function.emplace_back(pair);
-			//std::cout << "begin " << time_b << " end " << time_e << std::endl;
+			std::cout << "begin " << time_b << " end " << time_e << std::endl;
 			_function.emplace_back(*i, Interval<t>(time_b, time_e));
 			//std::cout << "pushed_back" << std::endl;
 			time_b += max_time;
