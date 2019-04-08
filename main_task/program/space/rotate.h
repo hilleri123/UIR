@@ -35,7 +35,7 @@ public:
 			std::cout << "do nothing" << std::endl;
 			_end_point = first;
 			_end_rotate = 0;
-			std::cout << "end point " << _end_point.x() << " " << _end_point.y() << " " << _end_point.z() << " end rotate " << _end_rotate << std::endl;
+			std::cout << "end point " << _end_point << " end rotate " << _end_rotate << std::endl;
 		} else {
 			//Point<scalar> B(second.x(), second.y(), first.z());
 
@@ -44,21 +44,26 @@ public:
 			//std::cout << "R " << R << " first " << first.z() << " " << B.z() << std::endl;
 	
 			//auto AO = a.rotate_z(copysign(2*atan(1), a.xy_angle(AB))) * (R / Vector<scalar>::norm(a));
+			Point<scalar> x = a + Point<scalar>(0,0,0);
+			std::cout << "a : " << x << std::endl;
+
 			auto AO = a.rotate(AB, 2*atan(1)) * (R / Vector<scalar>::norm(a));
 			_center = AO + first;
 
-			std::cout << "center " << _center.x() << " " << _center.y() << " " << _center.z() << " R " << R << std::endl;
+			std::cout << "center " << _center << " first " << first << " R " << R << std::endl;
 
 			auto OB = Vector<scalar>(_center, B);
-			double beta = acos(R / Vector<scalar>::norm(OB));
+			double beta = copysign(acos(R / Vector<scalar>::norm(OB)), cos(a^OB));
+			std::cout << "beta " << beta << std::endl;
 			auto OC = OB.rotate(-1 * AO, beta);
+			std::cout << "!" << std::endl;
 			auto C = (OC * (R / Vector<scalar>::norm(OC))) + _center;
 		
 			_end_point = C;
 			//_end_rotate = ((2 * (4 * atan(1))) / v.max_rotate()) * ( (2 * (4 * atan(1)) ) / ((-1 * AO)^OC));
 			_end_rotate = ((-1 * AO)^OC) / v.max_rotate();
 
-			std::cout << "end point " << C.x() << " " << C.y() << " " << C.z() << " end rotate " << _end_rotate << std::endl;
+			std::cout << "end point " << _end_point << " end rotate " << _end_rotate << std::endl;
 		}
 	}
 

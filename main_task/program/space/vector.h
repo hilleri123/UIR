@@ -111,6 +111,10 @@ public:
 		auto result = Point<scalar>(vector._direction.x() + point.x(), vector._direction.y() + point.y(), vector._direction.z() + point.z());
 		return result;
 	}
+	friend Point<scalar> operator+(const Point<scalar>& point, Vector<scalar>&& vector) { return vector+point; };
+	friend Point<scalar> operator+(const Point<scalar>& point, const Vector<scalar>& vector) { return vector+point; };
+	friend Point<scalar> operator+(Point<scalar>&& point, Vector<scalar>&& vector) { return vector+point; };
+	friend Point<scalar> operator+(Point<scalar>&& point, const Vector<scalar>& vector) { return vector+point; };
 	//		end +
 
 	//		begin -
@@ -220,23 +224,51 @@ public:
 		return result;
 	}
 
-	Vector<scalar> rotate(const Vector<scalar>& vector, double alpha) const
+	Vector<scalar> rotate(const Vector<scalar>& cvector, double beta) const
 	{
+		Vector<scalar> vector(cvector);
+		double alpha = this->operator^(vector);
+		if (beta < 0) {
+			beta *= -1;
+			vector *= -1;
+		}
+		if (equal<double>(sin(beta), sin(atan(1)*4)) && equal<double>(cos(beta), cos(atan(1)*4))) {
+			return this->operator*(-1);
+		} else if (equal<double>(sin(beta), sin(0)) && equal<double>(cos(beta), cos(0))) {
+			return Vector<scalar>(*this);
+		} else if (equal<double>(sin(beta), sin(alpha)) && equal<double>(cos(beta), cos(alpha))) {
+			return vector;
+		}
 		scalar norm_first = Vector<scalar>::norm(*this);
 		scalar norm_second = Vector<scalar>::norm(vector);
-		//scalar k = sin(alpha) / (norm_first * sin(alpha) + norm_second * sin(fabs(this->operator^(vector) - alpha)));
-		scalar k = sin(alpha) / (norm_first * sin(alpha) + norm_second * sin(this->operator^(vector) - alpha));
+		scalar k = (norm_first * sin(beta)) / (norm_second * sin(alpha - beta));
+		k = 1 / (1 + 1 / k);
+		//std::cout << "\tk " << k << std::endl;
+		//auto result = ((*this) + (vector - (*this)) * k) * copysign(1, beta*(alpha - beta));
 		auto result = ((*this) + (vector - (*this)) * k);
 		result = result * (norm_first / Vector<scalar>::norm(result));
 		return result;
 	}
 
-	Vector<scalar> rotate(Vector<scalar>&& vector, double alpha) const
+	Vector<scalar> rotate(Vector<scalar>&& vector, double beta) const
 	{
+		double alpha = this->operator^(vector);
+		if (beta < 0) {
+			beta *= -1;
+			vector *= -1;
+		}
+		if (equal<double>(sin(beta), sin(atan(1)*4)) && equal<double>(cos(beta), cos(atan(1)*4))) {
+			return this->operator*(-1);
+		} else if (equal<double>(sin(beta), sin(0)) && equal<double>(cos(beta), cos(0))) {
+			return Vector<scalar>(*this);
+		} else if (equal<double>(sin(beta), sin(alpha)) && equal<double>(cos(beta), cos(alpha))) {
+			return vector;
+		}
 		scalar norm_first = Vector<scalar>::norm(*this);
 		scalar norm_second = Vector<scalar>::norm(vector);
-		//scalar k = sin(alpha) / (norm_first * sin(alpha) + norm_second * sin(fabs(this->operator^(vector) - alpha)));
-		scalar k = sin(alpha) / (norm_first * sin(alpha) + norm_second * sin(this->operator^(vector) - alpha));
+		scalar k = (norm_first * sin(beta)) / (norm_second * sin(alpha - beta));
+		k = 1 / (1 + 1 / k);
+		//auto result = ((*this) + (vector - (*this)) * k) * copysign(1, k*beta);
 		auto result = ((*this) + (vector - (*this)) * k);
 		result = result * (norm_first / Vector<scalar>::norm(result));
 		return result;

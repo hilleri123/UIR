@@ -92,6 +92,7 @@ public:
 	}
 
 
+
 protected:
 	scalar _x;
 	scalar _y;
