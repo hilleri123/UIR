@@ -2,11 +2,11 @@
 #include <iostream>
 #include <cassert>
 
-#include "vector.h"
-#include "metrics.h"
-//#include "part_of_function.h"
-//#include "combinator.h"
-#include "point.h"
+#include "geometrics/vector.h"
+#include "geometrics/metrics.h"
+//#include "functions/part_of_function.h"
+//#include "functions/combinator.h"
+#include "geometrics/point.h"
 
 using MyPoint = Point<double>;
 using MyVector = Vector<double>;

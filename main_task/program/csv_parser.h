@@ -9,8 +9,8 @@
 
 #include <iostream>
 
-#include "space/point.h"
-#include "space/velocity.h"
+#include "space/geometrics/point.h"
+#include "space/functions/velocity.h"
 
 
 template <typename scalar, class velocity>

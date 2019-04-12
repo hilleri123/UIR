@@ -7,7 +7,7 @@
 
 #include <iostream>
 
-#include "init.h"
+#include "../init.h"
 #include "point.h"
 
 

@@ -6,10 +6,10 @@
 
 #include <iostream>
 
-#include "space/combinator.h"
-#include "space/part_of_function.h"
-#include "space/point.h"
-#include "space/velocity.h"
+#include "space/functions/combinator.h"
+#include "space/functions/part_of_function.h"
+#include "space/geometrics/point.h"
+#include "space/functions/velocity.h"
 
 
 

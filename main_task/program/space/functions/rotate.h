@@ -4,10 +4,10 @@
 #include <cmath>
 #include <iostream>
 
-#include "point.h"
-#include "vector.h"
+#include "../geometrics/point.h"
+#include "../geometrics/vector.h"
 #include "velocity.h"
-#include "init.h"
+#include "../init.h"
 
 
 template <typename scalar, class velocity, typename t>

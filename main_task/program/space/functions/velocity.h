@@ -3,8 +3,8 @@
 
 #include <cmath>
 
-#include "init.h"
-#include "vector.h"
+#include "../init.h"
+#include "../geometrics/vector.h"
 
 //template <typename scalar, typename angle>
 template <typename scalar>
