@@ -1,0 +1,68 @@
+
+#include "function.h"
+
+Interval::Interval(double begin, double end)
+	: _begin(begin), _end(end)
+{}
+
+bool Interval::in_interval(double time, const Interval interval)
+{
+	if (time <= interval._end && time >= interval._begin) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+double Interval::begin() const 
+{
+	return _begin;
+}
+
+double Interval::end() const
+{
+	return _end;
+}	
+
+
+
+Function::Function(const std::vector<std::pair<Point, Velocity>>& points)
+{
+	//std::cout << "constructor" << std::endl;
+	auto& trajectory = *combine(points);
+	//std::cout << "trajectory size = " << trajectory.size() << std::endl;
+	double time_b = 0;
+	double time_e = 0;
+	for (auto i = trajectory.begin(); i < trajectory.end(); i++) {
+		//std::cout << "!" << std::endl;
+		double max_time = i->max_time();
+		time_e += max_time;
+		//_function.push_back( std::make_pair<PartOfFunction<double, t>&, Interval<t>&>(*i, std::ref(Interval<t>(time_b, time_e))) );
+		//_function.push_back( std::make_pair<PartOfFunction<double, t>&, Interval<t>&>(std::ref(*i), std::ref(interval)) );
+		//auto pair = std::make_pair(*i, interval);
+		//std::cout << "push_back" << std::endl;
+		//_function.push_back(std::make_pair(*i, interval));
+		//_function.emplace_back(pair);
+		//std::cout << "begin " << time_b << " end " << time_e << std::endl;
+		_function.emplace_back(*i, Interval(time_b, time_e));
+		//std::cout << "pushed_back" << std::endl;
+		time_b += max_time;
+	}
+	delete &trajectory;
+}
+	
+Point Function::operator()(double time) const
+{
+	for (auto i = _function.begin(); i < _function.end(); i++) {
+		//std::cout << "check" << std::endl;
+		if (Interval::in_interval(time, std::get<1>(*i))) {
+			//std::cout << "in interval " << std::get<1>(*i).begin() << std::endl;
+			return std::get<0>(*i)(time - std::get<1>(*i).begin());
+		}
+	}
+	return std::get<0>(_function.back())(time);
+}
+
+Function::~Function()
+{}
+
