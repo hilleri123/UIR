@@ -206,9 +206,14 @@ Vector Vector::rotate(const Vector& vector, double beta) const
 		return Vector(*this);
 	}
 	double alpha = this->operator^(vector);
-	Vector y_vector = vector - this->operator*(cos(alpha));
-	y_vector = y_vector * (Vector::norm(*this) / Vector::norm(y_vector));
+	Vector y_vector = vector - this->operator*(Vector::norm(vector) * cos(alpha) / Vector::norm(*this));
+	y_vector *= (Vector::norm(*this) / Vector::norm(y_vector));
 	auto result = y_vector * sin(beta) + this->operator*(cos(beta));
+	if (!equal(cos(this->operator^(y_vector)), 0)) { 
+		std::cout << cos(this->operator^(y_vector)) << std::endl;
+	}
+	assert(equal(cos(this->operator^(y_vector)), 0));
+	//result *= (Vector::norm(*this) / Vector::norm(result));
 	//auto result = y_vector * sin(fabs(beta)) + this->operator*(cos(fabs(beta)));
 	return result;
 }
@@ -221,9 +226,14 @@ Vector Vector::rotate(Vector&& vector, double beta) const
 		return Vector(*this);
 	}
 	double alpha = this->operator^(vector);
-	Vector y_vector = vector - this->operator*(cos(alpha));
-	y_vector = y_vector * (Vector::norm(*this) / Vector::norm(y_vector));
+	Vector y_vector = vector - this->operator*(Vector::norm(vector) * cos(alpha) / Vector::norm(*this));
+	y_vector *= (Vector::norm(*this) / Vector::norm(y_vector));
 	auto result = y_vector * sin(beta) + this->operator*(cos(beta));
+	if (!equal(cos(this->operator^(y_vector)), 0)) { 
+		std::cout << cos(this->operator^(y_vector)) << std::endl;
+	}
+	assert(equal(cos(this->operator^(y_vector)), 0));
+	//result *= (Vector::norm(*this) / Vector::norm(result));
 	//auto result = y_vector * sin(fabs(beta)) + this->operator*(cos(fabs(beta)));
 	return result;
 }

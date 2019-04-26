@@ -4,6 +4,7 @@
 
 #include <cmath>
 
+#include <cassert>
 #include <iostream>
 
 //#include "../init.h"

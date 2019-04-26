@@ -39,6 +39,8 @@ public:
 	
 	Point operator()(double time) const;
 
+	Interval interval(std::size_t) const;
+
 	~Function();
 
 protected:

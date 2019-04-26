@@ -33,7 +33,7 @@ Rotate::Rotate(Point first, Point second, Velocity v, Vector direction)
 		//std::cout << "a : " << x << std::endl;
 		auto AO = a.rotate(AB, 2*atan(1)) * (R / Vector::norm(a));
 		_center = AO + first;
-		//std::cout << "center " << _center << " first " << first << " R " << R << std::endl;
+		//std::cout << "center " << _center << " first " << first << " second " << second << " R " << R << std::endl;
 		auto OB = Vector(_center, B);
 		//double beta = copysign(acos(R / Vector::norm(OB)), cos(a^OB));
 		_clocks_hand = copysign(1, cos(a^OB));

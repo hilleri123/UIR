@@ -63,6 +63,15 @@ Point Function::operator()(double time) const
 	return std::get<0>(_function.back())(time);
 }
 
+Interval Function::interval(std::size_t i) const
+{
+	if (i < _function.size()) {
+		return std::get<1>(_function.at(i));
+	} else {
+		return std::get<1>(_function.back());
+	}
+}
+
 Function::~Function()
 {}
 
