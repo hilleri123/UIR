@@ -34,7 +34,9 @@ Point PartOfFunction::operator()(double time) const
 	if (time < _rotate.max_time()) {
 		return _rotate(time);
 	}
-	double part = time * (_velocity / Point::norm(_rotate.end_point(), _end));
+	//std::cout << "line " << time << std::endl;
+	double part = (time - _rotate.max_time()) * (_velocity / Point::norm(_rotate.end_point(), _end));
+	//std::cout << "part " << part << std::endl;
 	auto&& vector = _direction_f * part;
 	return vector + _rotate.end_point();
 }

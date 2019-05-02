@@ -25,6 +25,7 @@ namespace comparison
 			result = result | less;
 		}
 		if (a - error::distance >= b) {
+			//std::cout << "more" << std::endl;
 			result = result | more;
 		}
 		return result;
@@ -35,28 +36,29 @@ namespace comparison
 
 bool equal(double a, double b)
 {
-	if (comparison::compare(a, b) == comparison::equal) { return true; } else { return false; }
+	if (comparison::compare(a, b) & comparison::equal) { return true; } else { return false; }
 }
 
 bool equal_or_more(double a, double b)
 {
-	if (comparison::compare(a, b) == comparison::equal_or_more) { return true; } else { return false; }
+	std::cout << comparison::compare(a, b) << std::endl;
+	if (comparison::compare(a, b) & comparison::equal_or_more) { return true; } else { return false; }
 }
 
 bool equal_or_less(double a, double b)
 {
-	if (comparison::compare(a, b) == comparison::equal_or_less) { return true; } else { return false; }
+	if (comparison::compare(a, b) & comparison::equal_or_less) { return true; } else { return false; }
 }
 
 
 bool less(double a, double b)
 {
-	if (comparison::compare(a, b) == comparison::less) { return true; } else { return false; }
+	if (comparison::compare(a, b) & comparison::less) { return true; } else { return false; }
 }
 
 bool more(double a, double b)
 {
-	if (comparison::compare(a, b) == comparison::more) { return true; } else { return false; }
+	if (comparison::compare(a, b) & comparison::more) { return true; } else { return false; }
 }
 
 bool is_null(double a)

@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <iostream>
+#include <cassert>
 
 //#include "../geometrics/point.h"
 //#include "../geometrics/vector.h"
