@@ -7,11 +7,12 @@ Interval::Interval(double begin, double end)
 
 bool Interval::in_interval(double time, const Interval interval)
 {
-	if (time <= interval._end && time >= interval._begin) {
-		return true;
-	} else {
-		return false;
-	}
+	return time <= interval._end && time >= interval._begin;
+}
+
+bool Interval::in(double time) const 
+{
+	return time <= _end && time >= _begin;
 }
 
 double Interval::begin() const 
@@ -71,6 +72,22 @@ Interval Function::interval(std::size_t i) const
 		return std::get<1>(_function.back());
 	}
 }
+
+std::size_t Function::find_interval(double t) const
+{
+	for (auto i = _function.begin(); i < _function.end(); i++) {
+		if (std::get<1>(*i).in(t)) {
+			return i - _function.begin();
+		}
+	}
+	return _function.size() - 1;
+}
+
+double Function::max_time() const
+{
+	return std::get<1>(_function.back()).end();
+}
+
 
 Function::~Function()
 {}

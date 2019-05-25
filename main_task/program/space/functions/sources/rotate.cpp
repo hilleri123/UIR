@@ -15,6 +15,7 @@ Rotate::Rotate(Point first, Point second, Velocity v, Vector direction)
 	auto a = direction;
 	Point B = second;
 	auto AB = Vector(first, B);
+	assert(AB.check());
 	//std::cout << "a^AB = " << (a^AB) << std::endl;
 	if (false) {
 		_err = true;
@@ -33,9 +34,11 @@ Rotate::Rotate(Point first, Point second, Velocity v, Vector direction)
 		//std::cout << "a : " << x << std::endl;
 		//std::cout << "AB " << (AB+Point()) << " a " << (a+Point()) << " a^AB " << (a^AB) << std::endl;
 		auto AO = a.rotate(AB, 2*atan(1)) * (R / Vector::norm(a));
+		assert(AO.check());
 		_center = AO + first;
 		//std::cout << "center " << _center << " first " << first << " second " << second << " R " << R << std::endl;
 		auto OB = Vector(_center, B);
+		assert(OB.check());
 		//double beta = copysign(acos(R / Vector::norm(OB)), cos(a^OB));
 		_clocks_hand = copysign(1, cos(a^OB));
 		//std::cout << "|OB| " << Vector::norm(OB) << " R " << R << " clocks_hand " << _clocks_hand << std::endl;
@@ -43,7 +46,14 @@ Rotate::Rotate(Point first, Point second, Velocity v, Vector direction)
 		assert(Vector::norm(OB) >= R);
 		double beta = acos(R / Vector::norm(OB)) * _clocks_hand;
 		//std::cout << "beta " << beta << std::endl;
-		auto OC = OB.rotate(-1 * AO, beta);
+		//std::cout << " OB " << (OB+Point()) << " OA " << (-1*AO+Point()) << " beta " << beta << std::endl;
+		Vector OC;
+		if (equal(fabs(cos(OB^AO)), 1)) {
+		     	OC = OB.rotate(a, beta);
+		} else {
+		     	OC = OB.rotate(-1 * AO, beta);
+		}
+		assert(OC.check());
 		//std::cout << "OC " << (OC+Point()) << " OB " << (OB+Point()) << " OA " << (-1*AO+Point()) << " beta " << beta << std::endl;
 		auto C = (OC * (R / Vector::norm(OC))) + _center;
 	
@@ -54,8 +64,7 @@ Rotate::Rotate(Point first, Point second, Velocity v, Vector direction)
 		} else {
 			_end_rotate = ((AO * -1)^OC) / v.max_rotate();
 		}	
-		//std::cout << "max rotation " << (pin - ((AO * -1)^OC)) << std::endl;
-		//std::cout << "end point " << _end_point << " end rotate " << _end_rotate << std::endl;
+		//std::cout << "end point " << _end_point << " end rotate " << _end_rotate << " center " << _center << std::endl;
 	}
 }
 
@@ -78,7 +87,13 @@ Point Rotate::operator()(double time) const
 	}
 	auto r_vector = Vector(_center, _begin);
 	//std::cout << "rotate " << (time * _velocity.max_rotate() * _clocks_hand) << std::endl;
-	r_vector = r_vector.rotate(Vector(_center, _end), time * _velocity.max_rotate() * _clocks_hand);
+	auto c_e = Vector(_center, _end);
+	if (equal(fabs(cos(c_e^r_vector)), 1)) {
+		r_vector = r_vector.rotate(_direction, time * _velocity.max_rotate() * _clocks_hand);
+	} else {
+		r_vector = r_vector.rotate(c_e, time * _velocity.max_rotate() * _clocks_hand);
+	}
+	//std::cout << Vector::norm(r_vector) << std::endl;
 	return r_vector + _center;
 }
 

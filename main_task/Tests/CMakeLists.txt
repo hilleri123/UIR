@@ -1,7 +1,7 @@
 
 cmake_minimum_required (VERSION 3.7)
 
-project (tests VERSION 0.20 LANGUAGES CXX)
+project (Tests VERSION 0.20 LANGUAGES CXX)
 
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
 
@@ -33,6 +33,6 @@ set (SOURCES
 	${sg_s_dir}/vector.cpp ${sg_h_dir}/vector.h
 	./test.cpp)
 
-add_library ( _uir_tests SHARED ${SOURCES})
+#add_library ( _uir_tests SHARED ${SOURCES})
 
 add_executable (${PROJECT_NAME} ${SOURCES})

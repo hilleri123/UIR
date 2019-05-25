@@ -126,9 +126,11 @@ Vector Vector::operator-=(Vector&& vector) { this->operator=(this->operator-(vec
        //angle Vector::operator^(const Vector& vector) const
 double Vector::operator^(const Vector& vector) const
 {
+	//std::cout << "this " << (*this+Point()) << " vector " << (vector+Point()) << std::endl;
+	assert(vector.check());
+	assert(this->check());
 	double s = _direction.x() * vector._direction.x() + _direction.y() * vector._direction.y() + _direction.z() * vector._direction.z();
 	if ((Vector::norm(*this) != 0 && Vector::norm(vector) != 0) && this->operator!=(vector)) {
-		//std::cout << "s " << s << " this " << (*this+Point()) << " vector " << (vector+Point()) << std::endl;
 		assert(s <= Vector::norm(*this)*Vector::norm(vector));
 		return acos( s / Vector::norm(*this) / Vector::norm(vector));
 	} else {
@@ -140,9 +142,11 @@ double Vector::operator^(const Vector& vector) const
        //angle Vector::operator^(Vector&& vector) const
 double Vector::operator^(Vector&& vector) const
 {
+	//std::cout << "this " << (*this+Point()) << " vector " << (vector+Point()) << std::endl;
+	assert(vector.check());
+	assert(this->check());
 	double s = _direction.x() * vector._direction.x() + _direction.y() * vector._direction.y() + _direction.z() * vector._direction.z();
 	if ((Vector::norm(*this) != 0 && Vector::norm(vector) != 0) && this->operator!=(vector)) {
-		//std::cout << "s " << s << " this " << (*this+Point()) << " vector " << (vector+Point()) << std::endl;
 		assert(s <= Vector::norm(*this)*Vector::norm(vector));
 		return acos( s / Vector::norm(*this) / Vector::norm(vector));
 	} else {
@@ -178,6 +182,7 @@ double Vector::yz_angle(Vector&& vector) const
 
 //		begin rotate
 //template <typename angle>
+#if 0
 //Vector& rotate_x(angle alpha) const
 Vector Vector::rotate_x(double alpha) const
 {
@@ -209,17 +214,25 @@ Vector Vector::rotate_z(double alpha) const
 	auto result = Vector(Point(0,0,0), Point(x, y, z));
 	return result;
 }
+#endif
 
 Vector Vector::rotate(const Vector& vector, double beta) const
 {
+	//std::cout << "rotate" << std::endl;
+	assert(this->check());
+	assert(vector.check());
 	if (equal(sin(beta), sin(atan(1)*4)) && equal(cos(beta), cos(atan(1)*4))) {
 		return this->operator*(-1);
 	} else if (equal(sin(beta), sin(0)) && equal(cos(beta), cos(0))) {
 		return Vector(*this);
 	}
 	double alpha = this->operator^(vector);
+	//std::cout << alpha << std::endl;
+	assert(!equal(fabs(cos(alpha)), 1));
+	//std::cout << "this " << (*this+(Point())) << " vector " << (vector+Point()) << std::endl;
 	Vector y_vector = vector - this->operator*(Vector::norm(vector) * cos(alpha) / Vector::norm(*this));
 	y_vector *= (Vector::norm(*this) / Vector::norm(y_vector));
+	//std::cout << "this " << (*this+(Point())) << " y_vector " << (y_vector+Point()) << std::endl;
 	auto result = y_vector * sin(beta) + this->operator*(cos(beta));
 	if (!equal(cos(this->operator^(y_vector)), 0)) { 
 		std::cout << cos(this->operator^(y_vector)) << " this " << (*this+(Point())) << " y_vector " << (y_vector+Point()) << std::endl;
@@ -227,19 +240,27 @@ Vector Vector::rotate(const Vector& vector, double beta) const
 	assert(equal(cos(this->operator^(y_vector)), 0));
 	//result *= (Vector::norm(*this) / Vector::norm(result));
 	//auto result = y_vector * sin(fabs(beta)) + this->operator*(cos(fabs(beta)));
+	//std::cout << "end rotate" << std::endl;
 	return result;
 }
 
 Vector Vector::rotate(Vector&& vector, double beta) const
 {
+	//std::cout << "rotate" << std::endl;
+	assert(this->check());
+	assert(vector.check());
 	if (equal(sin(beta), sin(atan(1)*4)) && equal(cos(beta), cos(atan(1)*4))) {
 		return this->operator*(-1);
 	} else if (equal(sin(beta), sin(0)) && equal(cos(beta), cos(0))) {
 		return Vector(*this);
 	}
 	double alpha = this->operator^(vector);
+	//std::cout << alpha << std::endl;
+	assert(!equal(fabs(cos(alpha)), 1));
+	//std::cout << "this " << (*this+(Point())) << " vector " << (vector+Point()) << std::endl;
 	Vector y_vector = vector - this->operator*(Vector::norm(vector) * cos(alpha) / Vector::norm(*this));
 	y_vector *= (Vector::norm(*this) / Vector::norm(y_vector));
+	//std::cout << "this " << (*this+(Point())) << " y_vector " << (y_vector+Point()) << std::endl;
 	auto result = y_vector * sin(beta) + this->operator*(cos(beta));
 	if (!equal(cos(this->operator^(y_vector)), 0)) { 
 		std::cout << cos(this->operator^(y_vector)) << " this " << (*this+(Point())) << " y_vector " << (y_vector+Point()) << std::endl;
@@ -248,10 +269,18 @@ Vector Vector::rotate(Vector&& vector, double beta) const
 	assert(equal(cos(this->operator^(y_vector)), 0));
 	//result *= (Vector::norm(*this) / Vector::norm(result));
 	//auto result = y_vector * sin(fabs(beta)) + this->operator*(cos(fabs(beta)));
+	//std::cout << "end rotate" << std::endl;
 	return result;
 }
 
 //		end rotate
+
+bool Vector::check() const
+{
+	return !((_direction.x()!=_direction.x())
+		|| (_direction.y()!=_direction.y())
+		|| (_direction.z()!=_direction.z()));
+}
 
 Vector Vector::projection(const Vector& plane) const
 {

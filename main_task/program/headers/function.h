@@ -22,6 +22,7 @@ class Interval
 public:
 	explicit Interval(double begin, double end);
 	static bool in_interval(double time, const Interval interval);
+	bool in(double time) const;
 	double begin() const;
 	double end() const;
 protected:
@@ -40,6 +41,10 @@ public:
 	Point operator()(double time) const;
 
 	Interval interval(std::size_t) const;
+
+	std::size_t find_interval(double) const;
+
+	double max_time() const;
 
 	~Function();
 

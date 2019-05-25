@@ -98,7 +98,7 @@ int main(int argc, char** argv)
 	{
 		for (int i = 0; i < 100; i++) {
 			std::srand(unsigned(std::time(0)));
-			int n = std::rand() % 20;
+			int n = std::rand() % 10 + 5;
 			std::vector<std::pair<Point, Velocity>> result;
 			for (int j = 0; j < n; j++) {
 				double h = 0.001;
@@ -107,7 +107,7 @@ int main(int argc, char** argv)
 				double y = (std::rand()%m)*h;
 				double z = (std::rand()%m)*h;
 				Velocity* v = nullptr;
-				INIT(v, Velocity, (((std::rand()%m)*h)/1000));
+				INIT(v, Velocity, (((std::rand()%m)*h)/10));
 				if (v != nullptr) {
 					auto pair = std::make_pair(Point(x, y, z), *v);
 					std::cout << "at " << result.size() << " " << Point(x, y, z) << " v " << v->v() << std::endl;
@@ -121,19 +121,18 @@ int main(int argc, char** argv)
 			std::size_t id = 0;
 			Point a = f(0);
 			Point b = f(0);
-			for (double t = 0; t < 1000; t+=0.01) {
+			double h =0.01;
+			for (double t = 0; t < f.max_time()+2*h; t+=h) {
 				//std::cout << "check 2" << std::endl;
-				if (!Interval::in_interval(t, f.interval(id))) {
-					id++;
-				}
+				id = f.find_interval(t);
 				Point c = f(t);
 				if (id < result.size()) {
-					//std::cout << "norm " << Point::norm(a, b) << " velocity*t " << (std::get<1>(result.at(id))*0.01) << std::endl;
-					assert(equal_or_less(Point::norm(a, b), std::get<1>(result.at(id))*0.01));
+					//std::cout << "norm " << Point::norm(a, b) << " velocity*t " << (std::get<1>(result.at(id))*h) << std::endl;
+					assert(equal_or_less(Point::norm(a, b), std::get<1>(result.at(id))*h));
 					assert(equal_or_less(Vector(a, b)^Vector(b, c), std::get<1>(result.at(id)).max_rotate()));
 				} else {
-					//std::cout << "norm " << Point::norm(a, b) << " velocity*t " << (std::get<1>(result.back())*0.01) << std::endl;
-					assert(equal_or_less(Point::norm(a, b), std::get<1>(result.back())*0.01));
+					//std::cout << "norm " << Point::norm(a, b) << " velocity*t " << (std::get<1>(result.back())*h) << std::endl;
+					assert(equal_or_less(Point::norm(a, b), std::get<1>(result.back())*h));
 					assert(equal_or_less(Vector(a, b)^Vector(b, c), std::get<1>(result.back()).max_rotate()));
 				}
 				a = b;

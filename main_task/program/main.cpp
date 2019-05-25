@@ -16,7 +16,8 @@ int main(int argc, char** argv)
 	}
 	auto& data = csv_parser_read(argv[1]);
 	Function a(data);
-	for (double time = 0; time < 60; time+=0.1) {
+	double h = 0.1;
+	for (double time = 0; time < a.max_time()+2*h; time+=h) {
 		std::cout << time << " " << a(time).x() << " " << a(time).y() << " " << a(time).z() << std::endl;
 	}
 	delete &data;
