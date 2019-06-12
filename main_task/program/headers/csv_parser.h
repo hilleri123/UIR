@@ -7,7 +7,10 @@
 #include <fstream>
 #include <functional>
 
+#include <algorithm>
+#include <cctype>
 #include <iostream>
+#include <cmath>
 
 //#include "space/geometrics/point.h"
 //#include "space/functions/velocity.h"

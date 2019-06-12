@@ -1,7 +1,7 @@
 
 #include "part_of_function.h"
 
-PartOfFunction::PartOfFunction(const Point& first, const Point& second, Velocity v, const Vector& direction)
+PartOfFunction::PartOfFunction(const Point& first, const Point& second, const Velocity& v, const Vector& direction)
 	: _begin(first), _end(second), _velocity(v), _direction(direction), _rotate(Rotate(first, second, v, direction))
 {
 	//if (v == 0) {
@@ -10,6 +10,7 @@ PartOfFunction::PartOfFunction(const Point& first, const Point& second, Velocity
 	//std::cout << "first = " << first << " second = " << second << std::endl;
 	//_direction_f = Vector(first, second);
 	//_rotate = Rotate<double, double, t>(first, second, v, direction);
+	//std::cout << "velocity " << v.v() << ", " << v.max_rotate() << std::endl;
 	_direction_f = Vector(_rotate.end_point(), second);
 }
 

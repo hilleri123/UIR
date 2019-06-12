@@ -19,7 +19,12 @@ class PartOfFunction : base_init
 {
 public:
 	explicit PartOfFunction(const Point& first = *std::unique_ptr<Point>(new Point), const Point& second = *std::unique_ptr<Point>(new Point),
-		       	Velocity v = Velocity(), const Vector& direction = *std::unique_ptr<Vector>(new Vector));
+		       	const Velocity& v = *std::unique_ptr<Velocity>(new Velocity), const Vector& direction = *std::unique_ptr<Vector>(new Vector));
+
+	PartOfFunction(const PartOfFunction&) = default;
+	PartOfFunction(PartOfFunction&&) = default;
+	PartOfFunction& operator=(const PartOfFunction&) = default;
+	PartOfFunction& operator=(PartOfFunction&&) = default;
 
 	virtual bool init() const override;
 	
