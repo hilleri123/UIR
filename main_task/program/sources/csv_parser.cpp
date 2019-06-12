@@ -45,17 +45,17 @@ std::vector<std::pair<Point, Velocity>>& csv_parser_read(const char* file)
 
 		}
 
-		std::cout << "size : " << parts.size() << std::endl;
-		for (auto i = parts.begin(); i < parts.end(); i++) {
-			std::cout << "'" << *i << "'" << std::endl;
-		}
+		//std::cout << "size : " << parts.size() << std::endl;
+		//for (auto i = parts.begin(); i < parts.end(); i++) {
+			//std::cout << "'" << *i << "'" << std::endl;
+		//}
 		//
 		
 		//std::cout << "size = " << parts.size() << std::endl;
 		if (parts.size() == 4 || parts.size() == 5) {
 			if (parts.size() == 5) {
 				angle = std::stod(parts[4]) / 45 * atan(1);
-				std::cout << angle << std::endl;
+				//std::cout << angle << std::endl;
 			}
 			double x = std::stod(parts[0]);
 			double y = std::stod(parts[1]);
