@@ -23,11 +23,17 @@ public:
 	Point& operator=(const Point&) = default;
 	Point& operator=(Point&&) = default;
 
+	Point& by_geo(double, double, double);
+
 	double operator[](std::size_t index) const;
 
 	double x() const;
 	double y() const;
 	double z() const;
+
+	double latitude() const;
+	double longitude() const;
+	double radius() const;
 
 	bool operator==(const Point& point) const;
 	bool operator!=(const Point& point) const;

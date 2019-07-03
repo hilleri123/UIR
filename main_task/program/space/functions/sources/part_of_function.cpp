@@ -12,6 +12,12 @@ PartOfFunction::PartOfFunction(const Point& first, const Point& second, const Ve
 	//_rotate = Rotate<double, double, t>(first, second, v, direction);
 	//std::cout << "velocity " << v.v() << ", " << v.max_rotate() << std::endl;
 	_direction_f = Vector(_rotate.end_point(), second);
+	if (equal(Vector::norm(_direction_f), 0)) {
+		_direction_f = _rotate.direction();
+		if (equal(Vector::norm(_direction_f), 0)) {
+			_direction_f = direction;
+		}
+	}
 }
 
 	

@@ -33,6 +33,8 @@ public:
 
 	virtual Point end_point() const;
 
+	virtual Vector direction() const;
+
 	virtual ~Rotate() override;
 protected:
 private:
@@ -45,5 +47,7 @@ private:
 	Velocity _velocity;
 	Vector _direction;
 	double _clocks_hand = 1;
+	
+	double _k = 0; // v = v0 - k * t
 }; 
 

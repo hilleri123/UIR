@@ -25,11 +25,11 @@ set (SOURCES
 	${sf_s_dir}/part_of_function.cpp ${sf_h_dir}/part_of_function.h
 	${sf_s_dir}/rotate.cpp ${sf_h_dir}/rotate.h
 	${sf_s_dir}/velocity.cpp ${sf_h_dir}/velocity.h
-	${sg_s_dir}/circle.cpp ${sg_h_dir}/circle.h
+	#${sg_s_dir}/circle.cpp ${sg_h_dir}/circle.h
 	${sg_s_dir}/metrics.cpp ${sg_h_dir}/metrics.h
-	${sg_s_dir}/plane.cpp ${sg_h_dir}/plane.h
+	#${sg_s_dir}/plane.cpp ${sg_h_dir}/plane.h
 	${sg_s_dir}/point.cpp ${sg_h_dir}/point.h
-	${sg_s_dir}/sphere.cpp ${sg_h_dir}/sphere.h
+	#${sg_s_dir}/sphere.cpp ${sg_h_dir}/sphere.h
 	${sg_s_dir}/vector.cpp ${sg_h_dir}/vector.h
 	./test.cpp)
 

@@ -22,6 +22,25 @@ int main(int argc, char** argv)
 		PartOfFunction part;
 	}
 	{
+		Point point;
+		for (double phi = -2*atan(1); phi < 2*atan(1); phi+=0.02) {
+			for (double di = -4*atan(1); di < 4*atan(1); di+=0.02) {
+				for (double r = 0.1; r < 5; r += 0.1) {
+					point.by_geo(r, phi, di);
+					//std::cout << point << std::endl;
+					assert(equal(point.radius(), r));
+					//std::cout << "latitude :" << point.latitude() << " " << phi << std::endl;
+					//std::cout << "tan latitude :" << tan(point.latitude()) << " " << tan(phi) << std::endl;
+					assert(equal(cos(point.latitude()), cos(phi)) && equal(sin(point.latitude()), sin(phi)));
+					//std::cout << "longitude :" << point.longitude() << " " << di << std::endl;
+					//std::cout << "cos long :" << cos(point.longitude()) << " " << cos(di) << std::endl;
+					//std::cout << "sin long :" << sin(point.longitude()) << " " << sin(di) << std::endl;
+					assert(equal(cos(point.longitude()), cos(di)) && equal(sin(point.longitude()), sin(di)));
+				}
+			}
+		}
+	}
+	{
 		Point zero(0,0,0);
 		Vector vector(zero, zero);
 	}
@@ -44,7 +63,7 @@ int main(int argc, char** argv)
 	{
 		for (double i0 = 0.1; i0 < 15; i0+=0.2) {
 			Point o(0,0,0);
-			Point a(i0,0,0);
+			Point a(0,0,0);
 			Vector A(o,a);
 			int x = 0;
 			int y = 0;

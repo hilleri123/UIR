@@ -130,9 +130,18 @@ double Vector::operator^(const Vector& vector) const
 	assert(vector.check());
 	assert(this->check());
 	double s = _direction.x() * vector._direction.x() + _direction.y() * vector._direction.y() + _direction.z() * vector._direction.z();
+	//std::cout << s << " " << Vector::norm(*this) << " " << Vector::norm(vector) << " " <<
+	    	//( s / Vector::norm(*this) / Vector::norm(vector)) << " " <<
+	    	//acos( s / Vector::norm(*this) / Vector::norm(vector)) << std::endl;
 	if ((Vector::norm(*this) != 0 && Vector::norm(vector) != 0) && this->operator!=(vector)) {
 		assert(s <= Vector::norm(*this)*Vector::norm(vector));
-		return acos( s / Vector::norm(*this) / Vector::norm(vector));
+		if (equal(s / Vector::norm(*this) / Vector::norm(vector), 1)) {
+			return 0;
+		} else if (equal(s / Vector::norm(*this) / Vector::norm(vector), -1)) {
+			return 4*atan(1);
+		} else {
+			return acos( s / Vector::norm(*this) / Vector::norm(vector));
+		}
 	} else {
 		return 0;
 	}
@@ -148,7 +157,13 @@ double Vector::operator^(Vector&& vector) const
 	double s = _direction.x() * vector._direction.x() + _direction.y() * vector._direction.y() + _direction.z() * vector._direction.z();
 	if ((Vector::norm(*this) != 0 && Vector::norm(vector) != 0) && this->operator!=(vector)) {
 		assert(s <= Vector::norm(*this)*Vector::norm(vector));
-		return acos( s / Vector::norm(*this) / Vector::norm(vector));
+		if (equal(s / Vector::norm(*this) / Vector::norm(vector), 1)) {
+			return 0;
+		} else if (equal(s / Vector::norm(*this) / Vector::norm(vector), -1)) {
+			return 4*atan(1);
+		} else {
+			return acos( s / Vector::norm(*this) / Vector::norm(vector));
+		}
 	} else {
 		return 0;
 	}
@@ -227,7 +242,7 @@ Vector Vector::rotate(const Vector& vector, double beta) const
 		return Vector(*this);
 	}
 	double alpha = this->operator^(vector);
-	//std::cout << alpha << std::endl;
+	//std::cout << "cos alpha " << cos(alpha) << std::endl;
 	assert(!equal(fabs(cos(alpha)), 1));
 	//std::cout << "this " << (*this+(Point())) << " vector " << (vector+Point()) << std::endl;
 	Vector y_vector = vector - this->operator*(Vector::norm(vector) * cos(alpha) / Vector::norm(*this));
