@@ -2,8 +2,29 @@
 #include "part_of_function.h"
 
 PartOfFunction::PartOfFunction(const Point& first, const Point& second, const Velocity& v, const Vector& direction)
-	: _begin(first), _end(second), _velocity(v), _direction(direction), _rotate(Rotate(first, second, v, direction))
+	: _begin(first), _end(second), _velocity(v), _direction(direction)
 {
+	Vector delta = direction.rotate(Vector(Point(0,0,0), second), 2*atan(1));
+	//double R = v.v() / v.max_rotate();
+	Vector OA = Vector(Point(0,0,0), first);
+	//double alpha = asin(R / Vector::norm(OA));
+	double alpha = asin(v.v() / v.max_rotate() / Vector::norm(OA));
+	Point Q = Point(0,0,0) + OA.rotate(delta, alpha);
+
+
+	// n = (A, B, C) = Vector(Point(0,0,0), first)
+	//double D = -(first.radius() * first.radius()); 	// Ax+By+Cz+D=0 A*A+B*B+C*C=R*R => D=-R*R
+	double D = -(Q.radius() * Q.radius()); 	// Ax+By+Cz+D=0 A*A+B*B+C*C=R*R => D=-R*R
+	double dr = first.x() * second.x() + first.y() * second.y() + first.z() * second.z() + D;	// Ax+By+Cz+D=dr
+	if (copysign(1, D) == copysign(1, dr)) {	// on same side ( (0,0,0) and second) 
+	} else {
+	}
+
+	//Point F = Point(0,0,0) + Vector(Point(0,0,0), second) * (-D / (first.x() * second.x() + first.y() * second.y() + first.z() * second.z()));	// Ax+By+Cz+D & (O, second) = F
+	Point F = Point(0,0,0) + Vector(Point(0,0,0), second) * (-D / (Q.x() * second.x() + Q.y() * second.y() + Q.z() * second.z()));	// Ax+By+Cz+D & (O, second) = F
+	//Point new_second = first + Vector(Point(0,0,0), F);		//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+	_rotate = Rotate(first, F, v, direction);
 	//if (v == 0) {
 		//throw ;
 	//}
@@ -40,12 +61,24 @@ Point PartOfFunction::operator()(double time) const
 	}
 	if (time < _rotate.max_time()) {
 		return _rotate(time);
+	} else {
+		time -= _rotate.max_time();
 	}
 	//std::cout << "line " << time << std::endl;
-	double part = (time - _rotate.max_time()) * (_velocity / Point::norm(_rotate.end_point(), _end));
+
+	//assert(equal(_rotate.end_point().radius(), _end.radius()));
+
+	Vector first(Point(0,0,0), _rotate.end_point());
+	Vector second(Point(0,0,0), _end);
+	//double part = (time - _rotate.max_time()) * (_velocity / Point::norm(_rotate.end_point(), _end));
 	//std::cout << "part " << part << std::endl;
-	auto&& vector = _direction_f * part;
-	return vector + _rotate.end_point();
+	//auto&& vector = _direction_f * part;
+
+	//!!!!!!!!!!!!!!!! mb rotation err
+
+	auto&& vector = first.rotate(second, time / max_time() * (second^first));
+
+	return vector + Point(0,0,0);
 }
 
 double PartOfFunction::max_time() const

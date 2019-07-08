@@ -57,16 +57,24 @@ std::vector<std::pair<Point, Velocity>>& csv_parser_read(const char* file)
 				angle = std::stod(parts[4]) / 45 * atan(1);
 				//std::cout << angle << std::endl;
 			}
-			double x = std::stod(parts[0]);
-			double y = std::stod(parts[1]);
-			double z = std::stod(parts[2]);
+			//double x = std::stod(parts[0]);
+			//double y = std::stod(parts[1]);
+			//double z = std::stod(parts[2]);
+
+			double r = std::stod(parts[0]);
+			double latitude = std::stod(parts[1]) / 45 * atan(1);
+			double longitude = std::stod(parts[2]) / 45 * atan(1);
+
 			double s = std::stod(parts[3]);
 
 			
 			Velocity* v = nullptr;
 			INIT (v, Velocity, s, angle);
 			if (v != nullptr) {
-				auto pair = std::make_pair(Point(x, y, z), *v);
+				//auto pair = std::make_pair(Point(x, y, z), *v);
+
+				Point tmp;
+				auto pair = std::make_pair(tmp.by_geo(r, latitude, longitude), *v);
 				//std::cout << std::get<0>(pair) << std::endl;
 				result.push_back(pair);
 				delete v;
