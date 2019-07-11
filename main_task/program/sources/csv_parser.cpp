@@ -95,6 +95,13 @@ std::vector<std::pair<Point, Velocity>>& csv_parser_read(const char* file)
 		//
 	}
 	stream.close();
-
+	
+#if 1
+	std::cout << "_________________________" << std::endl;
+	for (auto i = result.begin(); i < result.end(); i++) {
+		std::cout << std::get<0>(*i) << std::endl;
+	}
+	std::cout << "_________________________" << std::endl;
+#endif
 	return result;
 }

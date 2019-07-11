@@ -134,7 +134,7 @@ double Vector::operator^(const Vector& vector) const
 	    	//( s / Vector::norm(*this) / Vector::norm(vector)) << " " <<
 	    	//acos( s / Vector::norm(*this) / Vector::norm(vector)) << std::endl;
 	if ((Vector::norm(*this) != 0 && Vector::norm(vector) != 0) && this->operator!=(vector)) {
-		assert(s <= Vector::norm(*this)*Vector::norm(vector));
+		assert(equal_or_less(s, Vector::norm(*this)*Vector::norm(vector)));
 		if (equal(s / Vector::norm(*this) / Vector::norm(vector), 1)) {
 			return 0;
 		} else if (equal(s / Vector::norm(*this) / Vector::norm(vector), -1)) {
@@ -156,7 +156,7 @@ double Vector::operator^(Vector&& vector) const
 	assert(this->check());
 	double s = _direction.x() * vector._direction.x() + _direction.y() * vector._direction.y() + _direction.z() * vector._direction.z();
 	if ((Vector::norm(*this) != 0 && Vector::norm(vector) != 0) && this->operator!=(vector)) {
-		assert(s <= Vector::norm(*this)*Vector::norm(vector));
+		assert(equal_or_less(s, Vector::norm(*this)*Vector::norm(vector)));
 		if (equal(s / Vector::norm(*this) / Vector::norm(vector), 1)) {
 			return 0;
 		} else if (equal(s / Vector::norm(*this) / Vector::norm(vector), -1)) {

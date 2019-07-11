@@ -2,7 +2,7 @@
 #include "rotate.h"
 
 
-Rotate::Rotate(Point first, Point second, Velocity v, Vector direction)
+Rotate::Rotate(Point first, Point second, Velocity v, Vector direction, Point* center)
 	: _begin(first), _end(second), _velocity(v), _direction(direction)
 {
 	// A - start point
@@ -24,8 +24,14 @@ Rotate::Rotate(Point first, Point second, Velocity v, Vector direction)
 	} else {
 		double R = v.v() / v.max_rotate();
 
-		auto AO = a.rotate(AB, 2*atan(1)) * (R / Vector::norm(a));
-		_center = AO + first;
+		Vector AO;
+		if (center == nullptr) {
+			AO = a.rotate(AB, 2*atan(1)) * (R / Vector::norm(a));
+			_center = AO + first;
+		} else {
+			_center = *center;
+			AO = Vector(first, _center);
+		}
 		auto OB = Vector(_center, B);
 		_clocks_hand = copysign(1, cos(a^OB));
 
@@ -73,7 +79,9 @@ Rotate::Rotate(Point first, Point second, Velocity v, Vector direction)
 		if (Vector::norm(OB) < R) {
 			_k = (v.v() - Vector::norm(OC)*v.max_rotate()) / _end_rotate;
 		}
+		//std::cout << "end point " << _end_point << " end rotate " << _end_rotate << " r " << _end_point.radius() << " center " << _center << " k " << _k << std::endl;
 		std::cout << "end point " << _end_point << " end rotate " << _end_rotate << " center " << _center << " k " << _k << std::endl;
+		std::cout << "center r " << _center.radius() << std::endl;
 	}
 }
 
