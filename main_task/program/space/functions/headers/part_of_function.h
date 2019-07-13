@@ -45,4 +45,6 @@ protected:
 private:
 	Vector _direction_f;
 	Rotate _rotate;
+
+	double _alpha;
 };

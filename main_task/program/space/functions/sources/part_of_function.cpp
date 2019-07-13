@@ -1,11 +1,14 @@
 
 #include "part_of_function.h"
 
-PartOfFunction::PartOfFunction(const Point& first, const Point& second, const Velocity& v, const Vector& direction)
-	: _begin(first), _end(second), _velocity(v), _direction(direction)
+PartOfFunction::PartOfFunction(const Point& first, const Point& m_second, const Velocity& v, const Vector& direction)
+	: _begin(first), _end(m_second), _velocity(v), _direction(direction)
 {
+	Point second = m_second;
 	std::cout << "!!!!! first " << first << " second " << second << " dir " << (Point()+direction) << std::endl; 
 
+	double h = m_second.radius()-first.radius();
+	second.by_geo(first.radius(), second.latitude(), second.longitude());
 
 	Vector&& fv = Vector(Point(), first);
 	Vector&& sv = Vector(Point(), second);
@@ -56,6 +59,9 @@ PartOfFunction::PartOfFunction(const Point& first, const Point& second, const Ve
 	} else {
 		_rotate = Rotate(first, first, v, direction);
 	}
+	_alpha = v.v() * log(fabs(1 + h / first.radius())) / ((Vector(Point(), _rotate.end_point())^Vector(Point(), second)) * first.radius());
+	//std::cout << "a " << log(fabs(h / first.radius())) << " / " << ((Vector(Point(), _rotate.end_point())^Vector(Point(), second)) * first.radius()) << std::endl;
+	std::cout << "alpha " << _alpha << std::endl;
 	//if (v == 0) {
 		//throw ;
 	//}
@@ -113,7 +119,8 @@ Point PartOfFunction::operator()(double time) const
 
 	//!!!!!!!!!!!!!!!! mb rotation err
 
-	auto&& vector = first.rotate(second, time / (max_time() - _rotate.max_time()) * (second^first));
+	auto&& vector = first.rotate(second, time / (max_time() - _rotate.max_time()) * (second^first)) * (1 + _alpha * time);
+	std::cout << "f " << (Vector::norm(first) * _alpha * time) << std::endl;
 
 	return vector + Point();
 }
@@ -127,8 +134,10 @@ double PartOfFunction::max_time() const
 	Vector&& ev = Vector(Point(), _rotate.end_point()); 
 	Vector&& sv = Vector(Point(), _end);
 	//std::cout << "re " << _rotate.end_point() << " s " << _end << " r " << _rotate.end_point().radius() << " " << _end.radius() << std::endl;
-	assert(equal(Vector::norm(ev), Vector::norm(sv)));
-	return ((Vector::norm(ev)*(ev^sv)) / _velocity) + _rotate.max_time();
+	//assert(equal(Vector::norm(ev), Vector::norm(sv)));
+	//return ((Vector::norm(ev)*(ev^sv)) / _velocity) + _rotate.max_time();
+	std::cout << "T " <<((_end.radius() - _rotate.end_point().radius()) / _alpha / _rotate.end_point().radius()) << " " << _rotate.max_time() << std::endl;
+	return ((_end.radius() - _rotate.end_point().radius()) / _alpha / _rotate.end_point().radius()) + _rotate.max_time();
 }
 
 Vector PartOfFunction::direction() const
