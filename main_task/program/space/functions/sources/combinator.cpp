@@ -17,6 +17,8 @@ std::vector<PartOfFunction>* combine(const std::vector<std::pair<Point, Velocity
 		//INIT (part, PF, std::get<0>(*i), std::get<0>(*(i+1)), Velocity(std::get<1>(*i), vector));
 		if (part == nullptr) {
 			std::cout << "no part here " << (i - points.begin()) << std::endl;
+		} else {
+			//std::cout << "max_time " << part->max_time() << std::endl;
 		}
 		direction = part->direction();
 		result.push_back(*part);
