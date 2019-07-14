@@ -37,10 +37,21 @@ int main(int argc, char** argv)
 
 	}
 
-	auto& data = csv_parser_read(in);
+	auto& data = csv_parser_read(in, 6400);
 	Function a(data);
 	
 	std::ofstream stream;
+#if 0
+	std::ofstream plot;
+	plot.open("plot.txt");
+	
+	for (auto i = data.begin(); i < data.end(); i++)
+		plot << std::get<0>(*i).x() << " " 
+			<< std::get<0>(*i).y() << " "
+			<< std::get<0>(*i).z() << std::endl;
+	
+	plot.close();
+#endif
 
 	std::cout << in << std::endl;
 	if (out != nullptr) {
@@ -55,9 +66,13 @@ int main(int argc, char** argv)
 
 	for (double time = 0; time < a.max_time()+h; time+=h) {
 		if (out == nullptr) {
-			std::cout << time << " " << a(time).x() << " " << a(time).y() << " " << a(time).z() << std::endl;
+			//std::cout << time << " " << a(time).x() << " " << a(time).y() << " " << a(time).z() << std::endl;
+			//std::cout << a(time).x() << " " << a(time).y() << " " << a(time).z() << std::endl;
+			std::cout << time << " " << a(time).radius() << " " << a(time).latitude() << " " << a(time).longitude() << std::endl;
 		} else {
-			stream << time << " " << a(time).x() << " " << a(time).y() << " " << a(time).z() << std::endl;
+			//stream << time << " " << a(time).x() << " " << a(time).y() << " " << a(time).z() << std::endl;
+			//stream << a(time).x() << " " << a(time).y() << " " << a(time).z() << std::endl;
+			stream << time << " " << a(time).radius() << " " << a(time).latitude() << " " << a(time).longitude() << std::endl;
 		}
 	}
 	if (stream.is_open()) {

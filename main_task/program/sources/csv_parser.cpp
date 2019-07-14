@@ -2,7 +2,7 @@
 #include "csv_parser.h"
 
 
-std::vector<std::pair<Point, Velocity>>& csv_parser_read(const char* file)
+std::vector<std::pair<Point, Velocity>>& csv_parser_read(const char* file, double R)
 {
 	
 	std::ifstream stream;
@@ -61,7 +61,7 @@ std::vector<std::pair<Point, Velocity>>& csv_parser_read(const char* file)
 			//double y = std::stod(parts[1]);
 			//double z = std::stod(parts[2]);
 
-			double r = std::stod(parts[0]);
+			double r = std::stod(parts[0])+R;
 			double latitude = std::stod(parts[1]) / 45 * atan(1);
 			double longitude = std::stod(parts[2]) / 45 * atan(1);
 
