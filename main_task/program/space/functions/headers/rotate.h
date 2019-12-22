@@ -4,6 +4,8 @@
 #include <cmath>
 #include <iostream>
 #include <cassert>
+#include <utility>
+#include <vector>
 
 //#include "../geometrics/point.h"
 //#include "../geometrics/vector.h"
@@ -11,14 +13,18 @@
 //#include "../init.h"
 #include "point.h"
 #include "vector.h"
+#include "trans_matrix.h"
 #include "velocity.h"
 #include "init.h"
+#include "bz_curve.h"
+#include "xy_circle.h"
 
 
 class Rotate : base_init
 {
 public:
-	explicit Rotate(Point first = Point(), Point second = Point(), Velocity v = Velocity(), Vector direction = Vector(Point(0,0,0), Point(1,0,0)), Point* center = nullptr);
+	//explicit Rotate(Point first = Point(), Point second = Point(), Velocity v = Velocity(), Vector direction = Vector(Point(0,0,0), Point(1,0,0)), Point* center = nullptr);
+	explicit Rotate(Point distination = Point(), Vector direction = Vector(), Velocity v = Velocity(), Matrix m = Matrix());
 
 	Rotate(const Rotate&) = default;
 	Rotate(Rotate&&) = default;
@@ -38,16 +44,23 @@ public:
 	virtual ~Rotate() override;
 protected:
 private:
-	bool _err = false;
+	//bool _err = false;
 	double _end_rotate;
-	Point _begin;
+	//Point _begin;
 	Point _end;
 	Point _end_point;
-	Point _center;
+	//Point _center;
 	Velocity _velocity;
 	Vector _direction;
-	double _clocks_hand = 1;
+	//double _clocks_hand = 1;
 	
-	double _k = 0; // v = v0 - k * t
+	Matrix _matrix;
+
+	double _R;	//radius
+
+	std::vector<std::pair<double, BzCurve>> _curves;
+	//double _scale = 1;
+	
+	//double _k = 0; // v = v0 - k * t
 }; 
 

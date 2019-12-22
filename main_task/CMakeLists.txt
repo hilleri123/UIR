@@ -25,14 +25,24 @@ set (SOURCES
 	${sf_s_dir}/part_of_function.cpp ${sf_h_dir}/part_of_function.h
 	${sf_s_dir}/rotate.cpp ${sf_h_dir}/rotate.h
 	${sf_s_dir}/velocity.cpp ${sf_h_dir}/velocity.h
-	#${sg_s_dir}/circle.cpp ${sg_h_dir}/circle.h
 	${sg_s_dir}/metrics.cpp ${sg_h_dir}/metrics.h
-	#${sg_s_dir}/plane.cpp ${sg_h_dir}/plane.h
+	${sg_s_dir}/trans_matrix.cpp ${sg_h_dir}/trans_matrix.h
 	${sg_s_dir}/point.cpp ${sg_h_dir}/point.h
-	#${sg_s_dir}/sphere.cpp ${sg_h_dir}/sphere.h
 	${sg_s_dir}/vector.cpp ${sg_h_dir}/vector.h
+	${sg_s_dir}/bz_curve.cpp ${sg_h_dir}/bz_curve.h
+	${sg_s_dir}/xy_circle.cpp ${sg_h_dir}/xy_circle.h
 	program/main.cpp)
+
+
+#include_directories (program)
+#include_directories (program program/headers)
+#add_subdirectory (program)
+
+#set (SOURCES program/main.cpp)
+
 
 add_library ( _uir SHARED ${SOURCES})
 
 add_executable (${PROJECT_NAME} ${SOURCES})
+
+#target_link_libraries (${PROJECT_NAME} lib)

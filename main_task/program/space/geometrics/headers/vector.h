@@ -17,7 +17,9 @@ class Vector : base_init
 {
 public:
 	//explicit Vector(const Point& first = *std::unique_ptr<Point>(new Point()), const Point& second = *std::unique_ptr<Point>(new Point()));
-	explicit Vector(Point first = Point(), Point second = Point());
+	explicit Vector(Point first, Point second);
+
+	Vector(Point p = Point()) : _direction(p) {};
 
 	Vector(const Vector& ) = default;
 	Vector(Vector&& ) = default;

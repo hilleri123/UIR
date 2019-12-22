@@ -4,6 +4,13 @@
 PartOfFunction::PartOfFunction(const Point& first, const Point& m_second, const Velocity& v, const Vector& direction)
 	: _begin(first), _end(m_second), _velocity(v), _direction(direction)
 {
+	Point C(0,0,0);	//Центр Земли
+
+	double l = Vector(O, _begin)^Vector(O, _end)*(Point::norm(O, _begin));
+
+	Matrix trans;
+
+#if 0
 	Point second = m_second;
 	std::cout << "!!!!! first " << first << " second " << second << " dir " << (Point()+direction) << std::endl; 
 
@@ -18,26 +25,13 @@ PartOfFunction::PartOfFunction(const Point& first, const Point& m_second, const 
 	std::cout << "sv_projection " << (sv_projection + Point()) << std::endl;
 
 	if (!equal(abs(cos(sv_projection^direction)), 1)) {
-		//Vector delta = direction.rotate(Vector(Point(), second), 2*atan(1));
 		Vector delta = direction.rotate(sv_projection, 2*atan(1));
-		//double R = v.v() / v.max_rotate();
-		//Vector OA = Vector(Point(), first);
-		//double alpha = asin(R / Vector::norm(OA));
 		double alpha = asin(v.v() / v.max_rotate() / Vector::norm(fv));
-		//double alpha = asin(v.v() / v.max_rotate() / Vector::norm(fv)) * copysign(1, cos(fv^sv));
-		//Point Q = Point() + fv.rotate(delta, alpha);
 		Vector&& norm_Q = fv.rotate(delta, alpha); 	// rotation plane's norm
 		Point Q = Point() + norm_Q * cos(norm_Q^fv);
 
-		//Vector&& norm_U = fv.rotate(delta, -alpha); 	// rotation plane's norm
-		//Point U = Point() + norm_U * cos(norm_U^fv);
-
-		//std::cout << "Q " << Q << " -Q " << U << std::endl;
 		std::cout << "Q " << Q << " radius " << Q.radius() << std::endl;
-		//std::cout << "dir^norm " << (direction^norm_Q) << std::endl;
 
-		// n = (A, B, C) = Vector(Point(), first)
-		//double D = -(first.radius() * first.radius()); 	// Ax+By+Cz+D=0 A*A+B*B+C*C=R*R => D=-R*R
 		double D = -(Q.radius() * Q.radius()); 	// Ax+By+Cz+D=0 A*A+B*B+C*C=R*R => D=-R*R
 		double dr = first.x() * second.x() + first.y() * second.y() + first.z() * second.z() + D;	// Ax+By+Cz+D=dr
 		if (copysign(1, D) == copysign(1, dr)) {	// on same side ( (0,0,0) and second) 
@@ -45,15 +39,10 @@ PartOfFunction::PartOfFunction(const Point& first, const Point& m_second, const 
 		}
 
 		Point F = Point() + sv * (-D / (Q.x() * second.x() + Q.y() * second.y() + Q.z() * second.z())); 	// Ax+By+Cz+D & (O, second) = F
-		//std::cout << "QF " << (Point()+Vector(Q, F)) << std::endl;
 		F = Q + Vector(Q, F) * (copysign(1, cos(fv^sv)));	// new F 
-		//std::cout << "QF " << (Point()+Vector(Q, F)) << std::endl;
 
 
-		//std::cout << "F " << F << " A " << Q.x() << " B " << Q.y() << " C " << Q.z() << std::endl;
 		std::cout << "F " << F << " second " << second << std::endl;
-		//std::cout << "F " << F << " new F " << nF << " second " << second << std::endl;
-		//Point new_second = first + Vector(Point(), F);		//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 		_rotate = Rotate(first, F, v, direction);
 	} else {
@@ -61,28 +50,11 @@ PartOfFunction::PartOfFunction(const Point& first, const Point& m_second, const 
 	}
 	std::cout << "^ " << (Vector(Point(), _rotate.end_point())^Vector(Point(), second)) << std::endl;
 	_alpha = v.v() * log(fabs(1 + h / first.radius())) / ((Vector(Point(), _rotate.end_point())^Vector(Point(), second)) * first.radius());
-	//std::cout << "a " << log(fabs(h / first.radius())) << " / " << ((Vector(Point(), _rotate.end_point())^Vector(Point(), second)) * first.radius()) << std::endl;
+
 	std::cout << "alpha " << _alpha << std::endl;
-	//if (v == 0) {
-		//throw ;
-	//}
-	//std::cout << "first = " << first << " second = " << second << std::endl;
-	//_direction_f = Vector(first, second);
-	//_rotate = Rotate<double, double, t>(first, second, v, direction);
-	//std::cout << "velocity " << v.v() << ", " << v.max_rotate() << std::endl;
-	//_direction_f = Vector(_rotate.end_point(), second);
-	//if (equal(Vector::norm(_direction_f), 0)) {
-		//_direction_f = _rotate.direction();
-		//if (equal(Vector::norm(_direction_f), 0)) {
-			//_direction_f = direction;
-		//}
-	//}
-	//_direction_f = _rotate.direction();
 	std::cout << "R first " << first.radius() << " rotate " << _rotate.end_point().radius() << " second " << second.radius() << std::endl;
-	//std::cout << "first " << first << " _r " << _rotate(0) << std::endl;
 	_direction_f = sv.rotate(Vector(Point(), _rotate.end_point()), -2*atan(1));
-	//std::cout << "Res dir " << (_direction_f + Point()) << std::endl;
-	//std::cout << "Res dir " << (_direction_f + Point()) << std::endl;
+#endif
 }
 
 	
