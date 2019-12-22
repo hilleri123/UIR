@@ -4,11 +4,27 @@
 PartOfFunction::PartOfFunction(const Point& first, const Point& m_second, const Velocity& v, const Vector& direction)
 	: _begin(first), _end(m_second), _velocity(v), _direction(direction)
 {
-	Point C(0,0,0);	//Центр Земли
+	Point O(0,0,0);	//Центр Земли
 
 	double l = Vector(O, _begin)^Vector(O, _end)*(Point::norm(O, _begin));
 
 	Matrix trans;
+	Matrix obr;
+	trans *= Matrix::move(Vector(_begin));
+	trans *= Matrix::rotate(Vector(Point(1,0,0)), atan(1)*2-_begin.latitude());
+	trans *= Matrix::rotate(Vector(Point(0,0,1)), atan(1)*2-_begin.longitude());
+
+	obr *= Matrix::rotate(-1*Vector(Point(0,0,1)), atan(1)*2-_begin.longitude());
+	obr *= Matrix::rotate(-1*Vector(Point(1,0,0)), atan(1)*2-_begin.latitude());
+	obr *= Matrix::move(-1*Vector(_begin));
+
+	double R = v.v() / v.max_rotate();
+
+	//std::cout << "trans" << std::endl << trans << "obr" << std::endl << obr << std::endl;
+	//std::cout << _begin << trans(Point(0,0,0)) << obr(_begin) << std::endl;
+	
+	assert(obr(_begin) == Point(0,0,0));
+
 
 #if 0
 	Point second = m_second;
