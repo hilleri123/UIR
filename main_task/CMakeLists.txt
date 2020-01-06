@@ -7,6 +7,11 @@ set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
 
 set (CMAKE_VERBOSE_MAKEFILE on)
 
+find_package(Boost 1.40 COMPONENTS program_options REQUIRED)
+
+
+
+
 set (m_h_dir "program/headers")
 set (sf_h_dir "program/space/functions/headers")
 set (sg_h_dir "program/space/geometrics/headers")
@@ -14,7 +19,7 @@ set (m_s_dir "program/sources")
 set (sf_s_dir "program/space/functions/sources")
 set (sg_s_dir "program/space/geometrics/sources")
 
-include_directories (${m_h_dir} ${sf_h_dir} ${sg_h_dir} program/space program/)
+include_directories (${m_h_dir} ${sf_h_dir} ${sg_h_dir} program/space program/ ${Boost_INCLUDE_DIR})
 
 
 set (SOURCES 
@@ -46,3 +51,4 @@ add_library ( _uir SHARED ${SOURCES})
 add_executable (${PROJECT_NAME} ${SOURCES})
 
 #target_link_libraries (${PROJECT_NAME} lib)
+target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${Boost_LIBRARIES})

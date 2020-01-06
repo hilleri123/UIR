@@ -18,4 +18,4 @@
 #include "velocity.h"
 
 
-std::vector<std::pair<Point, Velocity>>& csv_parser_read(const char* file, double R = 6400);
+std::vector<std::pair<Point, Velocity>>& csv_parser_read(std::string file, double R = 6400);

@@ -2,7 +2,7 @@
 #include "csv_parser.h"
 
 
-std::vector<std::pair<Point, Velocity>>& csv_parser_read(const char* file, double R)
+std::vector<std::pair<Point, Velocity>>& csv_parser_read(std::string file, double R)
 {
 	
 	std::ifstream stream;
@@ -57,13 +57,18 @@ std::vector<std::pair<Point, Velocity>>& csv_parser_read(const char* file, doubl
 				angle = std::stod(parts[4]) / 45 * atan(1);
 				//std::cout << angle << std::endl;
 			}
-			//double x = std::stod(parts[0]);
-			//double y = std::stod(parts[1]);
-			//double z = std::stod(parts[2]);
-
+			Point tmp;
+			//if (geo) {
 			double r = std::stod(parts[0])+R;
 			double latitude = std::stod(parts[1]) / 45 * atan(1);
 			double longitude = std::stod(parts[2]) / 45 * atan(1);
+			tmp.by_geo(r, latitude, longitude);
+			//} else {
+				//double x = std::stod(parts[0]);
+				//double y = std::stod(parts[1]);
+				//double z = std::stod(parts[2]);
+				//tmp = Point(x, y, z);
+			//}
 
 			double s = std::stod(parts[3]);
 
@@ -73,8 +78,8 @@ std::vector<std::pair<Point, Velocity>>& csv_parser_read(const char* file, doubl
 			if (v != nullptr) {
 				//auto pair = std::make_pair(Point(x, y, z), *v);
 
-				Point tmp;
-				auto pair = std::make_pair(tmp.by_geo(r, latitude, longitude), *v);
+				//auto pair = std::make_pair(tmp.by_geo(r, latitude, longitude), *v);
+				auto pair = std::make_pair(tmp, *v);
 				//std::cout << std::get<0>(pair) << std::endl;
 				result.push_back(pair);
 				delete v;
