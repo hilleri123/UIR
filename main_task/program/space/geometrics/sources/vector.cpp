@@ -290,6 +290,17 @@ Vector Vector::rotate(Vector&& vector, double beta) const
 
 //		end rotate
 
+std::ostream& operator<<(std::ostream& stream, const Vector& vector) {
+	stream << "[" << vector.x() << " " << vector.y() << " " << vector.z() << "]";
+	return stream;
+}
+
+std::ostream& operator<<(std::ostream& stream, Vector&& vector) {
+	stream << "[" << vector.x() << " " << vector.y() << " " << vector.z() << "]";
+	return stream;
+}
+
+
 bool Vector::check() const
 {
 	return !((_direction.x()!=_direction.x())

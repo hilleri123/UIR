@@ -109,6 +109,8 @@ public:
 	Vector projection(const Vector& plane) const;
 	Vector projection(Vector&& plane) const;
 
+	friend std::ostream& operator<<(std::ostream& stream, const Vector& vector);
+	friend std::ostream& operator<<(std::ostream& stream, Vector&& vector);
 
 	static double norm(const Vector& vector);
 	static double norm(Vector&& vector);

@@ -1,29 +1,91 @@
 
 #include "part_of_function.h"
 
-PartOfFunction::PartOfFunction(const Point& first, const Point& m_second, const Velocity& v, const Vector& direction)
-	: _begin(first), _end(m_second), _velocity(v), _direction(direction)
+PartOfFunction::PartOfFunction(const Point& first, const Point& second, const Velocity& v, const Vector& direction, const Vector& end_direction)
+	: _begin(first), _end(second), _velocity(v), _direction(direction), _end_direction(end_direction)
 {
 	Point O(0,0,0);	//Центр Земли
+	//Маршрут rotate(AB) climb(BC) ortodorm(CD) rotate(DE)
+	const Point& A = _begin;
+	Point B;
+	Point C;
+	Point D;
+	const Point& E = _end;
 
-	double l = Vector(O, _begin)^Vector(O, _end)*(Point::norm(O, _begin));
+	//double l = Vector(O, _begin)^Vector(O, _end)*(Point::norm(O, _begin));
+	Vector ox(Point(1,0,0));
+	Vector oy(Point(0,1,0));
+	Vector oz(Point(0,0,1));
+
+	Vector OA(O, A);
+
+	Vector tmp_direction = Vector(Point(_direction.x(), _direction.y(), 0));
+
+
 
 	Matrix trans;
 	Matrix obr;
-	trans *= Matrix::move(Vector(_begin));
-	trans *= Matrix::rotate(Vector(Point(1,0,0)), atan(1)*2-_begin.latitude());
-	trans *= Matrix::rotate(Vector(Point(0,0,1)), atan(1)*2-_begin.longitude());
+	
+	Matrix tmp_m;
+	double angle;
 
-	obr *= Matrix::rotate(-1*Vector(Point(0,0,1)), atan(1)*2-_begin.longitude());
-	obr *= Matrix::rotate(-1*Vector(Point(1,0,0)), atan(1)*2-_begin.latitude());
-	obr *= Matrix::move(-1*Vector(_begin));
+	
+
+
+	angle = -atan(1)*2+A.latitude();
+	//angle = A.latitude();
+	trans *= Matrix::rotate(oy, angle);
+	obr = Matrix::rotate(-1*oy, angle) * obr;
+
+
+	//angle=atan(1)*2-A.longitude();
+	angle=-A.longitude();
+	trans *= Matrix::rotate(oz, angle);
+	obr = Matrix::rotate(-1*oz, angle) * obr;
+
+
+	//angle=atan(1)*2-(obr(ox)^_direction);
+	//angle=-(trans(ox)^_direction);
+	angle=-(obr(ox)^_direction);
+	trans = Matrix::rotate(oz, angle) * trans;
+	//trans *= Matrix::rotate(oz, angle);
+	obr *= Matrix::rotate(-1*oz, angle);
+	//obr = Matrix::rotate(-1*oz, angle) * obr;
+	//trans *= Matrix::rotate(oz, -(ox^tmp_direction));
+
+
+	//trans *= Matrix::move(OA);
+	trans = Matrix::move(OA) * trans;
+	//obr = Matrix::move(-1*OA) * obr;
+	obr *= Matrix::move(-1*OA);
+	
+
+	//std::cout << "x " << trans(ox) << " y " << trans(oy) << " z " << trans(oz) << std::endl;
+
+	//std::cout << "x " << obr(ox) << " y " << obr(oy) << " z " << obr(oz) << std::endl;
+
+	//std::cout << obr*trans << std::endl << std::endl << trans*obr << std::endl;
 
 	double R = v.v() / v.max_rotate();
 
-	//std::cout << "trans" << std::endl << trans << "obr" << std::endl << obr << std::endl;
-	//std::cout << _begin << trans(Point(0,0,0)) << obr(_begin) << std::endl;
 	
-	assert(obr(_begin) == Point(0,0,0));
+	//std::cout << "OA " << OA << obr(oz*Vector::norm(OA)) << std::endl;
+	//std::cout << A << "dir " << _direction << " " << trans(_direction) << " " << obr(Vector::norm(_direction)*ox)  << std::endl;
+
+
+	//std::cout << "trans(O)" << trans(O) << std::endl;
+	//std::cout << "obr(A)" << obr(A) << std::endl;
+	assert(obr(A) == O);
+	assert(A == trans(O));
+	assert(obr*trans == trans*obr);
+	assert(OA == obr(oz*Vector::norm(OA)));
+	assert(_direction == obr(ox*Vector::norm(_direction)));
+
+	//std::cout << trans(A) << std::endl;
+
+	//std::cout << O << trans(O) << obr(O) << std::endl;
+
+
 
 
 #if 0
@@ -138,7 +200,7 @@ double PartOfFunction::max_time() const
 
 Vector PartOfFunction::direction() const
 {
-	return _direction_f;
+	return _end_direction;
 }
 
 PartOfFunction::~PartOfFunction()

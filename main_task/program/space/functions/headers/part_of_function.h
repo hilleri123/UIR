@@ -21,7 +21,8 @@ class PartOfFunction : base_init
 {
 public:
 	explicit PartOfFunction(const Point& first = *std::unique_ptr<Point>(new Point), const Point& second = *std::unique_ptr<Point>(new Point),
-		       	const Velocity& v = *std::unique_ptr<Velocity>(new Velocity), const Vector& direction = *std::unique_ptr<Vector>(new Vector));
+		       	const Velocity& v = *std::unique_ptr<Velocity>(new Velocity), const Vector& s_direction = *std::unique_ptr<Vector>(new Vector),
+			const Vector& e_direction = *std::unique_ptr<Vector>(new Vector));
 
 	PartOfFunction(const PartOfFunction&) = default;
 	PartOfFunction(PartOfFunction&&) = default;
@@ -43,6 +44,7 @@ protected:
 	Point _end;
 	Velocity _velocity;
 	Vector _direction;
+	Vector _end_direction;
 
 private:
 	Vector _direction_f;
