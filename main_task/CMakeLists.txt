@@ -36,8 +36,10 @@ set (SOURCES
 	${sg_s_dir}/vector.cpp ${sg_h_dir}/vector.h
 	${sg_s_dir}/bz_curve.cpp ${sg_h_dir}/bz_curve.h
 	${sg_s_dir}/xy_circle.cpp ${sg_h_dir}/xy_circle.h
-	program/main.cpp)
+	#program/main.cpp)
+	)
 
+#program/local_main.cpp
 
 #include_directories (program)
 #include_directories (program program/headers)
@@ -48,7 +50,8 @@ set (SOURCES
 
 add_library ( _uir SHARED ${SOURCES})
 
-add_executable (${PROJECT_NAME} ${SOURCES})
+add_executable (${PROJECT_NAME} ${SOURCES} program/main.cpp)
+add_executable (local_${PROJECT_NAME} ${SOURCES} program/local_main.cpp)
 
 #target_link_libraries (${PROJECT_NAME} lib)
 target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${Boost_LIBRARIES})

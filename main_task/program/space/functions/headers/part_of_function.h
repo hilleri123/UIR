@@ -47,8 +47,9 @@ protected:
 	Vector _end_direction;
 
 private:
-	Vector _direction_f;
-	Rotate _rotate;
+	Rotate _start;
+	Rotate _climb;
+	Rotate _finish;
 
 	double _alpha;
 };

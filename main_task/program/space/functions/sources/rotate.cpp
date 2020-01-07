@@ -18,6 +18,7 @@ Rotate::Rotate(Point distination, Vector direction, Velocity v, Matrix m)
 {
 	_R = v.v() / v.max_rotate();
 
+	//std::cout << _end << " " << _direction << " " << _R << std::endl;
 	//b -begin 
 	std::vector<xyCircle> b_circle;
 	b_circle.emplace_back(_R, Point(0,_R,0), false);
@@ -25,10 +26,11 @@ Rotate::Rotate(Point distination, Vector direction, Velocity v, Matrix m)
 
 	xyCircle tmp_c(_R, _end);
 	//lc - left circle
-	Point lc = tmp_c(_end+_direction, 2*atan(1));
+	Point lc = tmp_c(_end+_direction, -2*atan(1));
 	//rc - right circle
-	Point rc = tmp_c(_end+_direction, -2*atan(1));
+	Point rc = tmp_c(_end+_direction, 2*atan(1));
 	//e -end 
+	//std::cout << "lc " << lc << " rc " << rc << std::endl;
 	std::vector<xyCircle> e_circle;
 	e_circle.emplace_back(_R, lc, false);
 	e_circle.emplace_back(_R, rc, true);
@@ -41,10 +43,20 @@ Rotate::Rotate(Point distination, Vector direction, Velocity v, Matrix m)
 		for (auto j = e_circle.begin(); j < e_circle.end(); j++) {
 			std::pair<Point, Point> tmp = i->get_tangent(*j);
 			if (std::get<0>(tmp) != std::get<1>(tmp)) {
+
+				//std::cout << "center " << i->center() << " " << j->center() << std::endl;
+				//std::cout << "role " << i->role() << " " << j->role() << std::endl;
+
 				double tmp_len = 0;
 				tmp_len += i->angl(Point(0,0,0), std::get<0>(tmp))*_R;
 				tmp_len += Point::norm(std::get<0>(tmp), std::get<1>(tmp));
-				tmp_len += j->angl(_end, std::get<1>(tmp))*_R;
+				tmp_len += j->angl(std::get<1>(tmp), _end)*_R;
+
+				//std::cout << "b andl " << (i->angl(Point(0,0,0), std::get<0>(tmp))/atan(1)*45) << std::endl;
+				//std::cout << "e andl " << (j->angl(_end, std::get<1>(tmp))/atan(1)*45) << std::endl;
+
+				//std::cout << "len " << tmp_len << " (" << len << ")" << std::endl;
+				//std::cout << "tmp line " << std::get<0>(tmp) << " " << std::get<1>(tmp) << std::endl;
 				if (tmp_len < len || len < 0) {
 					len = tmp_len;
 					line = tmp;
@@ -63,6 +75,8 @@ Rotate::Rotate(Point distination, Vector direction, Velocity v, Matrix m)
 			break;
 	}
 
+	//std::cout << "line " << std::get<0>(line) << " " << std::get<1>(line) << std::endl;
+
 	if (len < 0) 
 		std::cout << "!!!!!!!!!!!!! rotate" << std::endl;
 
@@ -71,12 +85,15 @@ Rotate::Rotate(Point distination, Vector direction, Velocity v, Matrix m)
 	double scale = 1;
 	std::array<Point, 4> tmp_arr;
 
+	//std::cout << "first " << first.center() << std::endl;
+
 	double angl = first.angl(Point(0,0,0), std::get<0>(line));
 	double delta = angl / 8;
-	for (double tmp_angl = 0; tmp_angl < angl; tmp_angl += delta) {
+	for (double tmp_angl = 0; less(tmp_angl, angl); tmp_angl += delta) {
 		for (int i = 0; i < 4; i++) {
 			// 3 = 4 - 1
 			tmp_arr[i] = first(Point(0,0,0), tmp_angl + static_cast<double>(i)*delta/3);
+			//std::cout << "i(" << i << ") tmp_angl(" << (tmp_angl + static_cast<double>(i)*delta/3) << ") " << tmp_arr[i] << std::endl;
 		}
 		BzCurve curve(tmp_arr);
 		curve *= _matrix;
@@ -90,19 +107,31 @@ Rotate::Rotate(Point distination, Vector direction, Velocity v, Matrix m)
 	}
 	BzCurve l_curve(tmp_arr);
 	l_curve *= _matrix;
+	//std::cout << "l Bz " << l_curve(0) << " to " << l_curve(1) << std::endl;
 	_curves.push_back(std::make_pair(scale, l_curve));
 
-	angl = first.angl(Point(0,0,0), std::get<0>(line));
+	//std::cout << "second " << second.center() << std::endl;
+
+	angl = second.angl(std::get<1>(line), _end);
 	delta = angl / 8;
-	for (double tmp_angl = angl; tmp_angl > 0; tmp_angl -= delta) {
+	for (double tmp_angl = 0; less(tmp_angl, angl); tmp_angl += delta) {
 		for (int i = 0; i < 4; i++) {
 			// 3 = 4 - 1
-			tmp_arr[i] = second(_end, tmp_angl - static_cast<double>(i)*delta/3);
+			tmp_arr[i] = second(std::get<1>(line), tmp_angl + static_cast<double>(i)*delta/3);
+			//std::cout << "i(" << i << ") tmp_angl(" << (tmp_angl + static_cast<double>(i)*delta/3) << ") " << tmp_arr[i] << std::endl;
 		}
 		BzCurve curve(tmp_arr);
 		curve *= _matrix;
+		//std::cout << "Bz " << curve(0) << " to " << curve(1) << std::endl;
 		_curves.push_back(std::make_pair(delta*_R, curve));
 	}
+	//for (auto i = _curves.begin(); i < _curves.end(); i++) {
+		//auto& curve = std::get<1>(*i);
+		//std::cout << (i-_curves.begin()) << " len " << std::get<0>(*i) <<
+			//" [" << curve(0) << curve(0.33) << " " << curve(0.66)
+			//<< " " << curve(1) << "]" << std::endl;
+		//std::cout << curve << std::endl;
+	//}
 }
 
 bool Rotate::init() const
