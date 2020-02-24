@@ -41,6 +41,8 @@ public:
 
 	virtual Vector direction() const;
 
+	virtual std::pair<Point, Point> line() const;
+
 	virtual ~Rotate() override;
 protected:
 private:
@@ -52,6 +54,8 @@ private:
 	//Point _center;
 	Velocity _velocity;
 	Vector _direction;
+
+	std::size_t _line_id;
 	//double _clocks_hand = 1;
 	
 	Matrix _matrix;

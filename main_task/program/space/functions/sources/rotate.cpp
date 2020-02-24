@@ -108,6 +108,7 @@ Rotate::Rotate(Point distination, Vector direction, Velocity v, Matrix m)
 	BzCurve l_curve(tmp_arr);
 	l_curve *= _matrix;
 	//std::cout << "l Bz " << l_curve(0) << " to " << l_curve(1) << std::endl;
+	_line_id = _curves.size();
 	_curves.push_back(std::make_pair(scale, l_curve));
 
 	//std::cout << "second " << second.center() << std::endl;
@@ -143,6 +144,16 @@ bool Rotate::init() const
 		return true;
 	}
 }
+
+
+std::pair<Point, Point> Rotate::line() const
+{
+	const BzCurve& line = std::get<1>(_curves.at(_line_id));
+	Point first = line.front();
+	Point second = line.back();
+	return std::make_pair(first, second);
+}
+
 
 Point Rotate::operator()(double time) const 
 {
