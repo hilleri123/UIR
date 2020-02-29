@@ -6,8 +6,10 @@
 #include "vector.h"
 #include "metrics.h"
 #include "trans_matrix.h"
+#include "bz_curve.h"
 
 #include <cstdarg>
+#include <vector>
 #include <array>
 #include <utility>
 #include <stdexcept>
@@ -46,4 +48,6 @@ bool direct(const double& lat1, const double& z1, const double& s, double& lat2,
 //out : s, z1, z2
 bool inverse(const double& lat1, const double& lat2, const double& L, double& s, double& z1, double& z2);
 
+
+std::vector<BzCurve> orthodoxy(const Point& first, const Point& second);
 

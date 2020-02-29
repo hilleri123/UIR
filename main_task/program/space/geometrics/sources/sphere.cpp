@@ -10,6 +10,8 @@ namespace sphere {
 
 
 	double error = 0.00001;
+
+	double split_distance = 100;
 }
 
 
@@ -104,3 +106,56 @@ bool inverse(const double& lat1, const double& lat2, const double& L, double& s,
 
 	return true;
 }
+
+
+std::vector<BzCurve> orthodoxy(const Point& first, const Point& second) {
+
+	std::vector<BzCurve> result;
+
+	double lat1, lat2, L;
+	double s, z1, z2;
+
+	lat1 = first.latitude();
+	lat2 = second.latitude();
+	L = second.longitude() - first.longitude();
+
+	if (!inverse(lat1, lat2, L, s, z1, z2)) {
+		std::cerr << "bool inverse(const double& lat1, const double& lat2, const double& L, double& s, double& z1, double& z2) failed" << std::endl;
+	}
+
+	std::size_t n = static_cast<std::size_t>(s / sphere::split_distance) + 1;
+
+	const std::size_t N = 4;
+
+	double tmp_s = sphere::split_distance / (N - 1);
+
+	std::array<Point, N> tmp;
+	//tmp.front() = first;
+	tmp.fill(first);
+
+	for (std::size_t i = 0; i < n; i++) {
+		if (i - 1 == n)
+			tmp_s = (s - sphere::split_distance * i) / (N - 1);
+
+		for (std::size_t j = 0; j < N - 1; j++) {
+			Point& curr = tmp.at(j);
+			Point& next = tmp.at(j+1);
+
+			lat1 = curr.latitude();
+
+			if (!direct(lat1, z1, tmp_s, lat2, L, z2)) {
+				std::cerr << "bool direct(const double& lat1, const double& z1, const double& s, double& lat2, double& L, double& z2) failed" << std::endl;
+			}
+			next.by_geo(curr.radius(), lat2, curr.longitude() + L);
+			z1 = z2;
+		}
+
+		result.emplace_back(tmp);
+		
+		tmp.front() = tmp.back();
+	}
+
+	return result;
+}
+
+

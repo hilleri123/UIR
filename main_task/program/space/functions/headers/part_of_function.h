@@ -16,6 +16,7 @@
 #include "rotate.h"
 #include "trans_matrix.h"
 #include "xy_circle.h"
+#include "sphere.h"
 
 class PartOfFunction : base_init
 {
