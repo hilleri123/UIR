@@ -36,6 +36,7 @@ set (SOURCES
 	${sg_s_dir}/vector.cpp ${sg_h_dir}/vector.h
 	${sg_s_dir}/bz_curve.cpp ${sg_h_dir}/bz_curve.h
 	${sg_s_dir}/xy_circle.cpp ${sg_h_dir}/xy_circle.h
+	${sg_s_dir}/sphere.cpp ${sg_h_dir}/sphere.h
 	#program/main.cpp)
 	)
 
