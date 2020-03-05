@@ -62,7 +62,8 @@ private:
 
 	double _R;	//radius
 
-	std::vector<std::pair<double, BzCurve>> _curves;
+	//std::vector<std::pair<double, BzCurve>> _curves;
+	std::vector<BzCurve> _curves;
 	//double _scale = 1;
 	
 	//double _k = 0; // v = v0 - k * t

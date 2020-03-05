@@ -64,6 +64,11 @@ PartOfFunction::PartOfFunction(const Point& first, const Point& second, const Ve
 	//std::cout << O << trans(O) << obr(O) << std::endl;
 
 
+	_curves = orthodoxy(first, second);
+
+	for (auto i = _curves.begin(); i < _curves.end(); i++) {
+		i->set_scale(i->get_len() / v.v());
+	}
 
 
 #if 0
@@ -132,6 +137,10 @@ Point PartOfFunction::operator()(double time) const
 	} else if (time < 0) {
 		return _begin;
 	}
+	
+	std::size_t ind = static_cast<std::size_t>(time);
+	return _curves.at(ind)(time - ind);
+
 	//if (time < _rotate.max_time()) {
 		//return _rotate(time);
 	//} else {
@@ -175,7 +184,8 @@ double PartOfFunction::max_time() const
 	//return ((Vector::norm(ev)*(ev^sv)) / _velocity) + _rotate.max_time();
 	//std::cout << "T " <<((_end.radius() - _rotate.end_point().radius()) / _alpha / _rotate.end_point().radius()) << " " << _rotate.max_time() << std::endl;
 	//return ((_end.radius() - _rotate.end_point().radius()) / _alpha / _rotate.end_point().radius()) + _rotate.max_time();
-	return 1;
+	//return 1;
+	return _curves.size();
 }
 
 Vector PartOfFunction::direction() const

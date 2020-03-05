@@ -52,5 +52,7 @@ private:
 	Rotate _climb;
 	Rotate _finish;
 
+	std::vector<BzCurve> _curves;
+
 	double _alpha;
 };

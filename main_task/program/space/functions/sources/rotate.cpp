@@ -97,7 +97,9 @@ Rotate::Rotate(Point distination, Vector direction, Velocity v, Matrix m)
 		}
 		BzCurve curve(tmp_arr);
 		curve *= _matrix;
-		_curves.push_back(std::make_pair(delta*_R, curve));
+		curve.set_len(delta*_R);
+		//_curves.push_back(std::make_pair(delta*_R, curve));
+		_curves.push_back(curve);
 	}
 
 	scale = Point::norm(std::get<0>(line), std::get<1>(line));
@@ -109,7 +111,10 @@ Rotate::Rotate(Point distination, Vector direction, Velocity v, Matrix m)
 	l_curve *= _matrix;
 	//std::cout << "l Bz " << l_curve(0) << " to " << l_curve(1) << std::endl;
 	_line_id = _curves.size();
-	_curves.push_back(std::make_pair(scale, l_curve));
+
+	//_curves.push_back(std::make_pair(scale, l_curve));
+	l_curve.set_len(scale);
+	_curves.push_back(l_curve);
 
 	//std::cout << "second " << second.center() << std::endl;
 
@@ -123,8 +128,10 @@ Rotate::Rotate(Point distination, Vector direction, Velocity v, Matrix m)
 		}
 		BzCurve curve(tmp_arr);
 		curve *= _matrix;
+		curve.set_len(delta*_R);
 		//std::cout << "Bz " << curve(0) << " to " << curve(1) << std::endl;
-		_curves.push_back(std::make_pair(delta*_R, curve));
+		//_curves.push_back(std::make_pair(delta*_R, curve));
+		_curves.push_back(curve);
 	}
 	//for (auto i = _curves.begin(); i < _curves.end(); i++) {
 		//auto& curve = std::get<1>(*i);
@@ -148,7 +155,8 @@ bool Rotate::init() const
 
 std::pair<Point, Point> Rotate::line() const
 {
-	const BzCurve& line = std::get<1>(_curves.at(_line_id));
+	//const BzCurve& line = std::get<1>(_curves.at(_line_id));
+	const BzCurve& line = _curves.at(_line_id);
 	Point first = line.front();
 	Point second = line.back();
 	return std::make_pair(first, second);
@@ -167,11 +175,16 @@ Point Rotate::operator()(double time) const
 
 	double t = time;
 	for (auto i = _curves.begin(); i < _curves.end(); i++) {
-		assert(std::get<0>(*i) != 0);
-		if (t <= std::get<0>(*i))
-			return std::get<1>(*i)(t / std::get<0>(*i));
+		assert(!equal(i->get_len(), 0));
+		if (t <= i->get_len())
+			return (*i)(t);
 		else
-			t -= std::get<0>(*i);
+			t -= i->get_len();
+		//assert(!equal(std::get<0>(*i), 0));
+		//if (t <= std::get<0>(*i))
+			//return std::get<1>(*i)(t / std::get<0>(*i));
+		//else
+			//t -= std::get<0>(*i);
 	}
 
 	return _matrix(_end);
@@ -181,7 +194,8 @@ double Rotate::max_time() const
 {
 	double sum = 0;
 	for (auto i = _curves.begin(); i < _curves.end(); i++) {
-		sum += std::get<0>(*i);
+		//sum += std::get<0>(*i);
+		sum += i->get_len();
 	}
 	return sum;
 }
