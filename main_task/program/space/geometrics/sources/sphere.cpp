@@ -13,12 +13,18 @@ namespace sphere {
 
 	double error = 0.001;
 
-	double split_distance = 100;
+	double split_distance = 10;
 }
 
 
 
 bool direct(const double& lat1, const double& z1, const double& s, double& lat2, double& L, double& z2) {
+
+	if (lat1 != lat1 || z1 != z1 || s != s) {
+		std::cerr << "lat1(" << lat1 << ") z1(" << z1 << ") s(" << s << ")" << std::endl;
+		return false;
+	}
+
 	double U1 = atan( (1. - sphere::f) * tan(lat1) );
 	double o1 = atan( tan(U1) / cos(z1) );
 	double z = cos(U1) * sin(z1);
@@ -71,12 +77,19 @@ bool direct(const double& lat1, const double& z1, const double& s, double& lat2,
 }
 
 bool inverse(const double& lat1, const double& lat2, const double& L, double& s, double& z1, double& z2) {
+
+	if (lat1 != lat1 || lat2 != lat2 || L != L) {
+		std::cerr << "lat1(" << lat1 << ") lat2(" << lat2 << ") L(" << L << ")" << std::endl;
+		return false;
+	}
 	
 	double k = L;
 	double prev_k = 0;
 
 	double U1 = atan( (1. - sphere::f) * tan(lat1) );
 	double U2 = atan( (1. - sphere::f) * tan(lat2) );
+
+	//std::cout << "U1 " << U1 << " U2 " << U2 << std::endl;
 
 	double o;
 	//om2 = 2 * om
@@ -91,13 +104,15 @@ bool inverse(const double& lat1, const double& lat2, const double& L, double& s,
 
 
 		//double z = asin( cos(U1) * cos(U2) * sin(k) / sin(o) );
-		double z = asin( cos(U1) * cos(U2) * sin(k) / sin_o );
+		double z = asin( round_one( cos(U1) * cos(U2) * sin(k) / sin_o ) );
 
 		//om2 = 2 * om
 		//om2 = acos( cos(o) - 2. * sin(U1) * sin(U2) / pow(cos(z), 2) );
-		om2 = acos( cos_o - 2. * sin(U1) * sin(U2) / pow(cos(z), 2) );
+		om2 = acos( round_one( cos_o - 2. * sin(U1) * sin(U2) / pow(cos(z), 2) ) );
 
 		double C = (sphere::f / 16.) * pow(cos(z), 2) * (4. + sphere::f * (4. - 3. * pow(cos(z), 2)));
+
+		//std::cout << "o " << o << " z " << z << " om2 " << om2 << " C " << C << std::endl;
 
 		prev_k = k;
 		//k = L + (1. - C) * sphere::f * sin(z) * (o + C * sin(o) * (cos(om2) + C * cos(o) * (-1. + 2. * pow(cos(om2), 2))));
@@ -145,7 +160,7 @@ std::vector<BzCurve> orthodoxy(const Point& first_point, const Point& second) {
 		tmp.fill(first);
 
 		//lat1 = first.latitude();
-		lat2 = second.latitude();
+		//lat2 = second.latitude();
 		//L = second.longitude() - first.longitude();
 
 		//if (!inverse(lat1, lat2, L, s, z1, z2)) {
@@ -174,11 +189,14 @@ std::vector<BzCurve> orthodoxy(const Point& first_point, const Point& second) {
 			Point& next = tmp.at(j+1);
 
 			lat1 = curr.latitude();
+			lat2 = second.latitude();
 			L = second.longitude() - curr.longitude();
 
 			if (!inverse(lat1, lat2, L, s, z1, z2)) {
 				std::cerr << "bool inverse(const double& lat1, const double& lat2, const double& L, double& s, double& z1, double& z2) failed" << std::endl;
 			}
+			//std::cout << "lat1 " << lat1 << " lat2 " << lat2 << " L " << L << " s " << s << std::endl;
+			//std::cout << "s " << s << " z1 " << z1 << " z2 " << z2 << std::endl;
 
 			double tmp_s = sphere::split_distance / (N - 1);
 			if (s < tmp_s)
@@ -191,6 +209,8 @@ std::vector<BzCurve> orthodoxy(const Point& first_point, const Point& second) {
 			if (!direct(lat1, z1, tmp_s, lat2, L, z2)) {
 				std::cerr << "bool direct(const double& lat1, const double& z1, const double& s, double& lat2, double& L, double& z2) failed" << std::endl;
 			}
+
+			//std::cout << "lat2 " << lat2 << " L " << L << " z2 " << z2 << std::endl;
 			//next.by_geo(curr.radius(), lat2, curr.longitude() + L);
 			next.by_geo(curr.radius(), lat2, curr.longitude() + L);
 			//z1 = z2;

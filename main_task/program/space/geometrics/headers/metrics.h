@@ -18,3 +18,6 @@ bool less(double a, double b);
 bool more(double a, double b);
 
 bool is_null(double a);
+
+double round_one(double a);
+

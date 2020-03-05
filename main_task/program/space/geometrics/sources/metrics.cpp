@@ -66,3 +66,13 @@ bool is_null(double a)
 	return equal(a, 0);
 }
 
+double round_one(double a)
+{
+	if (a > 1)
+		return 1;
+	else if (a < -1)
+		return -1;
+	else
+		return a;
+}
+
