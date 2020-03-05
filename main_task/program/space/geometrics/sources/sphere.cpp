@@ -144,52 +144,69 @@ std::vector<BzCurve> orthodoxy(const Point& first_point, const Point& second) {
 	do {
 		tmp.fill(first);
 
-		lat1 = first.latitude();
+		//lat1 = first.latitude();
 		lat2 = second.latitude();
-		L = second.longitude() - first.longitude();
+		//L = second.longitude() - first.longitude();
 
-		if (!inverse(lat1, lat2, L, s, z1, z2)) {
-			std::cerr << "bool inverse(const double& lat1, const double& lat2, const double& L, double& s, double& z1, double& z2) failed" << std::endl;
-		}
-		std::cout << "S : " << s << std::endl;
+		//if (!inverse(lat1, lat2, L, s, z1, z2)) {
+			//std::cerr << "bool inverse(const double& lat1, const double& lat2, const double& L, double& s, double& z1, double& z2) failed" << std::endl;
+		//}
+		//std::cout << "S : " << s << std::endl;
 		//std::cout << "z2 " << z2 << std::endl;
 
 		//std::size_t n = static_cast<std::size_t>(s / sphere::split_distance) + 1;
 
-		double tmp_s = sphere::split_distance / (N - 1);
+		//double tmp_s = sphere::split_distance / (N - 1);
 		//double tmp_tmp_s = s;
 
 		//for (std::size_t i = 0; i < n; i++) {
 		//if (i - 1 == n)
-		if (s < tmp_s)
+		//if (s < tmp_s)
 			//tmp_s = (s - sphere::split_distance * i) / (N - 1);
-			tmp_s = s / (N - 1);
+			//tmp_s = s / (N - 1);
 
-		std::cout << "tmp_s : " << tmp_s << std::endl;
+		//std::cout << "tmp_s : " << tmp_s << std::endl;
+
+		double curr_len = 0;
 
 		for (std::size_t j = 0; j < N - 1; j++) {
 			Point& curr = tmp.at(j);
 			Point& next = tmp.at(j+1);
-			//std::cout << "curr " << curr << std::endl;
 
 			lat1 = curr.latitude();
+			L = second.longitude() - curr.longitude();
+
+			if (!inverse(lat1, lat2, L, s, z1, z2)) {
+				std::cerr << "bool inverse(const double& lat1, const double& lat2, const double& L, double& s, double& z1, double& z2) failed" << std::endl;
+			}
+
+			double tmp_s = sphere::split_distance / (N - 1);
+			if (s < tmp_s)
+				tmp_s = s / (N - 1);
+
+			//std::cout << "curr " << curr << std::endl;
+
+			//lat1 = curr.latitude();
 
 			if (!direct(lat1, z1, tmp_s, lat2, L, z2)) {
 				std::cerr << "bool direct(const double& lat1, const double& z1, const double& s, double& lat2, double& L, double& z2) failed" << std::endl;
 			}
+			//next.by_geo(curr.radius(), lat2, curr.longitude() + L);
 			next.by_geo(curr.radius(), lat2, curr.longitude() + L);
-			z1 = z2;
+			//z1 = z2;
 
 			//tmp_tmp_s -= tmp_s;
 			//std::cout << "z " << z1 << std::endl;
 			//std::cout << "tmp tmp s " << tmp_tmp_s << std::endl;
+			curr_len += tmp_s;
 		}
 
 		result.emplace_back(tmp);
 
-		result.back().set_len(tmp_s * (N - 1));
+		result.back().set_len(curr_len);
+		//result.back().set_len(tmp_s * (N - 1));
 
-		s -= tmp_s * (N - 1);
+		//s -= tmp_s * (N - 1);
 		
 		//tmp.front() = tmp.back();
 		first = tmp.back();
