@@ -2,6 +2,7 @@
 #pragma once
 
 #include <cmath>
+#include <iostream>
 
 //#include "../init.h"
 //#include "../geometrics/vector.h"
@@ -75,6 +76,9 @@ public:
 	double operator/(double a) const;
 	friend double operator/(double a, const Velocity& b);
 	friend double operator/(double a, Velocity&& b);
+
+	friend std::ostream& operator<<(std::ostream& s, const Velocity& a);
+	friend std::ostream& operator<<(std::ostream& s, Velocity&& a);
 
 	virtual ~Velocity() override;
 protected:

@@ -193,6 +193,13 @@ Vector PartOfFunction::direction() const
 	return _end_direction;
 }
 
+
+Velocity PartOfFunction::stats() const
+{
+	return _velocity;
+}
+
+
 PartOfFunction::~PartOfFunction()
 {}
 

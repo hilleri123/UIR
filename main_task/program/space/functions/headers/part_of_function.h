@@ -38,6 +38,8 @@ public:
 
 	virtual Vector direction() const;
 
+	virtual Velocity stats() const;
+
 	virtual ~PartOfFunction() override;
 
 protected:

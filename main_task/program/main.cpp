@@ -104,11 +104,19 @@ int main(int argc, char** argv)
 		if (stream.is_open()) {
 			//stream << time << " " << a(time).x() << " " << a(time).y() << " " << a(time).z() << std::endl;
 			//stream << a(time).x() << " " << a(time).y() << " " << a(time).z() << std::endl;
-			stream << time << " " << a(time).radius() << " " << a(time).latitude() << " " << a(time).longitude() << std::endl;
+			auto pair = a(time);
+			Point point = std::get<0>(pair);
+			Velocity velocity = std::get<1>(pair);
+			stream << time << " " << point.radius() << " " << point.latitude() << " " << point.longitude() << " " << velocity << std::endl;
+			//stream << time << " " << a(time).radius() << " " << a(time).latitude() << " " << a(time).longitude() << std::endl;
 		} else {
 			//std::cout << time << " " << a(time).x() << " " << a(time).y() << " " << a(time).z() << std::endl;
 			//std::cout << a(time).x() << " " << a(time).y() << " " << a(time).z() << std::endl;
-			std::cout << time << " " << a(time).radius() << " " << a(time).latitude() << " " << a(time).longitude() << std::endl;
+			//std::cout << time << " " << a(time).radius() << " " << a(time).latitude() << " " << a(time).longitude() << std::endl;
+			auto pair = a(time);
+			Point point = std::get<0>(pair);
+			Velocity velocity = std::get<1>(pair);
+			std::cout << time << " " << point.radius() << " " << point.latitude() << " " << point.longitude() << " " << velocity << std::endl;
 		}
 	}
 	if (stream.is_open()) {

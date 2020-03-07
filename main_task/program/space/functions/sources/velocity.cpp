@@ -70,6 +70,18 @@ double Velocity::operator/(double a) const { return v() / a; }
 double operator/(double a, const Velocity& b) { return a / b._velocity; }
 double operator/(double a, Velocity&& b) { return a / b._velocity; }
 
+std::ostream& operator<<(std::ostream& s, const Velocity& a)
+{
+	s << "v: " << a.v() << " max_rotate " << a.max_rotate();
+	return s;
+}
+
+std::ostream& operator<<(std::ostream& s, Velocity&& a)
+{
+	s << "v: " << a.v() << " max_rotate " << a.max_rotate();
+	return s;
+}
+
 Velocity::~Velocity()
 {}
 

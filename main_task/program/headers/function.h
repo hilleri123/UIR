@@ -38,7 +38,8 @@ class Function
 public:
 	explicit Function(const std::vector<std::pair<Point, Velocity>>& points);
 	
-	Point operator()(double time) const;
+	//Point operator()(double time) const;
+	std::pair<Point, Velocity> operator()(double time) const;
 
 	Interval interval(std::size_t) const;
 
@@ -49,6 +50,8 @@ public:
 	~Function();
 
 protected:
+	std::size_t _last_id = 0;
+	bool _changed = true;
 
 	std::vector<std::pair<PartOfFunction, Interval>> _function;
 };

@@ -52,16 +52,20 @@ Function::Function(const std::vector<std::pair<Point, Velocity>>& points)
 	delete &trajectory;
 }
 	
-Point Function::operator()(double time) const
+std::pair<Point, Velocity> Function::operator()(double time) const
 {
 	for (auto i = _function.begin(); i < _function.end(); i++) {
 		//std::cout << "check" << std::endl;
 		if (Interval::in_interval(time, std::get<1>(*i))) {
 			//std::cout << "in interval " << std::get<1>(*i).begin() << std::endl;
-			return std::get<0>(*i)(time - std::get<1>(*i).begin());
+			const PartOfFunction& part = std::get<0>(*i);
+			//return std::get<0>(*i)(time - std::get<1>(*i).begin());
+			return std::make_pair(part(time - std::get<1>(*i).begin()), part.stats());
 		}
 	}
-	return std::get<0>(_function.back())(time);
+	const PartOfFunction& part = std::get<0>(_function.back());
+	return std::make_pair(part(time), part.stats());
+	//return std::get<0>(_function.back())(time);
 }
 
 Interval Function::interval(std::size_t i) const
@@ -87,7 +91,6 @@ double Function::max_time() const
 {
 	return std::get<1>(_function.back()).end();
 }
-
 
 Function::~Function()
 {}
