@@ -14,6 +14,8 @@ namespace sphere {
 	double error = 0.001;
 
 	double split_distance = 10;
+
+	//Matrix flatting = 
 }
 
 

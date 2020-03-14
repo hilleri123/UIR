@@ -52,7 +52,7 @@ set (SOURCES
 add_library ( _uir SHARED ${SOURCES})
 
 add_executable (${PROJECT_NAME} ${SOURCES} program/main.cpp)
-add_executable (local_${PROJECT_NAME} ${SOURCES} program/local_main.cpp)
+#add_executable (local_${PROJECT_NAME} ${SOURCES} program/local_main.cpp)
 
 #target_link_libraries (${PROJECT_NAME} lib)
 target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${Boost_LIBRARIES})

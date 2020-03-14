@@ -30,19 +30,26 @@ PartOfFunction::PartOfFunction(const Point& first, const Point& second, const Ve
 	double angle;
 
 	angle = -atan(1)*2+A.latitude();
-	trans *= Matrix::rotate(oy, angle);
-	obr = Matrix::rotate(-1*oy, angle) * obr;
+
+	Matrix::multiplay_foreward_backward(trans, obr, Matrix::rotate, &oy, angle);
+	//trans *= Matrix(Matrix::rotate, oy, angle);
+	//obr = Matrix::rotate(-1*oy, angle) * obr;
 
 	angle=-A.longitude();
-	trans *= Matrix::rotate(oz, angle);
-	obr = Matrix::rotate(-1*oz, angle) * obr;
+	Matrix::multiplay_foreward_backward(trans, obr, Matrix::rotate, &oz, angle);
+	//trans *= Matrix(Matrix::rotate, oz, angle);
+	//obr = Matrix(Matrix::rotate, -1*oz, angle) * obr;
 
 	angle=-(obr(ox)^_direction);
-	trans = Matrix::rotate(oz, angle) * trans;
-	obr *= Matrix::rotate(-1*oz, angle);
+	Vector zo = -1 * oz;
+	Matrix::multiplay_foreward_backward(obr, trans, Matrix::rotate, &zo, angle);
+	//trans = Matrix(Matrix::rotate, oz, angle) * trans;
+	//obr *= Matrix(Matrix::rotate, -1*oz, angle);
 
-	trans = Matrix::move(OA) * trans;
-	obr *= Matrix::move(-1*OA);
+	Vector AO = -1 * OA;
+	Matrix::multiplay_foreward_backward(obr, trans, Matrix::move, &AO);
+	//trans = Matrix(Matrix::move, OA) * trans;
+	//obr *= Matrix(Matrix::move, -1*OA);
 	
 	double R = v.v() / v.max_rotate();
 
