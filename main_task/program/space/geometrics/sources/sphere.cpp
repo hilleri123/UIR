@@ -15,6 +15,9 @@ namespace sphere {
 
 	double split_distance = 10;
 
+
+	double R_earth = 6400;
+
 	//Matrix flatting = 
 }
 
@@ -225,7 +228,9 @@ std::vector<BzCurve> orthodoxy(const Point& first_point, const Point& second) {
 
 		result.emplace_back(tmp);
 
-		result.back().set_len(curr_len);
+		
+		result.back().set_len(curr_len * first.radius() / sphere::R_earth);
+		//result.back().set_len(curr_len);
 		//result.back().set_len(tmp_s * (N - 1));
 
 		//s -= tmp_s * (N - 1);

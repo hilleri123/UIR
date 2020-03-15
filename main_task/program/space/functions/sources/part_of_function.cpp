@@ -40,12 +40,14 @@ PartOfFunction::PartOfFunction(const Point& first, const Point& second, const Ve
 	//trans *= Matrix(Matrix::rotate, oz, angle);
 	//obr = Matrix(Matrix::rotate, -1*oz, angle) * obr;
 
+#if 1
 	angle=-(obr(ox)^_direction);
 	Vector zo = -1 * oz;
 	Matrix::multiplay_foreward_backward(obr, trans, Matrix::rotate, &zo, angle);
 	//trans = Matrix(Matrix::rotate, oz, angle) * trans;
 	//obr *= Matrix(Matrix::rotate, -1*oz, angle);
 
+#endif
 	Vector AO = -1 * OA;
 	Matrix::multiplay_foreward_backward(obr, trans, Matrix::move, &AO);
 	//trans = Matrix(Matrix::move, OA) * trans;
@@ -63,21 +65,41 @@ PartOfFunction::PartOfFunction(const Point& first, const Point& second, const Ve
 	assert(obr(A) == O);
 	assert(A == trans(O));
 	assert(obr*trans == trans*obr);
+
+#if 0
 	assert(OA == obr(oz*Vector::norm(OA)));
 	assert(_direction == obr(ox*Vector::norm(_direction)));
+#endif
 
 	//std::cout << trans(A) << std::endl;
 
 	//std::cout << O << trans(O) << obr(O) << std::endl;
 
+	Point distination = obr(E);
+	distination = Point(distination.x(), distination.y(), 0);
+	Vector dist_vec = Vector(obr(A), distination);
+	dist_vec *= 3 * R / Vector::norm(dist_vec);
+	distination = obr(A) + dist_vec;
+	//std::cout << distination << std::endl;
 
-	_curves = orthodoxy(first, second);
+	//std::cout << "start" << std::endl;
+	_start = Rotate(obr(A), obr(direction), distination, dist_vec, v, trans);
+	B = _start.end_point();
+
+	//_climb = Rotate(trans(A), trans(direction), distination, dist_vec, v, obr);
+	C = B;
+
+	//_finish = Rotate(trans(D), trans(direction), trans(E), trans(end_direction), v, obr);
+	D = E;
+
+	//_curves = orthodoxy(_start.end_point(), _finish(0));
+	_curves = orthodoxy(C, D);
 
 	for (auto i = _curves.begin(); i < _curves.end(); i++) {
 		i->set_scale(i->get_len() / v.v());
 	}
 
-
+	std::cout << A.radius() << " " << B.radius() << " " << C.radius() << " " << D.radius() << " " << E.radius() << std::endl;
 #if 0
 	Point second = m_second;
 	std::cout << "!!!!! first " << first << " second " << second << " dir " << (Point()+direction) << std::endl; 

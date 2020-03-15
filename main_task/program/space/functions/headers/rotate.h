@@ -24,7 +24,7 @@ class Rotate : base_init
 {
 public:
 	//explicit Rotate(Point first = Point(), Point second = Point(), Velocity v = Velocity(), Vector direction = Vector(Point(0,0,0), Point(1,0,0)), Point* center = nullptr);
-	explicit Rotate(Point distination = Point(), Vector direction = Vector(), Velocity v = Velocity(), Matrix m = Matrix());
+	explicit Rotate(Point start = Point(), Vector start_direction = Vector(), Point distination = Point(), Vector end_direction = Vector(), Velocity v = Velocity(), Matrix m = Matrix());
 
 	Rotate(const Rotate&) = default;
 	Rotate(Rotate&&) = default;

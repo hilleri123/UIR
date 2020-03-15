@@ -12,10 +12,40 @@
 
 
 
-Rotate::Rotate(Point distination, Vector direction, Velocity v, Matrix m)
-	: _end(distination), _velocity(v), _direction(direction), _matrix(m)
+Rotate::Rotate(Point start, Vector start_direction, Point distination, Vector end_direction, Velocity v, Matrix m)
+	: _end(distination), _velocity(v), _direction(end_direction), _matrix(m)
 	//: _matrix(m)
 {
+	Vector ox(Point(1,0,0));
+	Vector oy(Point(0,1,0));
+	Vector oz(Point(0,0,1));
+
+	start = Point(start.x(), start.y(), 0);
+	distination = Point(distination.x(), distination.y(), 0);
+
+	start_direction = Vector(Point(start_direction.x(), start_direction.y(), 0));
+	end_direction = Vector(Point(end_direction.x(), end_direction.y(), 0));
+
+
+	Vector move_vec(start);
+	//std::cout << move_vec << std::endl;
+	
+	double angle = start_direction^oy;
+
+	Matrix move_mat_fore, move_mat_back;
+	Matrix::multiplay_foreward_backward(move_mat_fore, move_mat_back, Matrix::move, &move_vec);
+	Matrix rotate_mat_fore, rotate_mat_back;
+	Matrix::multiplay_foreward_backward(rotate_mat_fore, rotate_mat_back, Matrix::rotate, &oz, angle);
+
+	Matrix tmp = move_mat_fore * rotate_mat_fore;
+
+	//std::cout << tmp(oy*Vector::norm(start_direction)) << std::endl << start_direction << std::endl;
+	assert(tmp(oy*Vector::norm(start_direction)) == start_direction);
+
+	m = rotate_mat_back * move_mat_back * m;
+	//m = rotate_mat_back * move_mat_fore * m;
+
+
 	_R = v.v() / v.max_rotate();
 
 	//std::cout << _end << " " << _direction << " " << _R << std::endl;
@@ -202,12 +232,12 @@ double Rotate::max_time() const
 
 Vector Rotate::direction() const 
 {
-	return _direction;
+	return _matrix(_direction);
 }
 
 Point Rotate::end_point() const
 {
-	return _end;
+	return _matrix(_end);
 }
 
 Rotate::~Rotate()
