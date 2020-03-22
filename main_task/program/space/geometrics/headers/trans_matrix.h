@@ -8,10 +8,12 @@
 
 #include <cstdarg>
 #include <valarray>
+#include <vector>
 #include <utility>
 #include <stdexcept>
 
 
+class Conversion;
 
 class Matrix : public base_init
 {
@@ -59,4 +61,39 @@ protected:
 	std::valarray<double> _matrix;
 
 	std::exception* err = nullptr;
+};
+
+
+
+class Conversion : public base_init
+{
+public:
+	explicit Conversion(const Matrix& to, const Matrix& from)
+		: _to(to), _from(from)
+	{}
+
+	Conversion(const Point* pos = nullptr, const Vector* ox = nullptr, const Vector* oy = nullptr, const Vector* oz = nullptr);
+
+	virtual bool init() const override;
+
+	Matrix& to_matrix() { return _to;}
+	Matrix& from_matrix() { return _from;}
+
+	template <class T>
+	T to(T p) const { return _to(p);}
+	template <class T>
+	T from(T p) const { return _from(p);}
+
+#if 0
+	Point to(Point&& p) { return _to(p);}
+	Point from(Point&& p) { return _from(p);}
+	Vector to(Vector&& v) { return _to(v);}
+	Vector from(Vector&& v) { return _from(v);}
+#endif
+	virtual ~Conversion() override;
+protected:
+	std::exception* err = nullptr;
+	
+	Matrix _to;
+	Matrix _from;
 };

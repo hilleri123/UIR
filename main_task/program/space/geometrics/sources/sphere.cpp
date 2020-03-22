@@ -13,10 +13,11 @@ namespace sphere {
 
 	double error = 0.001;
 
-	double split_distance = 10;
+	double split_distance = 100;
 
 
-	double R_earth = 6400;
+	double R_earth = R_EARTH;
+	//double R_earth = 6400;
 
 	//Matrix flatting = 
 }
@@ -148,7 +149,7 @@ bool inverse(const double& lat1, const double& lat2, const double& L, double& s,
 }
 
 
-std::vector<BzCurve> orthodoxy(const Point& first_point, const Point& second) {
+std::vector<BzCurve> orthodoxy(const Point& first_point, const Point& second, Vector* direction) {
 
 	std::vector<BzCurve> result;
 
@@ -238,6 +239,22 @@ std::vector<BzCurve> orthodoxy(const Point& first_point, const Point& second) {
 		//tmp.front() = tmp.back();
 		first = tmp.back();
 	} while (more(s, 0));
+
+	if (direction != nullptr) {
+		Point O(0,0,0);
+		
+		Vector south(O, Point(0,0,sphere::R_earth));
+		Vector new_z(second, O);
+		Vector new_y = new_z * south;
+		
+		Conversion conv(&second, nullptr, &new_y, &new_z);
+
+		Vector tmp(Point(cos(z2),sin(z2),0));
+
+		*direction = conv.from(tmp);
+		//std::cout << *direction << std::endl;
+	}
+		
 
 	return result;
 }

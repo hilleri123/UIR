@@ -19,8 +19,19 @@ PartOfFunction::PartOfFunction(const Point& first, const Point& second, const Ve
 
 	Vector OA(O, A);
 
-	Vector tmp_direction = Vector(Point(_direction.x(), _direction.y(), 0));
+	double R = v.v() / v.max_rotate();
 
+	Conversion con_start(&A, nullptr, &direction, &OA);
+	//std::cout << A << " " << direction << " " << OA << std::endl;
+	//std::cout << con_start.to_matrix() << std::endl;
+
+
+
+#if 1
+	//Vector tmp_direction = Vector(Point(_direction.x(), _direction.y(), 0));
+
+
+#if 0
 
 
 	Matrix trans;
@@ -41,7 +52,7 @@ PartOfFunction::PartOfFunction(const Point& first, const Point& second, const Ve
 	//obr = Matrix(Matrix::rotate, -1*oz, angle) * obr;
 
 #if 1
-	angle=-(obr(ox)^_direction);
+	angle=-(obr(oy)^_direction);
 	Vector zo = -1 * oz;
 	Matrix::multiplay_foreward_backward(obr, trans, Matrix::rotate, &zo, angle);
 	//trans = Matrix(Matrix::rotate, oz, angle) * trans;
@@ -53,7 +64,6 @@ PartOfFunction::PartOfFunction(const Point& first, const Point& second, const Ve
 	//trans = Matrix(Matrix::move, OA) * trans;
 	//obr *= Matrix(Matrix::move, -1*OA);
 	
-	double R = v.v() / v.max_rotate();
 
 	
 	//std::cout << "OA " << OA << obr(oz*Vector::norm(OA)) << std::endl;
@@ -65,6 +75,11 @@ PartOfFunction::PartOfFunction(const Point& first, const Point& second, const Ve
 	assert(obr(A) == O);
 	assert(A == trans(O));
 	assert(obr*trans == trans*obr);
+#endif
+
+	//std::cout << "con_start.to(A) " << con_start.to(A) << " O " << O << std::endl;
+	assert(con_start.to(A) == O);
+	assert(A == con_start.from(O));
 
 #if 0
 	assert(OA == obr(oz*Vector::norm(OA)));
@@ -73,30 +88,48 @@ PartOfFunction::PartOfFunction(const Point& first, const Point& second, const Ve
 
 	//std::cout << trans(A) << std::endl;
 
+#endif
+
 	//std::cout << O << trans(O) << obr(O) << std::endl;
 
-	Point distination = obr(E);
+	Point distination = con_start.to(E);
 	distination = Point(distination.x(), distination.y(), 0);
-	Vector dist_vec = Vector(obr(A), distination);
+	Vector dist_vec = Vector(con_start.to(A), distination);
 	dist_vec *= 3 * R / Vector::norm(dist_vec);
-	distination = obr(A) + dist_vec;
+	distination = con_start.to(A) + dist_vec;
 	//std::cout << distination << std::endl;
 
 	//std::cout << "start" << std::endl;
-	_start = Rotate(obr(A), obr(direction), distination, dist_vec, v, trans);
+	_start = Rotate(con_start.to(A), con_start.to(direction), distination, dist_vec, v, con_start.from_matrix());
 	B = _start.end_point();
 
+	//std::cout << A << _start(0) << std::endl;
+	assert(A == _start(0));
+	//std::cout << std::get<0>(_start.line()) << " " << std::get<1>(_start.line()) << std::endl;
+
+	Vector OB(O, B);
+	Vector tmp_direction = _start.direction();
+	Vector tmp_direction_z = OB * tmp_direction;
+
+	Conversion con_climb(&B, nullptr, &tmp_direction, &tmp_direction_z);
+	//std::cout << "init " << con_climb.init() << std::endl;
+	//std::cout << "OB " << OB << " to(" << con_climb.to(OB) << ") from(" << con_climb.from(OB) << ")" << std::endl;
+	Vector H = OB.normolize() * (E.radius() - A.radius());
+	distination = con_climb.to(B) + 4 * R * oy + con_climb.to(H);
+	//std::cout << "H " << con_climb.to(H) << " distination " << distination << std::endl;
+
+	_climb = Rotate(con_climb.to(B), con_climb.to(tmp_direction), distination, dist_vec, v, con_climb.from_matrix());
 	//_climb = Rotate(trans(A), trans(direction), distination, dist_vec, v, obr);
-	C = B;
+	C = _climb.end_point();
 
 	//_finish = Rotate(trans(D), trans(direction), trans(E), trans(end_direction), v, obr);
 	D = E;
 
 	//_curves = orthodoxy(_start.end_point(), _finish(0));
-	_curves = orthodoxy(C, D);
+	_curves = orthodoxy(C, D, &_end_direction);
 
 	for (auto i = _curves.begin(); i < _curves.end(); i++) {
-		i->set_scale(i->get_len() / v.v());
+		i->set_scale(v.v() / i->get_len());
 	}
 
 	std::cout << A.radius() << " " << B.radius() << " " << C.radius() << " " << D.radius() << " " << E.radius() << std::endl;
@@ -161,14 +194,41 @@ bool PartOfFunction::init() const
 
 Point PartOfFunction::operator()(double time) const
 {
+
+	std::cout << "time(" << time << ") max_time(" << max_time() << ") _start.max_time(" << _start.max_time() << ") _climb.max_time(" << _climb.max_time()
+	       	<< ") _finish.max_time(" << _finish.max_time() << ")" << std::endl;
+
 	if (time > max_time()) {
 		return _end;
 	} else if (time < 0) {
 		return _begin;
 	}
+
+	double t = time;
+
+	if (t <= _start.max_time())
+		return _start(t);
+	else
+		t -= _start.max_time();
+
+	if (t <= _climb.max_time())
+		return _climb(t);
+	else
+		t -= _climb.max_time();
+
+	for (auto i = _curves.begin(); i < _curves.end(); i++) {
+		assert(!equal(i->get_len(), 0));
+		//std::cout << "get_len(" << i->get_len() << ")" << std::endl;
+		if (t <= i->get_len())
+			return (*i)(t);
+		else
+			t -= i->get_len();
+	}
+	if (t <= _finish.max_time())
+		return _finish(t);
 	
-	std::size_t ind = static_cast<std::size_t>(time);
-	return _curves.at(ind)(time - ind);
+	//std::size_t ind = static_cast<std::size_t>(time);
+	//return _curves.at(ind)(time - ind);
 
 	//if (time < _rotate.max_time()) {
 		//return _rotate(time);
@@ -214,7 +274,11 @@ double PartOfFunction::max_time() const
 	//std::cout << "T " <<((_end.radius() - _rotate.end_point().radius()) / _alpha / _rotate.end_point().radius()) << " " << _rotate.max_time() << std::endl;
 	//return ((_end.radius() - _rotate.end_point().radius()) / _alpha / _rotate.end_point().radius()) + _rotate.max_time();
 	//return 1;
-	return _curves.size();
+	double s = 0;
+	for (auto i = _curves.begin(); i < _curves.end(); i++)
+		s += i->get_len();
+	return _start.max_time() + _climb.max_time() + s + _finish.max_time();
+	//return _start.max_time() + _climb.max_time() + _curves.size() + _finish.max_time();
 }
 
 Vector PartOfFunction::direction() const

@@ -16,6 +16,10 @@
 #include <cmath>
 
 
+#ifndef R_EARTH
+#define R_EARTH 6400.
+#endif 
+
 // ngs.noaa.gov/PUBS_LIB/inverse.pdf
 //
 // Vol. XXIII		No. 176
@@ -49,5 +53,5 @@ bool direct(const double& lat1, const double& z1, const double& s, double& lat2,
 bool inverse(const double& lat1, const double& lat2, const double& L, double& s, double& z1, double& z2);
 
 
-std::vector<BzCurve> orthodoxy(const Point& first, const Point& second);
+std::vector<BzCurve> orthodoxy(const Point& first, const Point& second, Vector* direction = nullptr);
 

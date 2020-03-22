@@ -38,6 +38,7 @@ Matrix::Matrix(matrix opt, const Vector* vec, double angle)
 
 		double cosA = cos(angle);
 		double sinA = sin(angle);
+		//std::cout << "cosA " << cosA << " sinA " << sinA << std::endl;
 		//en.wikipedia.org/wiki/Transformation_matrix
 		x0 = l*l*(1-cosA)+cosA;         x1 = m*l*(1-cosA)-n*sinA;       x2 = n*l*(1-cosA)+m*sinA;
 		y0 = l*m*(1-cosA)+n*sinA;       y1 = m*m*(1-cosA)+cosA;         y2 = n*m*(1-cosA)-l*sinA;
@@ -76,6 +77,7 @@ bool Matrix::init() const
 		//err = nullptr;
 		//throw tmp;
 		throw *err;
+		return false;
 	}
 }
 
@@ -297,10 +299,17 @@ bool Matrix::multiplay_foreward_backward(Matrix& foreward, Matrix& backward, mat
 
 std::ostream& operator<<(std::ostream& stream, const Matrix& m)
 {
+	std::size_t len = std::to_string(*std::max_element(std::begin(m._matrix), std::end(m._matrix), 
+				[](const double& a, const double& b){ return std::to_string(a).size() < std::to_string(b).size();}
+				)).size() + 2;
 	for (std::size_t i = 0; i < 4; i++) {
 		std::cout << "|";
 		for (std::size_t j = 0 ; j < 4; j++) {
-			std::cout << "\t" << m._matrix[i*4 + j];
+			std::string d = std::to_string(m._matrix[i*4+j]);
+			//std::cerr << " len(" << len << ") size(" << d.size() << ") -(" << (len - d.size()) << ") d(" << d << ")" << std::endl;
+			std::string off(len - d.size(), ' ');
+			std::cout << off << d;
+			//std::cout << "\t" << m._matrix[i*4 + j];
 		}
 		std::cout << "|" << std::endl;
 	}
@@ -310,10 +319,16 @@ std::ostream& operator<<(std::ostream& stream, const Matrix& m)
 
 std::ostream& operator<<(std::ostream& stream, Matrix&& m)
 {
+	std::size_t len = std::to_string(*std::max_element(std::begin(m._matrix), std::end(m._matrix), 
+				[](const double& a, const double& b){ return std::to_string(a).size() < std::to_string(b).size();}
+				)).size() + 2;
 	for (std::size_t i = 0; i < 4; i++) {
 		std::cout << "|";
 		for (std::size_t j = 0 ; j < 4; j++) {
-			std::cout << "\t" << m._matrix[i*4 + j];
+			std::string d = std::to_string(m._matrix[i*4+j]);
+			std::string off(len - d.size(), ' ');
+			std::cout << off << d;
+			//std::cout << "\t" << m._matrix[i*4 + j];
 		}
 		std::cout << "|" << std::endl;
 	}
@@ -321,8 +336,154 @@ std::ostream& operator<<(std::ostream& stream, Matrix&& m)
 	return stream;
 }
 
+
+
+
 Matrix::~Matrix()
 {
 	if (err != nullptr)
 		delete err;
 }
+
+Conversion::Conversion(const Point* pos, const Vector* ox, const Vector* oy, const Vector* oz)
+{
+	std::vector<const Vector*> axis;
+	if (ox != nullptr)
+		axis.push_back(ox);
+	if (oy != nullptr)
+		axis.push_back(oy);
+	if (oz != nullptr)
+		axis.push_back(oz);
+
+	if (axis.size() < 2)
+		err = new std::invalid_argument("get 1 axis or less expected 2 or more");
+
+	const double pi_2 = atan(1)*2;
+	for (auto i = axis.begin(); i < axis.end()-1; i++) {
+		for (auto j = i+1; j < axis.end(); j++) {
+			double angle = (**i)^(**j);
+			if (!equal(angle, pi_2)) {
+				err = new std::invalid_argument("angle between axis != pi/2");
+			}
+		}
+	}
+
+	if (axis.size() == 3) {
+		Vector tmp_oz = (*ox) * (*oy);
+		double angle = tmp_oz^(*oz);
+		if (!is_null(angle))
+			err = new std::invalid_argument("axis system isnt right-handed");
+	}
+
+	if (err == nullptr) {
+		Vector c_ox(Point(1,0,0));
+		Vector c_oy(Point(0,1,0));
+		Vector c_oz(Point(0,0,1));
+
+		if (pos != nullptr) {
+			Vector move_vec(*pos);
+			bool res = Matrix::multiplay_foreward_backward(_from, _to, Matrix::move, &move_vec);
+			if (!res) {
+				std::cerr << "in Conversion multiplay_foreward_backward(..., Matrix::move ,...) function didnt work" << std::endl;
+				err = new std::logic_error("cant construct move matrix");
+			}
+		}
+		Vector tmp;
+		if (axis.size() == 2) {
+			if (ox == nullptr) {
+				tmp = (*oy)*(*oz);
+				ox = &tmp;
+			} else if (oy == nullptr) {
+				tmp = -1 * ((*ox)*(*oz));
+				oy = &tmp;
+			} else if (oz == nullptr) {
+				tmp = (*ox)*(*oy);
+				oz = &tmp;
+			}
+		}
+
+		//Ax+By+Cz+D=0 - plane
+		//D1 = D2 = 0
+		//oz = (A, B, C)
+		//interseption vector(1, a, 0)
+		//A+Ba=0 => a = -A/B
+		//Vector inter(Point(1, -(oz->x()/oz->y()), 0));
+		Vector inter = (*oz)*c_oz; //counter clockwise 
+		if (!equal(Vector::norm(inter), 0)) {
+			//std::cout << "inter " << inter << std::endl; 
+			double angle = -((*oz)^c_oz); //because rotation matrix clockwise
+			//std::cout << "angle oz " << (angle / atan(1) * 45.) << std::endl;
+			bool res = Matrix::multiplay_foreward_backward(_from, _to, Matrix::rotate, &inter, angle);
+			if (!res) {
+				std::cerr << "in Conversion multiplay_foreward_backward(..., Matrix::rotate ,...) function didnt work" << std::endl;
+				err = new std::logic_error("cant construct rotate matrix");
+			}
+		}
+
+		//std::cout << _from << std::endl << _to << std::endl;
+
+		//std::cout << "oz " << *oz << " " << from(c_oz*Vector::norm(*oz)) << std::endl;
+		assert(*oz == from(c_oz*Vector::norm(*oz)));
+
+		Vector tmp_ox = to(*ox);
+		Vector tmp_oy = to(*oy);
+		tmp_ox.normolize();
+		tmp_oy.normolize();
+		//std::cout << "orig x " << *ox << " y " << *oy << std::endl;
+		//std::cout << "tmp x " << tmp_ox << " y " << tmp_oy << std::endl;
+		//std::cout << "norm angle " << (((*ox)^tmp_ox) / atan(1) * 45.) << std::endl;
+		double angle = tmp_ox^c_ox;
+		if (tmp_ox.y() < 0)
+			angle = -angle;
+		//std::cout << "angle ox " << (angle / atan(1) * 45.) << " no n " << (((*ox)^c_ox) / atan(1) * 45.) << std::endl;
+		//std::cout << "end to " << tmp_ox << " " << tmp_oy << " angle " << angle << std::endl;
+
+		Matrix tmp_mat(Matrix::rotate, &c_oz, angle);
+		//std::cout << tmp_ox << " " << tmp_mat(c_ox) << " " << tmp_mat(tmp_ox) << std::endl << tmp_mat << std::endl;
+
+		bool res = Matrix::multiplay_foreward_backward(_from, _to, Matrix::rotate, &c_oz, angle);
+		if (!res) {
+			std::cerr << "in Conversion multiplay_foreward_backward(..., Matrix::rotate ,...) function didnt work" << std::endl;
+			err = new std::logic_error("cant construct rotate matrix");
+		}
+		//std::cout << _from << std::endl << _to << std::endl;
+
+		//std::cout << "ox " << *ox << " " << from(c_ox*Vector::norm(*ox)) << std::endl;
+		//assert(*ox == from(c_ox*Vector::norm(*ox)));
+		Vector norm_tmp = *ox;
+		//std::cout << "norm ox " << norm_tmp.normolize() << " " << from(c_ox).normolize() << std::endl;
+		assert(norm_tmp.normolize() == from(c_ox).normolize());
+		//std::cout << "oy " << *oy << " " << from(c_oy*Vector::norm(*oy)) << std::endl;
+		//assert(*oy == from(c_oy*Vector::norm(*oy)));
+		norm_tmp = *oy;
+		//std::cout << "norm oy " << norm_tmp.normolize() << " " << from(c_oy).normolize() << std::endl;
+		assert(norm_tmp.normolize() == from(c_oy).normolize());
+		//std::cout << "oz " << *oz << " " << from(c_oz*Vector::norm(*oz)) << std::endl;
+		//assert(*oz == from(c_oz*Vector::norm(*oz)));
+		norm_tmp = *oz;
+		//std::cout << "norm oz " << norm_tmp.normolize() << " " << from(c_oz).normolize() << std::endl;
+		assert(norm_tmp.normolize() == from(c_oz).normolize());
+		
+		assert(_from*_to == _to*_from);
+	}
+	//std::cout << "end" << std::endl;
+}
+
+
+bool Conversion::init() const
+{
+	if (err == nullptr) {
+		return true;
+	} else {
+		throw *err;
+		return false;
+	}
+}
+
+Conversion::~Conversion()
+{
+	if (err != nullptr)
+		delete err;
+}
+
+

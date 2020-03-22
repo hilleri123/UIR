@@ -17,7 +17,7 @@ int main(int argc, char** argv)
 {	
 	namespace po = boost::program_options;
 
-	double h = 0.1;
+	double h = 10;
 	std::string in;
 	std::string out;
 	//char* in = argv[1];
@@ -98,6 +98,7 @@ int main(int argc, char** argv)
 		}
 	}
 	std::cout << h << std::endl;
+	std::cout << a.max_time() << std::endl;
 
 
 	for (double time = 0; time < a.max_time()+h; time+=h) {

@@ -37,13 +37,20 @@ Rotate::Rotate(Point start, Vector start_direction, Point distination, Vector en
 	Matrix rotate_mat_fore, rotate_mat_back;
 	Matrix::multiplay_foreward_backward(rotate_mat_fore, rotate_mat_back, Matrix::rotate, &oz, angle);
 
-	Matrix tmp = move_mat_fore * rotate_mat_fore;
+	Matrix tmp = move_mat_back * rotate_mat_back;
+	//Matrix tmp = move_mat_fore * rotate_mat_fore;
+	//std::cout << tmp << std::endl;
+	end_direction = tmp(end_direction);
+	distination = tmp(distination);
 
 	//std::cout << tmp(oy*Vector::norm(start_direction)) << std::endl << start_direction << std::endl;
-	assert(tmp(oy*Vector::norm(start_direction)) == start_direction);
+	assert(oy*Vector::norm(start_direction) == tmp(start_direction));
 
-	m = rotate_mat_back * move_mat_back * m;
-	//m = rotate_mat_back * move_mat_fore * m;
+	//_matrix = move_mat_fore * rotate_mat_fore * m;
+	_matrix = _matrix * move_mat_fore * rotate_mat_fore;
+	
+	//std::cout << "rotate" << std::endl << distination << " " << end_direction << std::endl << _matrix << std::endl << m << std::endl;
+	///////////////////////////////////
 
 
 	_R = v.v() / v.max_rotate();
@@ -108,7 +115,7 @@ Rotate::Rotate(Point start, Vector start_direction, Point distination, Vector en
 	//std::cout << "line " << std::get<0>(line) << " " << std::get<1>(line) << std::endl;
 
 	if (len < 0) 
-		std::cout << "!!!!!!!!!!!!! rotate" << std::endl;
+		std::cerr << "in Rotate len < 0" << std::endl;
 
 	
 
@@ -127,12 +134,13 @@ Rotate::Rotate(Point start, Vector start_direction, Point distination, Vector en
 		}
 		BzCurve curve(tmp_arr);
 		curve *= _matrix;
-		curve.set_len(delta*_R);
+		//curve.set_len(delta*_R);
+		curve.set_scale(v.v() / (delta*_R));
 		//_curves.push_back(std::make_pair(delta*_R, curve));
 		_curves.push_back(curve);
 	}
 
-	scale = Point::norm(std::get<0>(line), std::get<1>(line));
+	scale = v.v() / Point::norm(std::get<0>(line), std::get<1>(line));
 	Vector tmp_v(std::get<0>(line), std::get<1>(line));
 	for (int i = 0; i < 4; i++) {
 		tmp_arr[i] = std::get<0>(line) + tmp_v*(static_cast<double>(i)/3);
@@ -143,7 +151,7 @@ Rotate::Rotate(Point start, Vector start_direction, Point distination, Vector en
 	_line_id = _curves.size();
 
 	//_curves.push_back(std::make_pair(scale, l_curve));
-	l_curve.set_len(scale);
+	l_curve.set_scale(scale);
 	_curves.push_back(l_curve);
 
 	//std::cout << "second " << second.center() << std::endl;
@@ -158,7 +166,8 @@ Rotate::Rotate(Point start, Vector start_direction, Point distination, Vector en
 		}
 		BzCurve curve(tmp_arr);
 		curve *= _matrix;
-		curve.set_len(delta*_R);
+		curve.set_scale(v.v() / delta*_R);
+		//curve.set_len(delta*_R);
 		//std::cout << "Bz " << curve(0) << " to " << curve(1) << std::endl;
 		//_curves.push_back(std::make_pair(delta*_R, curve));
 		_curves.push_back(curve);
@@ -187,8 +196,8 @@ std::pair<Point, Point> Rotate::line() const
 {
 	//const BzCurve& line = std::get<1>(_curves.at(_line_id));
 	const BzCurve& line = _curves.at(_line_id);
-	Point first = line.front();
-	Point second = line.back();
+	Point first = _matrix(line.front());
+	Point second = _matrix(line.back());
 	return std::make_pair(first, second);
 }
 

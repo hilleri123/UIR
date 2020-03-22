@@ -115,6 +115,8 @@ public:
 	static double norm(const Vector& vector);
 	static double norm(Vector&& vector);
 
+	Vector& normolize();
+
 	bool check() const;
 
 	virtual ~Vector();

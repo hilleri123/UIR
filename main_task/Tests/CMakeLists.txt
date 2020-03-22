@@ -3,7 +3,7 @@ cmake_minimum_required (VERSION 3.7)
 
 project (Tests VERSION 0.20 LANGUAGES CXX)
 
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -Wconversion")
 
 set (CMAKE_VERBOSE_MAKEFILE on)
 
@@ -14,7 +14,9 @@ set (m_s_dir "../program/sources")
 set (sf_s_dir "../program/space/functions/sources")
 set (sg_s_dir "../program/space/geometrics/sources")
 
-include_directories (${m_h_dir} ${sf_h_dir} ${sg_h_dir} ../program/space ../program/)
+set (test_s_dir "source")
+
+include_directories (${m_h_dir} ${sf_h_dir} ${sg_h_dir} ../program/space ../program ${test_s_dir})
 
 
 set (SOURCES 
@@ -29,10 +31,31 @@ set (SOURCES
 	${sg_s_dir}/metrics.cpp ${sg_h_dir}/metrics.h
 	#${sg_s_dir}/plane.cpp ${sg_h_dir}/plane.h
 	${sg_s_dir}/point.cpp ${sg_h_dir}/point.h
-	#${sg_s_dir}/sphere.cpp ${sg_h_dir}/sphere.h
+	${sg_s_dir}/sphere.cpp ${sg_h_dir}/sphere.h
 	${sg_s_dir}/vector.cpp ${sg_h_dir}/vector.h
-	./test.cpp)
+	${sg_s_dir}/trans_matrix.cpp ${sg_h_dir}/trans_matrix.h
+	${sg_s_dir}/bz_curve.cpp ${sg_h_dir}/bz_curve.h
+	${sg_s_dir}/xy_circle.cpp ${sg_h_dir}/xy_circle.h
+	)
+#${test_s_dir}/matrix_test.cpp
+#${test_s_dir}/test.cpp)
 
 #add_library ( _uir_tests SHARED ${SOURCES})
 
-add_executable (${PROJECT_NAME} ${SOURCES})
+set (TEST_SOURCES
+	${test_s_dir}/test.cpp
+	${test_s_dir}/matrix_test.cpp
+	${test_s_dir}/sphere_test.cpp
+	)
+
+
+list(LENGTH TEST_SOURCES len)
+
+#foreach (test_source num IN ZIP_LISTS TEST_SOURCES RANGE len)
+foreach (num RANGE len)
+	list (GET TEST_SOURCES num test_source)
+	#message (${test_source} ${num} ${len})
+	add_executable (${PROJECT_NAME}_${num} ${SOURCES} ${test_source})
+endforeach()
+#add_executable (${PROJECT_NAME}_1 ${SOURCES} ${test_s_dir}/test.cpp)
+#add_executable (${PROJECT_NAME}_2 ${SOURCES} ${test_s_dir}/matrix_test.cpp)

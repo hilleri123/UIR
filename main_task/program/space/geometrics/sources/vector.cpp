@@ -130,17 +130,20 @@ double Vector::operator^(const Vector& vector) const
 	assert(vector.check());
 	assert(this->check());
 	double s = _direction.x() * vector._direction.x() + _direction.y() * vector._direction.y() + _direction.z() * vector._direction.z();
-	//std::cout << s << " " << Vector::norm(*this) << " " << Vector::norm(vector) << " " <<
-	    	//( s / Vector::norm(*this) / Vector::norm(vector)) << " " <<
-	    	//acos( s / Vector::norm(*this) / Vector::norm(vector)) << std::endl;
+#if 0
+	std::cout << "^ s(" << s << ") this(" << Vector::norm(*this) << ") vec(" << Vector::norm(vector) << ") casA(" <<
+	    	( s / Vector::norm(*this) / Vector::norm(vector)) << ") A(" <<
+	    	acos( s / Vector::norm(*this) / Vector::norm(vector)) << ")" << std::endl;
+#endif
 	if ((Vector::norm(*this) != 0 && Vector::norm(vector) != 0) && this->operator!=(vector)) {
 		assert(equal_or_less(s, Vector::norm(*this)*Vector::norm(vector)));
-		if (equal(s / Vector::norm(*this) / Vector::norm(vector), 1)) {
+		double cosA = s / Vector::norm(*this) / Vector::norm(vector);
+		if (equal(cosA, 1)) {
 			return 0;
-		} else if (equal(s / Vector::norm(*this) / Vector::norm(vector), -1)) {
+		} else if (equal(cosA, -1)) {
 			return 4*atan(1);
 		} else {
-			return acos( s / Vector::norm(*this) / Vector::norm(vector));
+			return acos(cosA);
 		}
 	} else {
 		return 0;
@@ -157,12 +160,13 @@ double Vector::operator^(Vector&& vector) const
 	double s = _direction.x() * vector._direction.x() + _direction.y() * vector._direction.y() + _direction.z() * vector._direction.z();
 	if ((Vector::norm(*this) != 0 && Vector::norm(vector) != 0) && this->operator!=(vector)) {
 		assert(equal_or_less(s, Vector::norm(*this)*Vector::norm(vector)));
-		if (equal(s / Vector::norm(*this) / Vector::norm(vector), 1)) {
+		double cosA = s / Vector::norm(*this) / Vector::norm(vector);
+		if (equal(cosA, 1)) {
 			return 0;
-		} else if (equal(s / Vector::norm(*this) / Vector::norm(vector), -1)) {
+		} else if (equal(cosA, -1)) {
 			return 4*atan(1);
 		} else {
-			return acos( s / Vector::norm(*this) / Vector::norm(vector));
+			return acos(cosA);
 		}
 	} else {
 		return 0;
@@ -300,6 +304,11 @@ std::ostream& operator<<(std::ostream& stream, Vector&& vector) {
 	return stream;
 }
 
+Vector& Vector::normolize() {
+	double len = Vector::norm(*this);
+	_direction = Point(_direction.x()/len, _direction.y()/len, _direction.z()/len);
+	return *this;
+}
 
 bool Vector::check() const
 {
