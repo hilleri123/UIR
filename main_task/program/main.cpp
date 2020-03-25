@@ -9,6 +9,7 @@
 #include "function.h"
 #include "csv_parser.h"
 #include "velocity.h"
+#include "sphere.h"
 
 #include <boost/program_options.hpp>
 
@@ -73,7 +74,8 @@ int main(int argc, char** argv)
 	}
 #endif
 
-	auto& data = csv_parser_read(in, 6400);
+	//auto& data = csv_parser_read(in, earth::radius());
+	auto& data = csv_parser_read(in);
 	Function a(data);
 	
 	std::ofstream stream;
@@ -101,23 +103,32 @@ int main(int argc, char** argv)
 	std::cout << a.max_time() << std::endl;
 
 
+	const Conversion flatting = earth::flatting_conv();
+
 	for (double time = 0; time < a.max_time()+h; time+=h) {
+		auto pair = a(time);
+		Point point = std::get<0>(pair);
+		Velocity velocity = std::get<1>(pair);
+		double lat = point.latitude();
+		double lon = point.longitude();
+
+		//Point tmp;
+		//double local_R = flatting.to(tmp.by_geo(earth::radius(), lat, lon)).radius();
+
+		double r = point.radius() - earth::local_R(lat, lon);
+
 		if (stream.is_open()) {
 			//stream << time << " " << a(time).x() << " " << a(time).y() << " " << a(time).z() << std::endl;
 			//stream << a(time).x() << " " << a(time).y() << " " << a(time).z() << std::endl;
-			auto pair = a(time);
-			Point point = std::get<0>(pair);
-			Velocity velocity = std::get<1>(pair);
-			stream << time << " " << point.radius() << " " << point.latitude() << " " << point.longitude() << " " << velocity << std::endl;
+			//stream << time << " " << point.radius() << " " << point.latitude() << " " << point.longitude() << " " << velocity << std::endl;
+			stream << time << " " << r << " " << lat << " " << lon << " " << velocity << std::endl;
 			//stream << time << " " << a(time).radius() << " " << a(time).latitude() << " " << a(time).longitude() << std::endl;
 		} else {
 			//std::cout << time << " " << a(time).x() << " " << a(time).y() << " " << a(time).z() << std::endl;
 			//std::cout << a(time).x() << " " << a(time).y() << " " << a(time).z() << std::endl;
 			//std::cout << time << " " << a(time).radius() << " " << a(time).latitude() << " " << a(time).longitude() << std::endl;
-			auto pair = a(time);
-			Point point = std::get<0>(pair);
-			Velocity velocity = std::get<1>(pair);
-			std::cout << time << " " << point.radius() << " " << point.latitude() << " " << point.longitude() << " " << velocity << std::endl;
+			//std::cout << time << " " << point.radius() << " " << point.latitude() << " " << point.longitude() << " " << velocity << std::endl;
+			std::cout << time << " " << r << " " << lat << " " << lon << " " << velocity << std::endl;
 		}
 	}
 	if (stream.is_open()) {

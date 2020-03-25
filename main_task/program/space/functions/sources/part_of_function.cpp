@@ -21,76 +21,12 @@ PartOfFunction::PartOfFunction(const Point& first, const Point& second, const Ve
 
 	double R = v.v() / v.max_rotate();
 
+	Vector normA = earth::norm(A);
+
 	Conversion con_start(&A, nullptr, &direction, &OA);
 	//std::cout << A << " " << direction << " " << OA << std::endl;
 	//std::cout << con_start.to_matrix() << std::endl;
 
-
-
-#if 1
-	//Vector tmp_direction = Vector(Point(_direction.x(), _direction.y(), 0));
-
-
-#if 0
-
-
-	Matrix trans;
-	Matrix obr;
-	
-	Matrix tmp_m;
-	double angle;
-
-	angle = -atan(1)*2+A.latitude();
-
-	Matrix::multiplay_foreward_backward(trans, obr, Matrix::rotate, &oy, angle);
-	//trans *= Matrix(Matrix::rotate, oy, angle);
-	//obr = Matrix::rotate(-1*oy, angle) * obr;
-
-	angle=-A.longitude();
-	Matrix::multiplay_foreward_backward(trans, obr, Matrix::rotate, &oz, angle);
-	//trans *= Matrix(Matrix::rotate, oz, angle);
-	//obr = Matrix(Matrix::rotate, -1*oz, angle) * obr;
-
-#if 1
-	angle=-(obr(oy)^_direction);
-	Vector zo = -1 * oz;
-	Matrix::multiplay_foreward_backward(obr, trans, Matrix::rotate, &zo, angle);
-	//trans = Matrix(Matrix::rotate, oz, angle) * trans;
-	//obr *= Matrix(Matrix::rotate, -1*oz, angle);
-
-#endif
-	Vector AO = -1 * OA;
-	Matrix::multiplay_foreward_backward(obr, trans, Matrix::move, &AO);
-	//trans = Matrix(Matrix::move, OA) * trans;
-	//obr *= Matrix(Matrix::move, -1*OA);
-	
-
-	
-	//std::cout << "OA " << OA << obr(oz*Vector::norm(OA)) << std::endl;
-	//std::cout << A << "dir " << _direction << " " << trans(_direction) << " " << obr(Vector::norm(_direction)*ox)  << std::endl;
-
-
-	//std::cout << "trans(O)" << trans(O) << std::endl;
-	//std::cout << "obr(A)" << obr(A) << std::endl;
-	assert(obr(A) == O);
-	assert(A == trans(O));
-	assert(obr*trans == trans*obr);
-#endif
-
-	//std::cout << "con_start.to(A) " << con_start.to(A) << " O " << O << std::endl;
-	assert(con_start.to(A) == O);
-	assert(A == con_start.from(O));
-
-#if 0
-	assert(OA == obr(oz*Vector::norm(OA)));
-	assert(_direction == obr(ox*Vector::norm(_direction)));
-#endif
-
-	//std::cout << trans(A) << std::endl;
-
-#endif
-
-	//std::cout << O << trans(O) << obr(O) << std::endl;
 
 	Point distination = con_start.to(E);
 	distination = Point(distination.x(), distination.y(), 0);
@@ -195,8 +131,10 @@ bool PartOfFunction::init() const
 Point PartOfFunction::operator()(double time) const
 {
 
+#if 0
 	std::cout << "time(" << time << ") max_time(" << max_time() << ") _start.max_time(" << _start.max_time() << ") _climb.max_time(" << _climb.max_time()
 	       	<< ") _finish.max_time(" << _finish.max_time() << ")" << std::endl;
+#endif
 
 	if (time > max_time()) {
 		return _end;

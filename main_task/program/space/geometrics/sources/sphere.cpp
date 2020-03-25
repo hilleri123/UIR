@@ -7,8 +7,10 @@ namespace sphere {
 	//double a = 100;
 	//double b = 100;
 	//double f = (a - b) / a;
-	double a = 6378.388;
-	double f = 1./297.;
+	//double a = 6378.388;
+	double a = 6378.137;
+	//double f = 1./297.;
+	double f = 1./298.257223263;
 	double b = a - f * a;
 
 	double error = 0.001;
@@ -16,18 +18,61 @@ namespace sphere {
 	double split_distance = 100;
 
 
-	double R_earth = R_EARTH;
+	//double R_earth = R_EARTH;
 	//double R_earth = 6400;
 
 	//Matrix flatting = 
 }
 
 
+double earth::radius() {
+	return sphere::a;
+	//return sphere::R_earth;
+}
+
+Conversion earth::flatting_conv() {
+	Vector flatting(Point(1,1,sphere::b / sphere::a));
+	Matrix to, from;
+	Matrix::multiplay_foreward_backward(to, from, Matrix::comp, &flatting);
+	return Conversion(to, from);
+}
+
+Vector earth::norm(double lat, double lon) {
+	Point p;
+	p.by_geo(earth::radius(), lat, lon);
+	//Sphere : (x/a)^2+(y/a)^2+(z/b)^2=1
+	//F'x(p)*(x-px) + F'x(p)*(x-px) + F'x(p)*(x-px) = 0 
+	//Ax+By+Cz+D=0
+	//A = 2px/a^2
+	double x = 2*p.x() / pow(sphere::a, 2);
+	//B = 2py/a^2
+	double y = 2*p.y() / pow(sphere::a, 2);
+	//C = 2pz/b^2
+	double z = 2*p.z() / pow(sphere::b, 2);
+	Vector res(Point(x, y, z));
+	res.normolize();
+	return res;
+}
+
+Vector earth::norm(Point p) {
+	return earth::norm(p.latitude(), p.longitude());
+}
+
+double earth::local_R(double lat, double lon) {
+	Point p;
+	p.by_geo(earth::radius(), lat, lon);
+	const Conversion flatting = earth::flatting_conv();
+	return flatting.to(p).radius();
+}
+
+double earth::local_R(Point p) {
+	return local_R(p.latitude(), p.longitude());
+}
 
 bool direct(const double& lat1, const double& z1, const double& s, double& lat2, double& L, double& z2) {
 
 	if (lat1 != lat1 || z1 != z1 || s != s) {
-		std::cerr << "lat1(" << lat1 << ") z1(" << z1 << ") s(" << s << ")" << std::endl;
+		std::cerr << "nan found lat1(" << lat1 << ") z1(" << z1 << ") s(" << s << ")" << std::endl;
 		return false;
 	}
 
@@ -85,7 +130,7 @@ bool direct(const double& lat1, const double& z1, const double& s, double& lat2,
 bool inverse(const double& lat1, const double& lat2, const double& L, double& s, double& z1, double& z2) {
 
 	if (lat1 != lat1 || lat2 != lat2 || L != L) {
-		std::cerr << "lat1(" << lat1 << ") lat2(" << lat2 << ") L(" << L << ")" << std::endl;
+		std::cerr << "nan found lat1(" << lat1 << ") lat2(" << lat2 << ") L(" << L << ")" << std::endl;
 		return false;
 	}
 	
@@ -188,6 +233,8 @@ std::vector<BzCurve> orthodoxy(const Point& first_point, const Point& second, Ve
 
 		//std::cout << "tmp_s : " << tmp_s << std::endl;
 
+		const Conversion flatting = earth::flatting_conv();
+
 		double curr_len = 0;
 
 		for (std::size_t j = 0; j < N - 1; j++) {
@@ -218,7 +265,16 @@ std::vector<BzCurve> orthodoxy(const Point& first_point, const Point& second, Ve
 
 			//std::cout << "lat2 " << lat2 << " L " << L << " z2 " << z2 << std::endl;
 			//next.by_geo(curr.radius(), lat2, curr.longitude() + L);
-			next.by_geo(curr.radius(), lat2, curr.longitude() + L);
+			//Point tmp_point;
+			//double h1 = flatting.to(tmp_point.by_geo(earth::radius(), curr.latitude(), curr.longitude())).radius();
+			//double h2 = flatting.to(tmp_point.by_geo(earth::radius(), lat2, curr.longitude() + L)).radius();
+
+			double h1 = earth::local_R(curr);
+			double h2 = earth::local_R(lat2, curr.longitude() + L);
+
+			double H = (curr.radius() - h1) + h2;
+			next.by_geo(H, lat2, curr.longitude() + L);
+			std::cout << "bz curve " << next << " h1(" << (curr.radius() - h1) << ") h2(" << (next.radius() - h2) << ")" << std::endl;
 			//z1 = z2;
 
 			//tmp_tmp_s -= tmp_s;
@@ -230,7 +286,7 @@ std::vector<BzCurve> orthodoxy(const Point& first_point, const Point& second, Ve
 		result.emplace_back(tmp);
 
 		
-		result.back().set_len(curr_len * first.radius() / sphere::R_earth);
+		result.back().set_len(curr_len * first.radius() / earth::radius());
 		//result.back().set_len(curr_len);
 		//result.back().set_len(tmp_s * (N - 1));
 
@@ -243,7 +299,7 @@ std::vector<BzCurve> orthodoxy(const Point& first_point, const Point& second, Ve
 	if (direction != nullptr) {
 		Point O(0,0,0);
 		
-		Vector south(O, Point(0,0,sphere::R_earth));
+		Vector south(O, Point(0,0,earth::radius()));
 		Vector new_z(second, O);
 		Vector new_y = new_z * south;
 		

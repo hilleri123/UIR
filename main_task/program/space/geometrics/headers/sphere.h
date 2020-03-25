@@ -16,9 +16,25 @@
 #include <cmath>
 
 
+#if 0
 #ifndef R_EARTH
 #define R_EARTH 6400.
 #endif 
+#endif 
+
+
+namespace earth {
+	double radius();
+
+	Conversion flatting_conv();
+
+	Vector norm(Point p);
+	Vector norm(double lat, double lon);
+
+	double local_R(double lat, double lon);
+	double local_R(Point p);
+}
+
 
 // ngs.noaa.gov/PUBS_LIB/inverse.pdf
 //

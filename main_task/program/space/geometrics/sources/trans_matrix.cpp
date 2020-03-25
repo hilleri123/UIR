@@ -54,10 +54,13 @@ Matrix::Matrix(matrix opt, const Vector* vec, double angle)
 			break;
 		}
 		{
-		int last_line = 4*(4-1);
-		_matrix[last_line] = vec->x();
-		_matrix[last_line+1] = vec->y();
-		_matrix[last_line+2] = vec->z();
+		//int last_line = 4*(4-1);
+		//_matrix[last_line] = vec->x();
+		//_matrix[last_line+1] = vec->y();
+		//_matrix[last_line+2] = vec->z();
+		_matrix[0] = vec->x();
+		_matrix[1+1*4] = vec->y();
+		_matrix[2+2*4] = vec->z();
 		}
 		break;
 	default:
@@ -173,104 +176,10 @@ Vector Matrix::operator()(Vector vector) const
 }
 
 
-#if 0
-Matrix Matrix::rotate(const Vector& vec, double a)
-{
-	Matrix res;
-	double& x0 = res._matrix[0];                    double& x1 = res._matrix[1];                    double& x2 = res._matrix[2];
-	double& y0 = res._matrix[0+4];          double& y1 = res._matrix[1+4];          double& y2 = res._matrix[2+4];
-	double& z0 = res._matrix[0+2*4];        double& z1 = res._matrix[1+2*4];        double& z2 = res._matrix[2+2*4];
-
-	double norm = Vector::norm(vec);
-	double l = vec.x() / norm;	double m = vec.y() / norm;	double n = vec.z() / norm;
-	
-	//std::cout << "Point (" << l << " " << m << " " << n << ")" << std::endl;
-
-	double cosA = cos(a);
-	double sinA = sin(a);
-	//en.wikipedia.org/wiki/Transformation_matrix
-	x0 = l*l*(1-cosA)+cosA;         x1 = m*l*(1-cosA)-n*sinA;       x2 = n*l*(1-cosA)+m*sinA;
-	y0 = l*m*(1-cosA)+n*sinA;       y1 = m*m*(1-cosA)+cosA;         y2 = n*m*(1-cosA)-l*sinA;
-	z0 = l*n*(1-cosA)-m*sinA;       z1 = m*n*(1-cosA)+l*sinA;       z2 = n*n*(1-cosA)+cosA;
-	//std::cout << "[ " << x0 << " " << x1 << " " << x2 << " ]" << std::endl;
-	//std::cout << "[ " << y0 << " " << y1 << " " << y2 << " ]" << std::endl;
-	//std::cout << "[ " << z0 << " " << z1 << " " << z2 << " ]" << std::endl;
-
-	return res;
-}
-
-Matrix Matrix::rotate(Vector&& vec, double a)
-{
-	Matrix res;
-	double& x0 = res._matrix[0];                    double& x1 = res._matrix[1];                    double& x2 = res._matrix[2];
-	double& y0 = res._matrix[0+4];          double& y1 = res._matrix[1+4];          double& y2 = res._matrix[2+4];
-	double& z0 = res._matrix[0+2*4];        double& z1 = res._matrix[1+2*4];        double& z2 = res._matrix[2+2*4];
-
-	double norm = Vector::norm(vec);
-	double l = vec.x() / norm;	double m = vec.y() / norm;	double n = vec.z() / norm;
-	
-	double cosA = cos(a);
-	double sinA = sin(a);
-	//en.wikipedia.org/wiki/Transformation_matrix
-	x0 = l*l*(1-cosA)+cosA;         x1 = m*l*(1-cosA)-n*sinA;       x2 = n*l*(1-cosA)+m*sinA;
-	y0 = l*m*(1-cosA)+n*sinA;       y1 = m*m*(1-cosA)+cosA;         y2 = n*m*(1-cosA)-l*sinA;
-	z0 = l*n*(1-cosA)-m*sinA;       z1 = m*n*(1-cosA)+l*sinA;       z2 = n*n*(1-cosA)+cosA;
-
-	return res;
-}
-
-
-Matrix Matrix::move(const Vector& vec)
-{
-	Matrix res;
-
-	res._matrix[4-1] = vec.x();
-	res._matrix[2*4-1] = vec.y();
-	res._matrix[3*4-1] = vec.z();
-
-	return res;
-}
-
-Matrix Matrix::move(Vector&& vec)
-{
-	Matrix res;
-
-	res._matrix[4-1] = vec.x();
-	res._matrix[2*4-1] = vec.y();
-	res._matrix[3*4-1] = vec.z();
-
-	return res;
-}
-
-Matrix Matrix::compression(const Vector& vec)
-{
-	Matrix res;
-
-	int last_line = 4*(4-1);
-	res._matrix[last_line] = vec.x();
-	res._matrix[last_line+1] = vec.y();
-	res._matrix[last_line+2] = vec.z();
-
-	return res;
-}
-#endif
 
 
 std::size_t Matrix::size() const { return 4; }
 
-#if 0
-Matrix&& Matrix::transform(const Matrix& matrixs...)
-{
-	va_list args;
-	va_start(args, matrixs);
-	Matrix res = va_arg(args, Matrix);
-	for (std::size_t i = 1; i < matrixs; i++)
-		res *= va_arg(args, Matrix);
-	va_end(args);
-
-	return res;
-}
-#endif
 
 bool Matrix::multiplay_foreward_backward(Matrix& foreward, Matrix& backward, matrix opt, const Vector* vec_ptr, double angle)
 {
@@ -282,7 +191,11 @@ bool Matrix::multiplay_foreward_backward(Matrix& foreward, Matrix& backward, mat
 	foreward *= *tmp;
 	delete tmp;
 	if (vec_ptr != nullptr) {
-		Vector tmp_vec = *vec_ptr * (-1);
+		Vector tmp_vec;
+		if (opt == matrix::comp)
+			tmp_vec = Vector(Point(1./vec_ptr->x(), 1./vec_ptr->y(), 1./vec_ptr->z()));
+		else
+			tmp_vec = *vec_ptr * (-1);
 		INIT(tmp, Matrix, opt, &tmp_vec, angle);
 	} else {
 		INIT(tmp, Matrix, opt, vec_ptr, angle);

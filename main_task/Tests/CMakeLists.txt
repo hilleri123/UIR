@@ -50,11 +50,13 @@ set (TEST_SOURCES
 
 
 list(LENGTH TEST_SOURCES len)
+MATH (EXPR len "${len}-1")
 
 #foreach (test_source num IN ZIP_LISTS TEST_SOURCES RANGE len)
-foreach (num RANGE len)
-	list (GET TEST_SOURCES num test_source)
-	#message (${test_source} ${num} ${len})
+foreach (num RANGE ${len})
+	list (GET TEST_SOURCES ${num} test_source)
+	message (${test_source} " from " ${TEST_SOURCES} " " ${len})
+	message (${PROJECT_NAME}_${num} " " ${SOURCES} " " ${test_source})
 	add_executable (${PROJECT_NAME}_${num} ${SOURCES} ${test_source})
 endforeach()
 #add_executable (${PROJECT_NAME}_1 ${SOURCES} ${test_s_dir}/test.cpp)

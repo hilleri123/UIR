@@ -2,7 +2,8 @@
 #include "csv_parser.h"
 
 
-std::vector<std::pair<Point, Velocity>>& csv_parser_read(std::string file, double R)
+//std::vector<std::pair<Point, Velocity>>& csv_parser_read(std::string file, double R)
+std::vector<std::pair<Point, Velocity>>& csv_parser_read(std::string file)
 {
 	
 	std::ifstream stream;
@@ -17,6 +18,8 @@ std::vector<std::pair<Point, Velocity>>& csv_parser_read(std::string file, doubl
 	std::string buf;
 	
 	double angle = asin(1./2.);
+
+	const Conversion flatting = earth::flatting_conv();
 
 	while (std::getline(stream, buf) ) {
 	//while (!stream.eof()) {
@@ -58,10 +61,17 @@ std::vector<std::pair<Point, Velocity>>& csv_parser_read(std::string file, doubl
 				//std::cout << angle << std::endl;
 			}
 			Point tmp;
+			
+
 			//if (geo) {
-			double r = std::stod(parts[0])+R;
+			//double r = std::stod(parts[0])+R;
 			double latitude = std::stod(parts[1]) / 45 * atan(1);
 			double longitude = std::stod(parts[2]) / 45 * atan(1);
+
+			//Point tmp_sphere_point;
+			//double local_R = flatting.to(tmp_sphere_point.by_geo(earth::radius(), latitude, longitude)).radius();
+
+			double r = std::stod(parts[0]) + earth::local_R(latitude, longitude);
 			tmp.by_geo(r, latitude, longitude);
 			//} else {
 				//double x = std::stod(parts[0]);
