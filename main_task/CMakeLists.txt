@@ -7,15 +7,6 @@ set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -Wconversion")
 
 set (CMAKE_VERBOSE_MAKEFILE on)
 
-IF (WIN32)
-	set(Boost_USE_STATIC_LIBS ON)
-	set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "C:/Program Files/Fort SDK/lib/win32-msvc2017/boost")
-	set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "C:/Program Files/Fort SDK/lib/win32-msvc2017/boost/lib")
-ENDIF()
-
-find_package(Boost 1.40 COMPONENTS program_options REQUIRED)
-
-
 
 set (m_h_dir "program/headers")
 set (sf_h_dir "program/space/functions/headers")
@@ -54,10 +45,22 @@ set (SOURCES
 #set (SOURCES program/main.cpp)
 
 
-add_library ( _uir SHARED ${SOURCES})
+add_library ( _uir_shared SHARED ${SOURCES})
+add_library ( _uir_static STATIC ${SOURCES})
 
-add_executable (${PROJECT_NAME} ${SOURCES} program/main.cpp)
-#add_executable (local_${PROJECT_NAME} ${SOURCES} program/local_main.cpp)
+if (WIN32)
+	set(Boost_USE_STATIC_LIBS ON)
+	set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "C:/Program Files/Fort SDK/lib/win32-msvc2017/boost")
+	set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "C:/Program Files/Fort SDK/lib/win32-msvc2017/boost/lib")
+endif()
 
-#target_link_libraries (${PROJECT_NAME} lib)
-target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${Boost_LIBRARIES})
+find_package(Boost 1.40 COMPONENTS program_options REQUIRED)
+
+if (Boost_FOUND)
+
+	add_executable (${PROJECT_NAME} ${SOURCES} program/main.cpp)
+	#add_executable (local_${PROJECT_NAME} ${SOURCES} program/local_main.cpp)
+
+	target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${Boost_LIBRARIES})
+
+endif()
