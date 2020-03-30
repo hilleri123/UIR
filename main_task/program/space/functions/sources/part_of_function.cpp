@@ -50,8 +50,11 @@ PartOfFunction::PartOfFunction(const Point& first, const Point& second, const Ve
 	Conversion con_climb(&B, nullptr, &tmp_direction, &tmp_direction_z);
 	//std::cout << "init " << con_climb.init() << std::endl;
 	//std::cout << "OB " << OB << " to(" << con_climb.to(OB) << ") from(" << con_climb.from(OB) << ")" << std::endl;
-	Vector H = OB.normolize() * (E.radius() - A.radius());
+	Vector H = OB.normolize() * (earth::H(E) - earth::H(B));
 	distination = con_climb.to(B) + 4 * R * oy + con_climb.to(H);
+
+
+	std::cout << "climb dist(" << earth::H(con_climb.from(distination)) << ")" << std::endl;
 	//std::cout << "H " << con_climb.to(H) << " distination " << distination << std::endl;
 
 	_climb = Rotate(con_climb.to(B), con_climb.to(tmp_direction), distination, dist_vec, v, con_climb.from_matrix());
@@ -68,7 +71,9 @@ PartOfFunction::PartOfFunction(const Point& first, const Point& second, const Ve
 		i->set_scale(v.v() / i->get_len());
 	}
 
-	std::cout << A.radius() << " " << B.radius() << " " << C.radius() << " " << D.radius() << " " << E.radius() << std::endl;
+
+	std::cout << earth::H(A) << " " << earth::H(B) << " " << earth::H(C) << " " << earth::H(D) << " " << earth::H(E) << std::endl;
+	//std::cout << A.radius() << " " << B.radius() << " " << C.radius() << " " << D.radius() << " " << E.radius() << std::endl;
 #if 0
 	Point second = m_second;
 	std::cout << "!!!!! first " << first << " second " << second << " dir " << (Point()+direction) << std::endl; 

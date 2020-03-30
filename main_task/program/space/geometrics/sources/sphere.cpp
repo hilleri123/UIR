@@ -58,6 +58,11 @@ Vector earth::norm(Point p) {
 	return earth::norm(p.latitude(), p.longitude());
 }
 
+double earth::H(Point p) {
+	return p.radius() - earth::local_R(p);
+}
+
+
 double earth::local_R(double lat, double lon) {
 	Point p;
 	p.by_geo(earth::radius(), lat, lon);
@@ -197,6 +202,7 @@ bool inverse(const double& lat1, const double& lat2, const double& L, double& s,
 std::vector<BzCurve> orthodoxy(const Point& first_point, const Point& second, Vector* direction) {
 
 	std::vector<BzCurve> result;
+	//std::cout << "bz curve h1(" << (first_point.radius() - earth::local_R(first_point)) << ") h2(" << (second.radius() - earth::local_R(second)) << ")" << std::endl;
 
 	double lat1, lat2, L;
 	double s, z1, z2;
@@ -274,7 +280,7 @@ std::vector<BzCurve> orthodoxy(const Point& first_point, const Point& second, Ve
 
 			double H = (curr.radius() - h1) + h2;
 			next.by_geo(H, lat2, curr.longitude() + L);
-			std::cout << "bz curve " << next << " h1(" << (curr.radius() - h1) << ") h2(" << (next.radius() - h2) << ")" << std::endl;
+			//std::cout << "bz curve " << next << " h1(" << (curr.radius() - h1) << ") h2(" << (next.radius() - h2) << ")" << std::endl;
 			//z1 = z2;
 
 			//tmp_tmp_s -= tmp_s;

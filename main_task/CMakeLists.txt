@@ -7,7 +7,7 @@ set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -Wconversion")
 
 set (CMAKE_VERBOSE_MAKEFILE on)
 
-find_package(Boost 1.40 COMPONENTS program_options REQUIRED)
+find_package(Boost 1.60 COMPONENTS program_options REQUIRED)
 
 
 

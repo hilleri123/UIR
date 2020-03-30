@@ -33,6 +33,8 @@ namespace earth {
 
 	double local_R(double lat, double lon);
 	double local_R(Point p);
+
+	double H(Point p);
 }
 
 
