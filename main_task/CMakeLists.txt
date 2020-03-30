@@ -54,7 +54,8 @@ if (WIN32)
 	set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "C:/Program Files/Fort SDK/lib/win32-msvc2017/boost/lib")
 endif()
 
-find_package(Boost 1.40 COMPONENTS program_options REQUIRED)
+#find_package(Boost 1.40 COMPONENTS program_options REQUIRED)
+find_package(Boost 1.40 COMPONENTS program_options)
 
 if (Boost_FOUND)
 
