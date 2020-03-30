@@ -7,7 +7,17 @@ set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -Wconversion")
 
 set (CMAKE_VERBOSE_MAKEFILE on)
 
+<<<<<<< HEAD
 find_package(Boost 1.60 COMPONENTS program_options REQUIRED)
+=======
+IF (WIN32)
+	set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "C:/Program Files/Fort SDK/lib/win32-msvc2017/boost")
+	SET(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "C:/Program Files/Fort SDK/lib/win32-msvc2017/boost/lib")
+ENDIF()
+
+
+find_package(Boost 1.40 COMPONENTS program_options REQUIRED)
+>>>>>>> 109fbf4b394c99b9ca89b5165057a3b536f24a89
 
 
 
