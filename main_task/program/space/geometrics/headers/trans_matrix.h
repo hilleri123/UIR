@@ -9,6 +9,7 @@
 #include <cstdarg>
 #include <valarray>
 #include <vector>
+#include <algorithm>
 #include <utility>
 #include <stdexcept>
 
