@@ -76,10 +76,10 @@ set (SOURCES
 #set (SOURCES program/main.cpp)
 
 set (STATIC_NAME _uir_static)
-set (SHARED_NAME _uir_static)
+set (SHARED_NAME _uir_shared)
 
-add_library ( SHARED_NAME SHARED ${SOURCES})
-add_library ( STATIC_NAME STATIC ${SOURCES})
+add_library ( ${SHARED_NAME} SHARED ${SOURCES})
+add_library ( ${STATIC_NAME} STATIC ${SOURCES})
 
 set(HEADERS_DIR "./headers_dir")
 
