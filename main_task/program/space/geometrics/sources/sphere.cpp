@@ -41,7 +41,7 @@ Vector earth::norm(double lat, double lon) {
 	Point p;
 	p.by_geo(earth::radius(), lat, lon);
 	//Sphere : (x/a)^2+(y/a)^2+(z/b)^2=1
-	//F'x(p)*(x-px) + F'x(p)*(x-px) + F'x(p)*(x-px) = 0 
+	//F'x(p)*(x-px) + F'y(p)*(y-py) + F'z(p)*(z-pz) = 0 
 	//Ax+By+Cz+D=0
 	//A = 2px/a^2
 	double x = 2*p.x() / pow(sphere::a, 2);
