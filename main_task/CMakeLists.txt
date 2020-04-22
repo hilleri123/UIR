@@ -34,7 +34,7 @@ set (HEADERS
 	${sg_h_dir}/sphere.h
 	)
 
-set (SOURCES 
+set (SOURCES
 	${m_s_dir}/csv_parser.cpp
 	${m_s_dir}/function.cpp
 	${sf_s_dir}/combinator.cpp
@@ -75,9 +75,11 @@ set (SOURCES
 
 #set (SOURCES program/main.cpp)
 
+set (STATIC_NAME _uir_static)
+set (SHARED_NAME _uir_static)
 
-add_library ( _uir_shared SHARED ${SOURCES})
-add_library ( _uir_static STATIC ${SOURCES})
+add_library ( SHARED_NAME SHARED ${SOURCES})
+add_library ( STATIC_NAME STATIC ${SOURCES})
 
 set(HEADERS_DIR "./headers_dir")
 
@@ -86,7 +88,7 @@ if (WIN32)
 	set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "C:/Program Files/Fort SDK/lib/win32-msvc2017/boost")
 	set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "C:/Program Files/Fort SDK/lib/win32-msvc2017/boost/lib")
 
-	#set(HEADERS_DIR "C:/Work/012/...")
+	set(HEADERS_DIR "C:/Work/012/src/ric/traceeditor/include")
 endif()
 
 
@@ -104,7 +106,7 @@ endif()
 foreach (myheader_path IN LISTS HEADERS)
 	get_filename_component(myheader ${myheader_path} NAME)
 	message(STATUS "path = '${myheader_path}' filename = '${myheader}'")
-	add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+	add_custom_command(TARGET ${STATIC_NAME} POST_BUILD
 		COMMAND "${CMAKE_COMMAND}" -E copy
 		"./${myheader_path}"
 		"${HEADERS_DIR}/${myheader}"
