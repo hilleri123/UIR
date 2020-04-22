@@ -107,13 +107,14 @@ if (Boost_FOUND)
 
 endif()
 
+file(MAKE_DIRECTORY "${HEADERS_DIR}/${PROJECT_NAME}/")
 foreach (myheader_path IN LISTS HEADERS)
 	get_filename_component(myheader ${myheader_path} NAME)
 	message(STATUS "path = '${myheader_path}' filename = '${myheader}'")
 	add_custom_command(TARGET ${STATIC_NAME} POST_BUILD
 		COMMAND "${CMAKE_COMMAND}" -E copy
-		"./${myheader_path}"
-		"${HEADERS_DIR}/${myheader}"
+		"${CMAKE_CURRENT_SOURCE_DIR}/${myheader_path}"
+		"${HEADERS_DIR}/${PROJECT_NAME}/"
 		COMMENT "Copying ${myheader_path}"
 		)
 endforeach()
