@@ -43,7 +43,7 @@ Rotate::Rotate(Point start, Vector start_direction, Point distination, Vector en
 	end_direction = tmp(end_direction);
 	distination = tmp(distination);
 
-	//std::cout << tmp(oy*Vector::norm(start_direction)) << std::endl << start_direction << std::endl;
+	std::cout << tmp(oy*Vector::norm(start_direction)) << std::endl << start_direction << std::endl;
 	assert(oy*Vector::norm(start_direction) == tmp(start_direction));
 
 	//_matrix = move_mat_fore * rotate_mat_fore * m;

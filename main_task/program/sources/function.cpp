@@ -30,6 +30,8 @@ double Interval::end() const
 Function::Function(const std::vector<std::pair<Point, Velocity>>& points)
 {
 	//std::cout << "constructor" << std::endl;
+	if (points.size() < 2)
+		return;
 	auto& trajectory = *combine(points);
 	//std::cout << "trajectory size = " << trajectory.size() << std::endl;
 	double time_b = 0;
