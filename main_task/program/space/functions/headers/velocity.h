@@ -80,9 +80,13 @@ public:
 	friend std::ostream& operator<<(std::ostream& s, const Velocity& a);
 	friend std::ostream& operator<<(std::ostream& s, Velocity&& a);
 
+	void set_stats(void const* ptr);
+	void const* stats() const;
+
 	virtual ~Velocity() override;
 protected:
-	double _velocity = 1;
+	double _velocity;
 	//angle _max_rotate;
 	double _max_rotate;
+	void const* _stats = nullptr;
 };

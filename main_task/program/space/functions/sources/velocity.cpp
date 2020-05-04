@@ -82,6 +82,14 @@ std::ostream& operator<<(std::ostream& s, Velocity&& a)
 	return s;
 }
 
+void Velocity::set_stats(void const* ptr) {
+	_stats = ptr;
+}
+
+void const* Velocity::stats() const {
+	return _stats;
+}
+
 Velocity::~Velocity()
 {}
 
