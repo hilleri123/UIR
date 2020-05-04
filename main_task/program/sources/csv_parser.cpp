@@ -60,9 +60,7 @@ std::vector<std::pair<Point, Velocity>>& csv_parser_read(std::string file)
 				angle = std::stod(parts[4]) / 45 * atan(1);
 				//std::cout << angle << std::endl;
 			}
-			Point tmp;
-			
-
+			//Point tmp;
 			//if (geo) {
 			//double r = std::stod(parts[0])+R;
 			double latitude = std::stod(parts[1]) / 45 * atan(1);
@@ -70,9 +68,9 @@ std::vector<std::pair<Point, Velocity>>& csv_parser_read(std::string file)
 
 			//Point tmp_sphere_point;
 			//double local_R = flatting.to(tmp_sphere_point.by_geo(earth::radius(), latitude, longitude)).radius();
-
-			double r = std::stod(parts[0]) + earth::local_R(latitude, longitude);
-			tmp.by_geo(r, latitude, longitude);
+			double h = std::stod(parts[0]);
+			//double r = std::stod(parts[0]) + earth::local_R(latitude, longitude);
+			Point tmp = earth::geo(h, latitude, longitude);
 			//} else {
 				//double x = std::stod(parts[0]);
 				//double y = std::stod(parts[1]);

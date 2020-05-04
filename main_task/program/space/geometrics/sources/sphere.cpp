@@ -39,7 +39,7 @@ Conversion earth::flatting_conv() {
 
 Vector earth::norm(double lat, double lon) {
 	Point p;
-	p.by_geo(earth::radius(), lat, lon);
+	p.by_geo(earth::local_R(lat, lon), lat, lon);
 	//Sphere : (x/a)^2+(y/a)^2+(z/b)^2=1
 	//F'x(p)*(x-px) + F'y(p)*(y-py) + F'z(p)*(z-pz) = 0 
 	//Ax+By+Cz+D=0
@@ -60,6 +60,12 @@ Vector earth::norm(Point p) {
 
 double earth::H(Point p) {
 	return p.radius() - earth::local_R(p);
+}
+
+Point earth::geo(double h, double lat, double lon) {
+	Point p;
+	p.by_geo(earth::local_R(lat, lon), lat, lon);
+	return p;
 }
 
 
