@@ -7,15 +7,6 @@ Velocity::Velocity(double velocity, double max_rotate)
 	
 Velocity& Velocity::operator=(double velocity) { _velocity = velocity; return *this; }
 
-bool Velocity::init() const
-{
-	if (_velocity == 0 || _max_rotate == 0) {	//!!!
-		return false;
-	} else {
-		return true;
-	}
-}
-
 double Velocity::max_rotate() const { return _max_rotate; }
 double Velocity::v() const { return _velocity; }
 

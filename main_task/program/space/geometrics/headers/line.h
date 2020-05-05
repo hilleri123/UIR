@@ -20,7 +20,7 @@ public:
 	Line& operator=(const Line&) = default;
 	Line& operator=(Line&&) = default;
 
-	virtual bool init() const override;
+	virtual bool init() override;
 
 	Point operator()(double t) const;
 

@@ -32,7 +32,7 @@ public:
 	Matrix& operator=(const Matrix&) = default;
 	Matrix& operator=(Matrix&&) = default;
 	
-	virtual bool init() const override;
+	virtual bool init() override;
 
 	bool operator==(const Matrix& vector) const;
 	bool operator!=(const Matrix& vector) const;
@@ -75,7 +75,7 @@ public:
 
 	Conversion(const Point* pos = nullptr, const Vector* ox = nullptr, const Vector* oy = nullptr, const Vector* oz = nullptr);
 
-	virtual bool init() const override;
+	virtual bool init() override;
 
 	Matrix& to_matrix() { return _to;}
 	Matrix& from_matrix() { return _from;}
@@ -93,7 +93,12 @@ public:
 #endif
 	virtual ~Conversion() override;
 protected:
-	std::exception* err = nullptr;
+	//std::exception* err = nullptr;
+	
+	Point const* pos;
+	Vector const* ox;
+	Vector const* oy;
+	Vector const* oz;
 	
 	Matrix _to;
 	Matrix _from;

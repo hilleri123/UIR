@@ -70,7 +70,7 @@ Matrix::Matrix(matrix opt, const Vector* vec, double angle)
 }
 
 	
-bool Matrix::init() const
+bool Matrix::init()
 {
 	if (err == nullptr)
 		return true;
@@ -259,7 +259,10 @@ Matrix::~Matrix()
 }
 
 Conversion::Conversion(const Point* pos, const Vector* ox, const Vector* oy, const Vector* oz)
-{
+	: pos(pos), ox(ox), oy(oy), oz(oz)
+{}
+
+bool Conversion::init() {
 	std::vector<const Vector*> axis;
 	if (ox != nullptr)
 		axis.push_back(ox);
@@ -268,15 +271,23 @@ Conversion::Conversion(const Point* pos, const Vector* ox, const Vector* oy, con
 	if (oz != nullptr)
 		axis.push_back(oz);
 
-	if (axis.size() < 2)
-		err = new std::invalid_argument("get 1 axis or less expected 2 or more");
+	if (axis.size() < 2) {
+		//err = new std::invalid_argument("get 1 axis or less expected 2 or more");
+		//throw std::invalid_argument("get 1 axis or less expected 2 or more");
+		std::cerr << "get 1 axis or less expected 2 or more" << std::endl;
+		return false;
+	}
 
 	const double pi_2 = atan(1)*2;
 	for (auto i = axis.begin(); i < axis.end()-1; i++) {
 		for (auto j = i+1; j < axis.end(); j++) {
 			double angle = (**i)^(**j);
 			if (!equal(angle, pi_2)) {
-				err = new std::invalid_argument("angle between axis != pi/2");
+				//std::cout << "angle " << **i << **j << " " << angle << " 2pi " << pi_2 << std::endl;
+				//err = new std::invalid_argument("angle between axis != pi/2");
+				std::cerr << "angle between axis != pi/2" << std::endl;
+				//throw std::invalid_argument("angle between axis != pi/2");
+				return false;
 			}
 		}
 	}
@@ -284,11 +295,16 @@ Conversion::Conversion(const Point* pos, const Vector* ox, const Vector* oy, con
 	if (axis.size() == 3) {
 		Vector tmp_oz = (*ox) * (*oy);
 		double angle = tmp_oz^(*oz);
-		if (!is_null(angle))
-			err = new std::invalid_argument("axis system isnt right-handed");
+		if (!is_null(angle)) {
+			//err = new std::invalid_argument("axis system isnt right-handed");
+			//throw std::invalid_argument("axis system isnt right-handed");
+			std::cerr << "axis system isnt right-handed" << std::endl;
+			return false;
+		}
 	}
 
-	if (err == nullptr) {
+	//if (err == nullptr) {
+	{
 		Vector c_ox(Point(1,0,0));
 		Vector c_oy(Point(0,1,0));
 		Vector c_oz(Point(0,0,1));
@@ -298,7 +314,10 @@ Conversion::Conversion(const Point* pos, const Vector* ox, const Vector* oy, con
 			bool res = Matrix::multiplay_foreward_backward(_from, _to, Matrix::move, &move_vec);
 			if (!res) {
 				std::cerr << "in Conversion multiplay_foreward_backward(..., Matrix::move ,...) function didnt work" << std::endl;
-				err = new std::logic_error("cant construct move matrix");
+				//err = new std::logic_error("cant construct move matrix");
+				//throw std::logic_error("cant construct move matrix");
+				std::cerr << "cant construct move matrix" << std::endl;
+				return false;
 			}
 		}
 		Vector tmp;
@@ -329,7 +348,10 @@ Conversion::Conversion(const Point* pos, const Vector* ox, const Vector* oy, con
 			bool res = Matrix::multiplay_foreward_backward(_from, _to, Matrix::rotate, &inter, angle);
 			if (!res) {
 				std::cerr << "in Conversion multiplay_foreward_backward(..., Matrix::rotate ,...) function didnt work" << std::endl;
-				err = new std::logic_error("cant construct rotate matrix");
+				//err = new std::logic_error("cant construct rotate matrix");
+				//throw std::logic_error("cant construct rotate matrix");
+				std::cerr << "cant construct rotate matrix" << std::endl;
+				return false;
 			}
 		}
 
@@ -357,7 +379,10 @@ Conversion::Conversion(const Point* pos, const Vector* ox, const Vector* oy, con
 		bool res = Matrix::multiplay_foreward_backward(_from, _to, Matrix::rotate, &c_oz, angle);
 		if (!res) {
 			std::cerr << "in Conversion multiplay_foreward_backward(..., Matrix::rotate ,...) function didnt work" << std::endl;
-			err = new std::logic_error("cant construct rotate matrix");
+			//err = new std::logic_error("cant construct rotate matrix");
+			//throw std::logic_error("cant construct rotate matrix");
+			std::cerr << "cant construct rotate matrix" << std::endl;
+			return false;
 		}
 		//std::cout << _from << std::endl << _to << std::endl;
 
@@ -383,6 +408,7 @@ Conversion::Conversion(const Point* pos, const Vector* ox, const Vector* oy, con
 }
 
 
+#if 0
 bool Conversion::init() const
 {
 	if (err == nullptr) {
@@ -392,11 +418,12 @@ bool Conversion::init() const
 		return false;
 	}
 }
+#endif
 
 Conversion::~Conversion()
 {
-	if (err != nullptr)
-		delete err;
+	//if (err != nullptr)
+		//delete err;
 }
 
 

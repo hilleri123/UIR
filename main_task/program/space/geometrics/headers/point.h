@@ -9,11 +9,10 @@
 //#include "metrics.h"
 //#include "../init.h"
 #include "metrics.h"
-#include "init.h"
 
 
 
-class Point : base_init
+class Point
 {
 public:
 	explicit Point(double x = 0, double y = 0, double z = 0);

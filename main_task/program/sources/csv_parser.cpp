@@ -81,16 +81,17 @@ std::vector<std::pair<Point, Velocity>>& csv_parser_read(std::string file)
 			double s = std::stod(parts[3]);
 
 			
-			Velocity* v = nullptr;
-			INIT (v, Velocity, s, angle);
-			if (v != nullptr) {
+			//Velocity* v = nullptr;
+			//INIT (v, Velocity, s, angle);
+			Velocity v(s, angle);
+			if (v.v() != 0) {
 				//auto pair = std::make_pair(Point(x, y, z), *v);
 
 				//auto pair = std::make_pair(tmp.by_geo(r, latitude, longitude), *v);
-				auto pair = std::make_pair(tmp, *v);
+				auto pair = std::make_pair(tmp, v);
 				//std::cout << std::get<0>(pair) << std::endl;
 				result.push_back(pair);
-				delete v;
+				//delete v;
 			} else {
 				// bad data
 				std::cout << "velocity cannt exists" << std::endl;

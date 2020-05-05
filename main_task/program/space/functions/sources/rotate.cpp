@@ -13,24 +13,32 @@
 
 
 Rotate::Rotate(Point start, Vector start_direction, Point distination, Vector end_direction, Velocity v, Matrix m)
-	: _end(distination), _velocity(v), _direction(end_direction), _matrix(m)
+	: _start(start), _end(distination), _velocity(v), _start_direction(start_direction), _direction(end_direction), _matrix(m)
 	//: _matrix(m)
+{}
+
+bool Rotate::init()
 {
+	if (!(equal(_end.z(), 0) && equal(_direction.z(), 0) && equal(_start.z(), 0) && equal(_start_direction.z(), 0))) {
+		std::cout << "z must be 0 " << _start << _start_direction << _end << _direction << std::endl;
+		return false;
+	}
 	Vector ox(Point(1,0,0));
 	Vector oy(Point(0,1,0));
 	Vector oz(Point(0,0,1));
 
-	start = Point(start.x(), start.y(), 0);
-	distination = Point(distination.x(), distination.y(), 0);
+	//std::cout << _start << std::endl;
+	_start = Point(_start.x(), _start.y(), 0);
+	_end = Point(_end.x(), _end.y(), 0);
 
-	start_direction = Vector(Point(start_direction.x(), start_direction.y(), 0));
-	end_direction = Vector(Point(end_direction.x(), end_direction.y(), 0));
+	_start_direction = Vector(Point(_start_direction.x(), _start_direction.y(), 0));
+	_direction = Vector(Point(_direction.x(), _direction.y(), 0));
 
 
-	Vector move_vec(start);
+	Vector move_vec(_start);
 	//std::cout << move_vec << std::endl;
 	
-	double angle = start_direction^oy;
+	double angle = _start_direction^oy;
 
 	Matrix move_mat_fore, move_mat_back;
 	Matrix::multiplay_foreward_backward(move_mat_fore, move_mat_back, Matrix::move, &move_vec);
@@ -40,20 +48,20 @@ Rotate::Rotate(Point start, Vector start_direction, Point distination, Vector en
 	Matrix tmp = move_mat_back * rotate_mat_back;
 	//Matrix tmp = move_mat_fore * rotate_mat_fore;
 	//std::cout << tmp << std::endl;
-	end_direction = tmp(end_direction);
-	distination = tmp(distination);
+	_direction = tmp(_direction);
+	_end = tmp(_end);
 
-	std::cout << tmp(oy*Vector::norm(start_direction)) << std::endl << start_direction << std::endl;
-	assert(oy*Vector::norm(start_direction) == tmp(start_direction));
+	std::cout << tmp(oy*Vector::norm(_start_direction)) << std::endl << _start_direction << std::endl;
+	assert(oy*Vector::norm(_start_direction) == tmp(_start_direction));
 
 	//_matrix = move_mat_fore * rotate_mat_fore * m;
 	_matrix = _matrix * move_mat_fore * rotate_mat_fore;
 	
-	//std::cout << "rotate" << std::endl << distination << " " << end_direction << std::endl << _matrix << std::endl << m << std::endl;
+	//std::cout << "rotate" << std::endl << _end << " " << end_direction << std::endl << _matrix << std::endl << m << std::endl;
 	///////////////////////////////////
 
 
-	_R = v.v() / v.max_rotate();
+	_R = _velocity.v() / _velocity.max_rotate();
 
 	//std::cout << _end << " " << _direction << " " << _R << std::endl;
 	//b -begin 
@@ -135,12 +143,12 @@ Rotate::Rotate(Point start, Vector start_direction, Point distination, Vector en
 		BzCurve curve(tmp_arr);
 		curve *= _matrix;
 		//curve.set_len(delta*_R);
-		curve.set_scale(v.v() / (delta*_R));
+		curve.set_scale(_velocity.v() / (delta*_R));
 		//_curves.push_back(std::make_pair(delta*_R, curve));
 		_curves.push_back(curve);
 	}
 
-	scale = v.v() / Point::norm(std::get<0>(line), std::get<1>(line));
+	scale = _velocity.v() / Point::norm(std::get<0>(line), std::get<1>(line));
 	Vector tmp_v(std::get<0>(line), std::get<1>(line));
 	for (int i = 0; i < 4; i++) {
 		tmp_arr[i] = std::get<0>(line) + tmp_v*(static_cast<double>(i)/3);
@@ -166,7 +174,7 @@ Rotate::Rotate(Point start, Vector start_direction, Point distination, Vector en
 		}
 		BzCurve curve(tmp_arr);
 		curve *= _matrix;
-		curve.set_scale(v.v() / delta*_R);
+		curve.set_scale(_velocity.v() / delta*_R);
 		//curve.set_len(delta*_R);
 		//std::cout << "Bz " << curve(0) << " to " << curve(1) << std::endl;
 		//_curves.push_back(std::make_pair(delta*_R, curve));
@@ -179,17 +187,19 @@ Rotate::Rotate(Point start, Vector start_direction, Point distination, Vector en
 			//<< " " << curve(1) << "]" << std::endl;
 		//std::cout << curve << std::endl;
 	//}
+	return true;
 }
 
+#if 0
 bool Rotate::init() const
 {
 	if (!(equal(_end.z(), 0) && equal(_direction.z(), 0))) {
-		//std::cout << "rotate init" << std::endl;
 		return false;
 	} else {
 		return true;
 	}
 }
+#endif
 
 
 std::pair<Point, Point> Rotate::line() const

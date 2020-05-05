@@ -3,7 +3,9 @@
 
 PartOfFunction::PartOfFunction(const Point& first, const Point& second, const Velocity& v, const Vector& direction, const Vector& end_direction)
 	: _begin(first), _end(second), _velocity(v), _direction(direction), _end_direction(end_direction)
-{
+{}
+
+bool PartOfFunction::init() {
 	Point O(0,0,0);	//Центр Земли
 	//Маршрут rotate(AB) climb(BC) ortodorm(CD) rotate(DE)
 	const Point& A = _begin;
@@ -17,47 +19,84 @@ PartOfFunction::PartOfFunction(const Point& first, const Point& second, const Ve
 	Vector oy(Point(0,1,0));
 	Vector oz(Point(0,0,1));
 
-	Vector OA(O, A);
+	//Vector OA(O, A);
 
-	double R = v.v() / v.max_rotate();
+	double R = _velocity.v() / _velocity.max_rotate();
 
 	Vector normA = earth::norm(A);
 
-	Conversion con_start(&A, nullptr, &direction, &OA);
-	//std::cout << A << " " << direction << " " << OA << std::endl;
-	//std::cout << con_start.to_matrix() << std::endl;
+	//Conversion con_start(&A, nullptr, &_direction, &OA);
+	Conversion* con_start;
+	INIT(con_start, Conversion, &A, nullptr, &_direction, &normA);
+	if (con_start == nullptr) {
+		std::cerr << "first Conversion faild" << std::endl;
+		return false;
+	}
+
+	//std::cout << A << " " << _direction << " " << normA << std::endl;
+	//std::cout << con_start->to_matrix() << std::endl;
 
 
-	Point distination = con_start.to(E);
+	Point distination = con_start->to(E);
 	distination = Point(distination.x(), distination.y(), 0);
-	Vector dist_vec = Vector(con_start.to(A), distination);
+	Vector dist_vec = Vector(con_start->to(A), distination);
 	dist_vec *= 3 * R / Vector::norm(dist_vec);
-	distination = con_start.to(A) + dist_vec;
+	distination = con_start->to(A) + dist_vec;
 	//std::cout << distination << std::endl;
 
-	//std::cout << "start" << std::endl;
-	_start = Rotate(con_start.to(A), con_start.to(direction), distination, dist_vec, v, con_start.from_matrix());
+	//std::cout << "start " << A << con_start->to(A) << std::endl;
+	//_start = Rotate(con_start->to(A), con_start->to(_direction), distination, dist_vec, _velocity, con_start->from_matrix());
+	Rotate* tmp_rotate = nullptr;
+	INIT(tmp_rotate, Rotate, con_start->to(A), con_start->to(_direction), distination, dist_vec, _velocity, con_start->from_matrix());
+	if (tmp_rotate == nullptr) {
+		std::cerr << "first rotate faild" << std::endl;
+	} else {
+		_start = *tmp_rotate;
+		delete tmp_rotate;
+	}
+
 	B = _start.end_point();
 
+	//std::cout << "start " << A << con_start->to(A) << con_start->from(A) << _start(0) << std::endl;
 	//std::cout << A << _start(0) << std::endl;
 	assert(A == _start(0));
 	//std::cout << std::get<0>(_start.line()) << " " << std::get<1>(_start.line()) << std::endl;
 
-	Vector OB(O, B);
+	//Vector OB(O, B);
+
+	Vector normB = earth::norm(B);
+
 	Vector tmp_direction = _start.direction();
-	Vector tmp_direction_z = OB * tmp_direction;
+	//Vector tmp_direction_z = OB * tmp_direction;
+	Vector tmp_direction_z = normB * tmp_direction;
 
-	Conversion con_climb(&B, nullptr, &tmp_direction, &tmp_direction_z);
-	//std::cout << "init " << con_climb.init() << std::endl;
-	//std::cout << "OB " << OB << " to(" << con_climb.to(OB) << ") from(" << con_climb.from(OB) << ")" << std::endl;
-	Vector H = OB.normolize() * (earth::H(E) - earth::H(B));
-	distination = con_climb.to(B) + 4 * R * oy + con_climb.to(H);
+	//Conversion con_climb(&B, nullptr, &tmp_direction, &tmp_direction_z);
+	Conversion* con_climb;
+	INIT(con_climb, Conversion, &B, nullptr, &tmp_direction, &tmp_direction_z);
+	if (con_start == nullptr) {
+		std::cerr << "climb Conversion faild" << std::endl;
+		return false;
+	}
+	//std::cout << "init " << con_climb->init() << std::endl;
+	//std::cout << "OB " << OB << " to(" << con_climb->to(OB) << ") from(" << con_climb->from(OB) << ")" << std::endl;
+	//Vector H = OB.normolize() * (earth::H(E) - earth::H(B));
+	std::cout << "B " << earth::H(B) << " E " << earth::H(E) << std::endl;
+	Vector H = normB.normolize() * (earth::H(E) - earth::H(B));
+	distination = con_climb->to(B) + 4 * R * oy + con_climb->to(H);
 
 
-	std::cout << "climb dist(" << earth::H(con_climb.from(distination)) << ")" << std::endl;
-	//std::cout << "H " << con_climb.to(H) << " distination " << distination << std::endl;
+	//std::cout << "climb dist(" << earth::H(con_climb->from(distination)) << ")" << std::endl;
+	//std::cout << "H " << con_climb->to(H) << " distination " << distination << std::endl;
 
-	_climb = Rotate(con_climb.to(B), con_climb.to(tmp_direction), distination, dist_vec, v, con_climb.from_matrix());
+	//_climb = Rotate(con_climb->to(B), con_climb->to(tmp_direction), distination, dist_vec, v, con_climb->from_matrix());
+	INIT(tmp_rotate, Rotate, con_climb->to(B), con_climb->to(tmp_direction), distination, dist_vec, _velocity, con_climb->from_matrix());
+	if (tmp_rotate == nullptr) {
+		std::cerr << "first rotate faild" << std::endl;
+	} else {
+		_climb = *tmp_rotate;
+		delete tmp_rotate;
+	}
+
 	//_climb = Rotate(trans(A), trans(direction), distination, dist_vec, v, obr);
 	C = _climb.end_point();
 
@@ -68,11 +107,11 @@ PartOfFunction::PartOfFunction(const Point& first, const Point& second, const Ve
 	_curves = orthodoxy(C, D, &_end_direction);
 
 	for (auto i = _curves.begin(); i < _curves.end(); i++) {
-		i->set_scale(v.v() / i->get_len());
+		i->set_scale(_velocity.v() / i->get_len());
 	}
 
 
-	std::cout << earth::H(A) << " " << earth::H(B) << " " << earth::H(C) << " " << earth::H(D) << " " << earth::H(E) << std::endl;
+	std::cout << earth::H(A) << " <= " << earth::H(B) << " < " << earth::H(C) << " = " << earth::H(D) << " >= " << earth::H(E) << std::endl;
 	//std::cout << A.radius() << " " << B.radius() << " " << C.radius() << " " << D.radius() << " " << E.radius() << std::endl;
 #if 0
 	Point second = m_second;
@@ -122,16 +161,16 @@ PartOfFunction::PartOfFunction(const Point& first, const Point& second, const Ve
 }
 
 	
-bool PartOfFunction::init() const
-{
+//bool PartOfFunction::init() 
+//{
 	//if (_begin == _end || _velocity == 0 || !_rotate.init()) {
 		//std::cout << "pof init" << std::endl;
 		//return false;
 	//} else {
 		//return true;
 	//}
-	return true;
-}
+	//return true;
+//}
 
 Point PartOfFunction::operator()(double time) const
 {

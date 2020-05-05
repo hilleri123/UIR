@@ -30,7 +30,7 @@ public:
 	PartOfFunction& operator=(const PartOfFunction&) = default;
 	PartOfFunction& operator=(PartOfFunction&&) = default;
 
-	virtual bool init() const override;
+	virtual bool init() override;
 	
 	virtual Point operator()(double time) const;
 

@@ -16,12 +16,6 @@
 #include <cmath>
 
 
-#if 0
-#ifndef R_EARTH
-#define R_EARTH 6400.
-#endif 
-#endif 
-
 
 namespace earth {
 	double radius();

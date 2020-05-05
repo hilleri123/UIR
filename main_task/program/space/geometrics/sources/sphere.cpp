@@ -65,7 +65,7 @@ double earth::H(Point p) {
 
 Point earth::geo(double h, double lat, double lon) {
 	Point p;
-	p.by_geo(earth::local_R(lat, lon), lat, lon);
+	p.by_geo(earth::local_R(lat, lon)+h, lat, lon);
 	return p;
 }
 
@@ -313,14 +313,18 @@ std::vector<BzCurve> orthodoxy(const Point& first_point, const Point& second, Ve
 		Point O(0,0,0);
 		
 		Vector south(O, Point(0,0,earth::radius()));
-		Vector new_z(second, O);
+		//Vector new_z(second, O);
+		Vector new_z = earth::norm(second);
 		Vector new_y = new_z * south;
 		
-		Conversion conv(&second, nullptr, &new_y, &new_z);
+		//Conversion conv(&second, nullptr, &new_y, &new_z);
+
+		Conversion* conv;
+		INIT(conv, Conversion, &second, nullptr, &new_y, &new_z);
 
 		Vector tmp(Point(cos(z2),sin(z2),0));
 
-		*direction = conv.from(tmp);
+		*direction = conv->from(tmp);
 		//std::cout << *direction << std::endl;
 	}
 		

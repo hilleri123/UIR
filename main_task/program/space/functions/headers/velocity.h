@@ -6,10 +6,9 @@
 
 //#include "../init.h"
 //#include "../geometrics/vector.h"
-#include "init.h"
 #include "vector.h"
 
-class Velocity : base_init
+class Velocity
 {
 public:
 	explicit Velocity(double velocity = 1, double max_rotate = asin(1./2.));
@@ -20,8 +19,6 @@ public:
 	Velocity& operator=(Velocity&&) = default;
 	
 	Velocity& operator=(double velocity);
-
-	virtual bool init() const override;
 
 	double max_rotate() const;
 	double v() const;
@@ -83,7 +80,7 @@ public:
 	void set_stats(void const* ptr);
 	void const* stats() const;
 
-	virtual ~Velocity() override;
+	~Velocity();
 protected:
 	double _velocity;
 	//angle _max_rotate;

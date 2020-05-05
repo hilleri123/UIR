@@ -31,7 +31,7 @@ public:
 	Rotate& operator=(const Rotate&) = default;
 	Rotate& operator=(Rotate&&) = default;
 
-	virtual bool init() const override;
+	virtual bool init() override;
 
 	virtual Point operator()(double time) const;
 
@@ -49,10 +49,12 @@ private:
 	//bool _err = false;
 	double _end_rotate;
 	//Point _begin;
+	Point _start;
 	Point _end;
 	Point _end_point;
 	//Point _center;
 	Velocity _velocity;
+	Vector _start_direction;
 	Vector _direction;
 
 	std::size_t _line_id;

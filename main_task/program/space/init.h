@@ -19,7 +19,7 @@ do { \
 class base_init
 {
 public:
-	virtual bool init() const
+	virtual bool init()
 	{
 		return true;
 	}
