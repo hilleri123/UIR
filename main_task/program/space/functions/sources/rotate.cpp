@@ -51,7 +51,7 @@ bool Rotate::init()
 	_direction = tmp(_direction);
 	_end = tmp(_end);
 
-	std::cout << tmp(oy*Vector::norm(_start_direction)) << std::endl << _start_direction << std::endl;
+	//std::cout << tmp(oy*Vector::norm(_start_direction)) << std::endl << _start_direction << std::endl;
 	assert(oy*Vector::norm(_start_direction) == tmp(_start_direction));
 
 	//_matrix = move_mat_fore * rotate_mat_fore * m;

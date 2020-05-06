@@ -5,6 +5,7 @@
 #include <cmath>
 #include <iostream>
 #include <string>
+#include <array>
 
 //#include "metrics.h"
 //#include "../init.h"
@@ -51,8 +52,6 @@ public:
 
 
 protected:
-	double _x;
-	double _y;
-	double _z;
+	std::array<double, 3> _arr;
 };
 

@@ -113,6 +113,14 @@ bool PartOfFunction::init() {
 
 	std::cout << earth::H(A) << " <= " << earth::H(B) << " < " << earth::H(C) << " = " << earth::H(D) << " >= " << earth::H(E) << std::endl;
 	//std::cout << A.radius() << " " << B.radius() << " " << C.radius() << " " << D.radius() << " " << E.radius() << std::endl;
+	
+	if (con_start != nullptr) {
+		delete con_start;
+	}
+	if (con_climb != nullptr) {
+		delete con_climb;
+	}
+	return true;
 #if 0
 	Point second = m_second;
 	std::cout << "!!!!! first " << first << " second " << second << " dir " << (Point()+direction) << std::endl; 

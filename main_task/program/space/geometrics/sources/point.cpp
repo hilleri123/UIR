@@ -4,49 +4,51 @@
 
 
 Point::Point(double x, double y, double z)
-	: _x(x), _y(y), _z(z)
-{}
+	//: _arr[0](x), _arr[1](y), _arr[2](z)
+{
+	_arr = {x, y, z};
+}
 
 Point& Point::by_geo(double r, double latitude, double longitude)
 {
-	_x = r * cos(latitude) * cos(longitude);
-	_y = r * cos(latitude) * sin(longitude);
-	_z = r * sin(latitude);
+	_arr[0] = r * cos(latitude) * cos(longitude);
+	_arr[1] = r * cos(latitude) * sin(longitude);
+	_arr[2] = r * sin(latitude);
 	return *this;
 }
 
 double Point::operator[](std::size_t index) const {
 	if (index == 0) {
-		return _x;
+		return _arr[0];
 	} else if (index == 1) {
-		return _y;
+		return _arr[1];
 	} else if (index == 2) {
-		return _z;
+		return _arr[2];
 	} else {
 		throw std::out_of_range("point");
 	}
 }
 
-double Point::x() const { return _x; }
-double Point::y() const { return _y; }
-double Point::z() const { return _z; }
+double Point::x() const { return _arr[0]; }
+double Point::y() const { return _arr[1]; }
+double Point::z() const { return _arr[2]; }
 
 double Point::latitude() const
 {
-	return atan(_z / sqrt(_x*_x + _y*_y));
+	return atan(_arr[2] / sqrt(_arr[0]*_arr[0] + _arr[1]*_arr[1]));
 }
 
 double Point::longitude() const 
 {
-	double phi = atan(_y / _x);
-	//if (less(_x, 0))
-	if (_x < 0)
+	double phi = atan(_arr[1] / _arr[0]);
+	//if (less(_arr[0], 0))
+	if (_arr[0] < 0)
 		phi += 4*atan(1);
 	return phi;
 }
 double Point::radius() const 
 {
-	return sqrt(_x*_x+_y*_y+_z*_z);
+	return sqrt(_arr[0]*_arr[0]+_arr[1]*_arr[1]+_arr[2]*_arr[2]);
 }
 
 bool Point::operator==(const Point& point) const
@@ -71,12 +73,12 @@ bool Point::operator!=(Point&& point) const { return !this->operator==(point); }
 	
 
 std::ostream& operator<<(std::ostream& stream, const Point& point) {
-	stream << "(" << point._x << " " << point._y << " " << point._z << ")";
+	stream << "(" << point._arr[0] << " " << point._arr[1] << " " << point._arr[2] << ")";
 	return stream;
 }
 
 std::ostream& operator<<(std::ostream& stream, Point&& point) {
-	stream << "(" << point._x << " " << point._y << " " << point._z << ")";
+	stream << "(" << point._arr[0] << " " << point._arr[1] << " " << point._arr[2] << ")";
 	return stream;
 }
 

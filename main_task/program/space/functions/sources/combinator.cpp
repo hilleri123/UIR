@@ -10,10 +10,12 @@ std::vector<PartOfFunction>* combine(const std::vector<std::pair<Point, Velocity
 	//auto direction = Vector(std::get<0>(*points.begin()), std::get<0>(*(points.begin()+1)));
 	//auto&& fv =  Vector(Point(), std::get<0>(*points.begin()));
 	//auto&& sv =  Vector(Point(), std::get<0>(*(points.begin()+1)));
-	auto&& fv = earth::norm(std::get<0>(*points.begin()));
-	auto&& sv = earth::norm(std::get<0>(*(points.begin()+1)));
-	auto&& fs = Vector(std::get<0>(*points.begin()), std::get<0>(*(points.begin()+1)));
-	auto direction = fv.rotate(fs, 2*atan(1));
+	Vector&& fv = earth::norm(std::get<0>(*points.begin()));
+	Vector&& sv = earth::norm(std::get<0>(*(points.begin()+1)));
+	//Vector&& fs = Vector(std::get<0>(*points.begin()), std::get<0>(*(points.begin()+1)));
+	Vector&& fs_ort = fv * sv;
+	Vector direction = fs_ort * fv;
+	//auto direction = fv.rotate(fs, 2*atan(1));
 	//std::cout << "direction " << direction << std::endl;
 
 	for (auto i = points.begin(); i+1 < points.end(); i++) {
