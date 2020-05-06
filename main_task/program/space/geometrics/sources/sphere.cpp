@@ -325,6 +325,8 @@ std::vector<BzCurve> orthodoxy(const Point& first_point, const Point& second, Ve
 		Vector tmp(Point(cos(z2),sin(z2),0));
 
 		*direction = conv->from(tmp);
+
+		delete conv;
 		//std::cout << *direction << std::endl;
 	}
 		

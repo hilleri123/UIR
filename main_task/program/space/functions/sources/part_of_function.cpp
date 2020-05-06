@@ -50,9 +50,14 @@ bool PartOfFunction::init() {
 	INIT(tmp_rotate, Rotate, con_start->to(A), con_start->to(_direction), distination, dist_vec, _velocity, con_start->from_matrix());
 	if (tmp_rotate == nullptr) {
 		std::cerr << "first rotate faild" << std::endl;
+		delete con_start;
+		return false;
 	} else {
 		_start = *tmp_rotate;
 		delete tmp_rotate;
+	}
+	if (con_start != nullptr) {
+		delete con_start;
 	}
 
 	B = _start.end_point();
@@ -73,7 +78,7 @@ bool PartOfFunction::init() {
 	//Conversion con_climb(&B, nullptr, &tmp_direction, &tmp_direction_z);
 	Conversion* con_climb;
 	INIT(con_climb, Conversion, &B, nullptr, &tmp_direction, &tmp_direction_z);
-	if (con_start == nullptr) {
+	if (con_climb == nullptr) {
 		std::cerr << "climb Conversion faild" << std::endl;
 		return false;
 	}
@@ -92,9 +97,14 @@ bool PartOfFunction::init() {
 	INIT(tmp_rotate, Rotate, con_climb->to(B), con_climb->to(tmp_direction), distination, dist_vec, _velocity, con_climb->from_matrix());
 	if (tmp_rotate == nullptr) {
 		std::cerr << "first rotate faild" << std::endl;
+		delete con_climb;
+		return false;
 	} else {
 		_climb = *tmp_rotate;
 		delete tmp_rotate;
+	}
+	if (con_climb != nullptr) {
+		delete con_climb;
 	}
 
 	//_climb = Rotate(trans(A), trans(direction), distination, dist_vec, v, obr);
@@ -114,12 +124,6 @@ bool PartOfFunction::init() {
 	std::cout << earth::H(A) << " <= " << earth::H(B) << " < " << earth::H(C) << " = " << earth::H(D) << " >= " << earth::H(E) << std::endl;
 	//std::cout << A.radius() << " " << B.radius() << " " << C.radius() << " " << D.radius() << " " << E.radius() << std::endl;
 	
-	if (con_start != nullptr) {
-		delete con_start;
-	}
-	if (con_climb != nullptr) {
-		delete con_climb;
-	}
 	return true;
 #if 0
 	Point second = m_second;
