@@ -7,6 +7,12 @@ std::vector<PartOfFunction>* combine(const std::vector<std::pair<Point, Velocity
 	using PF = PartOfFunction;
 	auto& result = *new std::vector<PF>();
 	PF* part;
+	
+	std::cout << "Combine" << std::endl;
+	for (auto i = points.begin(); i < points.end(); i++) {
+		std::cout << std::get<0>(*i) << " v(" << std::get<1>(*i).v() << ")" << std::endl;
+	}
+
 	//auto direction = Vector(std::get<0>(*points.begin()), std::get<0>(*(points.begin()+1)));
 	//auto&& fv =  Vector(Point(), std::get<0>(*points.begin()));
 	//auto&& sv =  Vector(Point(), std::get<0>(*(points.begin()+1)));
