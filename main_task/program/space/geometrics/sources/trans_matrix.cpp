@@ -283,7 +283,7 @@ bool Conversion::init() {
 		for (auto j = i+1; j < axis.end(); j++) {
 			double angle = (**i)^(**j);
 			if (!equal(angle, pi_2)) {
-				//std::cout << "angle " << **i << **j << " " << angle << " 2pi " << pi_2 << std::endl;
+				std::cout << "angle " << **i << **j << " " << angle << " 2pi " << pi_2 << std::endl;
 				//err = new std::invalid_argument("angle between axis != pi/2");
 				std::cerr << "angle between axis != pi/2" << std::endl;
 				//throw std::invalid_argument("angle between axis != pi/2");
