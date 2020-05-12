@@ -20,6 +20,7 @@ std::vector<PartOfFunction>* combine(const std::vector<std::pair<Point, Velocity
 	Vector&& sv = earth::norm(std::get<0>(*(points.begin()+1)));
 	//Vector&& fs = Vector(std::get<0>(*points.begin()), std::get<0>(*(points.begin()+1)));
 	Vector&& fs_ort = fv * sv;
+	std::cout << "pre dir" << fv << sv << fs_ort << std::endl;
 	Vector direction = fs_ort * fv;
 	//auto direction = fv.rotate(fs, 2*atan(1));
 	//std::cout << "direction " << direction << std::endl;
