@@ -25,6 +25,7 @@ std::vector<PartOfFunction>* combine(const std::vector<std::pair<Point, Velocity
 	//std::cout << "direction " << direction << std::endl;
 
 	for (auto i = points.begin(); i+1 < points.end(); i++) {
+		std::cout << "direction " << direction << std::endl;
 		//std::cout << "c v " << std::get<1>(*i).v() << ", " << std::get<1>(*i).max_rotate()  << std::endl;
 		INIT (part, PF, std::get<0>(*i), std::get<0>(*(i+1)), std::get<1>(*i), direction);
 		//INIT (part, PF, std::get<0>(*i), std::get<0>(*(i+1)), Velocity(std::get<1>(*i), vector));

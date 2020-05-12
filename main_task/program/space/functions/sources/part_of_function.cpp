@@ -25,6 +25,8 @@ bool PartOfFunction::init() {
 
 	Vector normA = earth::norm(A);
 
+	std::cout << "normA " << normA << " A " << A << std::endl;
+
 	//Conversion con_start(&A, nullptr, &_direction, &OA);
 	Conversion* con_start;
 	INIT(con_start, Conversion, &A, nullptr, &_direction, &normA);

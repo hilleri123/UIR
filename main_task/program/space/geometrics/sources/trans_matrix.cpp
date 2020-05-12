@@ -271,6 +271,11 @@ bool Conversion::init() {
 	if (oz != nullptr)
 		axis.push_back(oz);
 
+	std::cout << "Conversion (";
+	for (auto i = axis.begin(); i < axis.end(); i++)
+		std::cout << **i;
+	std::cout << ")" << std::endl;
+
 	if (axis.size() < 2) {
 		//err = new std::invalid_argument("get 1 axis or less expected 2 or more");
 		//throw std::invalid_argument("get 1 axis or less expected 2 or more");
@@ -282,8 +287,9 @@ bool Conversion::init() {
 	for (auto i = axis.begin(); i < axis.end()-1; i++) {
 		for (auto j = i+1; j < axis.end(); j++) {
 			double angle = (**i)^(**j);
+			std::cout << "angle " << **i << **j << " " << angle << " 2pi " << pi_2 << std::endl;
 			if (!equal(angle, pi_2)) {
-				std::cout << "angle " << **i << **j << " " << angle << " 2pi " << pi_2 << std::endl;
+				//std::cout << "angle " << **i << **j << " " << angle << " 2pi " << pi_2 << std::endl;
 				//err = new std::invalid_argument("angle between axis != pi/2");
 				std::cerr << "angle between axis != pi/2" << std::endl;
 				//throw std::invalid_argument("angle between axis != pi/2");
