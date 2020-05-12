@@ -93,7 +93,16 @@ if (WIN32)
 	set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "C:/Program Files/Fort SDK/lib/win32-msvc2017/boost/lib")
 
 	set(HEADERS_DIR "C:/Work/012/src/ric/traceeditor/include")
+
 endif()
+
+add_custom_command(TARGET ${STATIC_NAME} POST_BUILD
+	COMMAND "${CMAKE_COMMAND}" -E copy
+	"${CMAKE_CURRENT_SOURCE_DIR}/${STATIC_NAME}"
+	"${CMAKE_CURRENT_LIST_DIR}/libs/"
+	COMMENT "Copying ${STATIC_NAME}"
+	)
+
 
 
 find_package(Boost 1.40 COMPONENTS program_options)
