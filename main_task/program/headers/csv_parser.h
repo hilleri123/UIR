@@ -17,6 +17,7 @@
 #include "point.h"
 #include "velocity.h"
 #include "sphere.h"
+#include "log.h"
 
 
 //std::vector<std::pair<Point, Velocity>>& csv_parser_read(std::string file, double R = earth::radius());

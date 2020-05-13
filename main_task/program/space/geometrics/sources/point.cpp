@@ -71,14 +71,20 @@ bool Point::operator==(Point&& point) const
 }
 bool Point::operator!=(Point&& point) const { return !this->operator==(point); }
 	
+std::string Point::to_string() const {
+	std::string res = "(" + std::to_string(_arr[0]) + " " + std::to_string(_arr[1]) + " " + std::to_string(_arr[2]) + ")";
+	return res;
+}
 
 std::ostream& operator<<(std::ostream& stream, const Point& point) {
-	stream << "(" << point._arr[0] << " " << point._arr[1] << " " << point._arr[2] << ")";
+	//stream << "(" << point._arr[0] << " " << point._arr[1] << " " << point._arr[2] << ")";
+	stream << point.to_string();
 	return stream;
 }
 
 std::ostream& operator<<(std::ostream& stream, Point&& point) {
-	stream << "(" << point._arr[0] << " " << point._arr[1] << " " << point._arr[2] << ")";
+	//stream << "(" << point._arr[0] << " " << point._arr[1] << " " << point._arr[2] << ")";
+	stream << point.to_string();
 	return stream;
 }
 

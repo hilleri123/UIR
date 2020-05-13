@@ -14,6 +14,7 @@
 #include "part_of_function.h"
 #include "point.h"
 #include "velocity.h"
+#include "log.h"
 
 
 

@@ -2,10 +2,6 @@
 #pragma once
 
 
-#include "point.h"
-#include "vector.h"
-#include "metrics.h"
-
 #include <cstdarg>
 #include <valarray>
 #include <vector>
@@ -13,6 +9,10 @@
 #include <utility>
 #include <stdexcept>
 
+#include "point.h"
+#include "vector.h"
+#include "metrics.h"
+#include "log.h"
 
 class Conversion;
 

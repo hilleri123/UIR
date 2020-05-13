@@ -271,15 +271,21 @@ bool Conversion::init() {
 	if (oz != nullptr)
 		axis.push_back(oz);
 
-	std::cout << "Conversion (";
+	std::string message = "Converstion (";
+	//std::cout << "Conversion (";
 	for (auto i = axis.begin(); i < axis.end(); i++)
-		std::cout << **i;
-	std::cout << ")" << std::endl;
+		if (*i != nullptr)
+			//std::cout << **i;
+			message += (*i)->to_string();
+	//std::cout << ")" << std::endl;
+	message += ")";
+	my_log::log_it(0, message);
 
 	if (axis.size() < 2) {
 		//err = new std::invalid_argument("get 1 axis or less expected 2 or more");
 		//throw std::invalid_argument("get 1 axis or less expected 2 or more");
-		std::cerr << "get 1 axis or less expected 2 or more" << std::endl;
+		//std::cerr << "get 1 axis or less expected 2 or more" << std::endl;
+		my_log::log_it(1, "get 1 axis or less expected 2 or more");
 		return false;
 	}
 
@@ -287,11 +293,13 @@ bool Conversion::init() {
 	for (auto i = axis.begin(); i < axis.end()-1; i++) {
 		for (auto j = i+1; j < axis.end(); j++) {
 			double angle = (**i)^(**j);
-			std::cout << "angle " << **i << **j << " " << angle << " 2pi " << pi_2 << std::endl;
+			//std::cout << "angle " << **i << **j << " " << angle << " 2pi " << pi_2 << std::endl;
+			my_log::log_it(0, "angle " + (*i)->to_string() + (*j)->to_string() + " " + std::to_string(angle) + " 2pi " + std::to_string(pi_2));
 			if (!equal(angle, pi_2)) {
 				//std::cout << "angle " << **i << **j << " " << angle << " 2pi " << pi_2 << std::endl;
 				//err = new std::invalid_argument("angle between axis != pi/2");
-				std::cerr << "angle between axis != pi/2" << std::endl;
+				//std::cerr << "angle between axis != pi/2" << std::endl;
+				my_log::log_it(1, "angle between axis != pi/2");
 				//throw std::invalid_argument("angle between axis != pi/2");
 				return false;
 			}
@@ -304,7 +312,8 @@ bool Conversion::init() {
 		if (!is_null(angle)) {
 			//err = new std::invalid_argument("axis system isnt right-handed");
 			//throw std::invalid_argument("axis system isnt right-handed");
-			std::cerr << "axis system isnt right-handed" << std::endl;
+			//std::cerr << "axis system isnt right-handed" << std::endl;
+			my_log::log_it(1, "axis system isnt right-handed");
 			return false;
 		}
 	}
@@ -319,10 +328,12 @@ bool Conversion::init() {
 			Vector move_vec(*pos);
 			bool res = Matrix::multiplay_foreward_backward(_from, _to, Matrix::move, &move_vec);
 			if (!res) {
-				std::cerr << "in Conversion multiplay_foreward_backward(..., Matrix::move ,...) function didnt work" << std::endl;
+				//std::cerr << "in Conversion multiplay_foreward_backward(..., Matrix::move ,...) function didnt work" << std::endl;
+				my_log::log_it(1, "in Conversion multiplay_foreward_backward(..., Matrix::move ,...) function didnt work");
 				//err = new std::logic_error("cant construct move matrix");
 				//throw std::logic_error("cant construct move matrix");
-				std::cerr << "cant construct move matrix" << std::endl;
+				//std::cerr << "cant construct move matrix" << std::endl;
+				my_log::log_it(1, "cant construct move matrix");
 				return false;
 			}
 		}
@@ -353,10 +364,12 @@ bool Conversion::init() {
 			//std::cout << "angle oz " << (angle / atan(1) * 45.) << std::endl;
 			bool res = Matrix::multiplay_foreward_backward(_from, _to, Matrix::rotate, &inter, angle);
 			if (!res) {
-				std::cerr << "in Conversion multiplay_foreward_backward(..., Matrix::rotate ,...) function didnt work" << std::endl;
+				//std::cerr << "in Conversion multiplay_foreward_backward(..., Matrix::rotate ,...) function didnt work" << std::endl;
+				my_log::log_it(1, "in Conversion multiplay_foreward_backward(..., Matrix::rotate ,...) function didnt work");
 				//err = new std::logic_error("cant construct rotate matrix");
 				//throw std::logic_error("cant construct rotate matrix");
-				std::cerr << "cant construct rotate matrix" << std::endl;
+				//std::cerr << "cant construct rotate matrix" << std::endl;
+				my_log::log_it(1, "cant construct rotate matrix");
 				return false;
 			}
 		}
@@ -384,18 +397,22 @@ bool Conversion::init() {
 
 		bool res = Matrix::multiplay_foreward_backward(_from, _to, Matrix::rotate, &c_oz, angle);
 		if (!res) {
-			std::cerr << "in Conversion multiplay_foreward_backward(..., Matrix::rotate ,...) function didnt work" << std::endl;
+			//std::cerr << "in Conversion multiplay_foreward_backward(..., Matrix::rotate ,...) function didnt work" << std::endl;
+			my_log::log_it(1, "in Conversion multiplay_foreward_backward(..., Matrix::rotate ,...) function didnt work");
 			//err = new std::logic_error("cant construct rotate matrix");
 			//throw std::logic_error("cant construct rotate matrix");
-			std::cerr << "cant construct rotate matrix" << std::endl;
+			//std::cerr << "cant construct rotate matrix" << std::endl;
+			my_log::log_it(1, "cant construct rotate matrix");
 			return false;
 		}
 		//std::cout << _from << std::endl << _to << std::endl;
 
 		//std::cout << "ox " << *ox << " " << from(c_ox*Vector::norm(*ox)) << std::endl;
+		//std::cout << "ox " << *ox << " " << from(c_ox*Vector::norm(*ox)) << std::endl;
 		//assert(*ox == from(c_ox*Vector::norm(*ox)));
 		Vector norm_tmp = *ox;
 		//std::cout << "norm ox " << norm_tmp.normolize() << " " << from(c_ox).normolize() << std::endl;
+		my_log::log_it(0, "norm ox " + norm_tmp.normolize().to_string() + " " + from(c_ox).normolize().to_string());
 		assert(norm_tmp.normolize() == from(c_ox).normolize());
 		//std::cout << "oy " << *oy << " " << from(c_oy*Vector::norm(*oy)) << std::endl;
 		//assert(*oy == from(c_oy*Vector::norm(*oy)));
@@ -411,6 +428,7 @@ bool Conversion::init() {
 		assert(_from*_to == _to*_from);
 	}
 	//std::cout << "end" << std::endl;
+	return true;
 }
 
 

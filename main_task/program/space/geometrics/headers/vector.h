@@ -109,6 +109,8 @@ public:
 	Vector projection(const Vector& plane) const;
 	Vector projection(Vector&& plane) const;
 
+	std::string to_string() const;
+
 	friend std::ostream& operator<<(std::ostream& stream, const Vector& vector);
 	friend std::ostream& operator<<(std::ostream& stream, Vector&& vector);
 

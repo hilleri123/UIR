@@ -41,6 +41,7 @@ public:
 	bool operator==(Point&& point) const;
 	bool operator!=(Point&& point) const;
 	
+	std::string to_string() const;
 
 	friend std::ostream& operator<<(std::ostream& stream, const Point& point);
 	friend std::ostream& operator<<(std::ostream& stream, Point&& point);

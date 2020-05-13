@@ -94,14 +94,16 @@ std::vector<std::pair<Point, Velocity>>& csv_parser_read(std::string file)
 				//delete v;
 			} else {
 				// bad data
-				std::cout << "velocity cannt exists" << std::endl;
+				//std::cerr << "velocity cannt exist" << std::endl;
+				my_log::log_it(1, "velocity cannt exist");
 				delete &result;
 				throw ;			//!!!
 			}
 
 		} else if (parts.size() != 0) {
 			// bad data
-			std::cout << "bad data" << std::endl;
+			//std::cerr << "bad data" << std::endl;
+			my_log::log_it(1, "bad data");
 			delete &result;
 			throw ;			//!!!
 		}
@@ -111,11 +113,14 @@ std::vector<std::pair<Point, Velocity>>& csv_parser_read(std::string file)
 	stream.close();
 	
 #if 1
-	std::cout << "_________________________" << std::endl;
+	//std::cout << "_________________________" << std::endl;
+	my_log::log_it(0, "_________________________");
 	for (auto i = result.begin(); i < result.end(); i++) {
-		std::cout << std::get<0>(*i) << std::endl;
+		//std::cout << std::get<0>(*i) << std::endl;
+		my_log::log_it(0, std::get<0>(*i).to_string());
 	}
-	std::cout << "_________________________" << std::endl;
+	my_log::log_it(0, "_________________________");
+	//std::cout << "_________________________" << std::endl;
 #endif
 	return result;
 }

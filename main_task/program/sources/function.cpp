@@ -46,7 +46,8 @@ Function::Function(const std::vector<std::pair<Point, Velocity>>& points)
 		//std::cout << "push_back" << std::endl;
 		//_function.push_back(std::make_pair(*i, interval));
 		//_function.emplace_back(pair);
-		std::cout << "begin " << time_b << " end " << time_e << std::endl;
+		//std::cout << "begin " << time_b << " end " << time_e << std::endl;
+		my_log::log_it(0, "begin "+std::to_string(time_b)+" end "+std::to_string(time_e));
 		_function.emplace_back(*i, Interval(time_b, time_e));
 		//std::cout << "pushed_back" << std::endl;
 		time_b += max_time;
@@ -57,7 +58,8 @@ Function::Function(const std::vector<std::pair<Point, Velocity>>& points)
 std::pair<Point, Velocity> Function::operator()(double time) const
 {
 	if (_function.size() == 0) {
-		std::cerr << "null function" << std::endl;
+		//std::cerr << "null function" << std::endl;
+		my_log::log_it(1, "null function");
 		return std::make_pair(Point(), Velocity());
 	}
 	for (auto i = _function.begin(); i < _function.end(); i++) {

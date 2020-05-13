@@ -6,7 +6,13 @@ project (a VERSION 0.20 LANGUAGES CXX)
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall")
 
 if (UNIX)
-	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wconversion")
+	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wconversion -Wextra")
+endif()
+
+if (WIN32)
+	set(Boost_USE_STATIC_LIBS ON)
+	set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "C:/Program Files/Fort SDK/lib/win32-msvc2017/boost")
+	set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "C:/Program Files/Fort SDK/lib/win32-msvc2017/boost/lib")
 endif()
 
 set (CMAKE_VERBOSE_MAKEFILE on)
@@ -19,11 +25,26 @@ set (m_s_dir "program/sources")
 set (sf_s_dir "program/space/functions/sources")
 set (sg_s_dir "program/space/geometrics/sources")
 
-include_directories (${m_h_dir} ${sf_h_dir} ${sg_h_dir} program/space program/ ${Boost_INCLUDE_DIR})
+set (conf_dir "program/config")
+
+find_package(Boost 1.40 COMPONENTS log)
+
+if (Boost_FOUND)
+	option (USE_BOOST_LOG "use boost log" ON)
+	message ("boost log ${USE_BOOST_LOG}")
+endif()
+
+set (LOG_DIR "${CMAKE_CURRENT_BINARY_DIR}/log")
+
+configure_file(${conf_dir}/config.h.in ${conf_dir}/config.h)
+
+
+include_directories (${m_h_dir} ${sf_h_dir} ${sg_h_dir} ${conf_dir} program/space program/ ${Boost_INCLUDE_DIR})
 
 set (HEADERS
 	${m_h_dir}/csv_parser.h
 	${m_h_dir}/function.h
+	${m_h_dir}/log.h
 	program/space/init.h
 	${sf_h_dir}/combinator.h
 	${sf_h_dir}/part_of_function.h
@@ -36,11 +57,13 @@ set (HEADERS
 	${sg_h_dir}/bz_curve.h
 	${sg_h_dir}/xy_circle.h
 	${sg_h_dir}/sphere.h
+	${conf_dir}/config.h
 	)
 
 set (SOURCES
 	${m_s_dir}/csv_parser.cpp
 	${m_s_dir}/function.cpp
+	${m_s_dir}/log.cpp
 	${sf_s_dir}/combinator.cpp
 	${sf_s_dir}/part_of_function.cpp
 	${sf_s_dir}/rotate.cpp
@@ -88,9 +111,6 @@ add_library ( ${STATIC_NAME} STATIC ${SOURCES})
 set(HEADERS_DIR "./headers_dir")
 
 if (WIN32)
-	set(Boost_USE_STATIC_LIBS ON)
-	set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "C:/Program Files/Fort SDK/lib/win32-msvc2017/boost")
-	set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "C:/Program Files/Fort SDK/lib/win32-msvc2017/boost/lib")
 
 	set(HEADERS_DIR "C:/Work/012/src/ric/traceeditor/include")
 

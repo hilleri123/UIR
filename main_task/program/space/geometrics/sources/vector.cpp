@@ -294,13 +294,20 @@ Vector Vector::rotate(Vector&& vector, double beta) const
 
 //		end rotate
 
+std::string Vector::to_string() const {
+	std::string res = "[" + std::to_string(x()) + " " + std::to_string(y()) + " " + std::to_string(z()) + "]";
+	return res;
+}
+
 std::ostream& operator<<(std::ostream& stream, const Vector& vector) {
-	stream << "[" << vector.x() << " " << vector.y() << " " << vector.z() << "]";
+	//stream << "[" << vector.x() << " " << vector.y() << " " << vector.z() << "]";
+	stream << vector.to_string();
 	return stream;
 }
 
 std::ostream& operator<<(std::ostream& stream, Vector&& vector) {
-	stream << "[" << vector.x() << " " << vector.y() << " " << vector.z() << "]";
+	//stream << "[" << vector.x() << " " << vector.y() << " " << vector.z() << "]";
+	stream << vector.to_string();
 	return stream;
 }
 
