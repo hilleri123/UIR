@@ -95,7 +95,7 @@ std::vector<std::pair<Point, Velocity>>& csv_parser_read(std::string file)
 			} else {
 				// bad data
 				//std::cerr << "velocity cannt exist" << std::endl;
-				my_log::log_it(1, "velocity cannt exist");
+				my_log::log_it(my_log::level::error, __FUNCTION_NAME__, "velocity cannt exist");
 				delete &result;
 				throw ;			//!!!
 			}
@@ -103,7 +103,7 @@ std::vector<std::pair<Point, Velocity>>& csv_parser_read(std::string file)
 		} else if (parts.size() != 0) {
 			// bad data
 			//std::cerr << "bad data" << std::endl;
-			my_log::log_it(1, "bad data");
+			my_log::log_it(my_log::level::error, __FUNCTION_NAME__, "bad data");
 			delete &result;
 			throw ;			//!!!
 		}
@@ -114,12 +114,12 @@ std::vector<std::pair<Point, Velocity>>& csv_parser_read(std::string file)
 	
 #if 1
 	//std::cout << "_________________________" << std::endl;
-	my_log::log_it(0, "_________________________");
+	my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, "_________________________");
 	for (auto i = result.begin(); i < result.end(); i++) {
 		//std::cout << std::get<0>(*i) << std::endl;
-		my_log::log_it(0, std::get<0>(*i).to_string());
+		my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, std::get<0>(*i).to_string());
 	}
-	my_log::log_it(0, "_________________________");
+	my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, "_________________________");
 	//std::cout << "_________________________" << std::endl;
 #endif
 	return result;

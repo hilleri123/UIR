@@ -1,17 +1,61 @@
 
+#pragma once
+
 #include "config.h"
 #include <string>
 #include <utility>
 #include <iostream>
 
-namespace my_log {
 #ifdef USE_BOOST_LOG
+#include <iomanip>
 
+#include <boost/log/core.hpp>
+#include <boost/log/trivial.hpp>
+#include <boost/log/expressions.hpp>
+#include <boost/log/sinks/text_file_backend.hpp>
+#include <boost/log/utility/setup/file.hpp>
+#include <boost/log/utility/setup/common_attributes.hpp>
+#include <boost/log/sources/severity_logger.hpp>
+#include <boost/log/sources/record_ostream.hpp>
+#include <boost/log/support/date_time.hpp>
+#endif
 
+namespace my_log {
+	enum level {
+		trace,
+		debug,
+		info,
+		warning,
+		error,
+		fatal
+	};
+#ifdef USE_BOOST_LOG
+	//namespace logging = boost::log;
+	//namespace src = boost::log::sources;
+	//namespace trivial = boost::log::trivial;
+	//namespace keywords = boost::log::keywords;
+
+	void init();
 #else
 
 #endif
 
-	void log_it(std::size_t sender, std::string message);
+	void log_it(level lvl, std::string sender, std::string message);
 }
+
+
+#ifndef __FUNCTION_NAME__
+	#ifdef WIN32
+		#ifdef __FUNCTION__
+			#define __FUNCTION_NAME__ __FUNCTION__
+		#endif
+	#else
+		#ifdef __func__
+			#define __FUNCTION_NAME__ __func__
+		#endif
+	#endif
+	#ifndef __FUNCTION_NAME__
+		#define __FUNCTION_NAME__ ""
+	#endif
+#endif
 

@@ -9,8 +9,9 @@ if (UNIX)
 	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wconversion -Wextra")
 endif()
 
+set(Boost_USE_STATIC_LIBS ON)
+
 if (WIN32)
-	set(Boost_USE_STATIC_LIBS ON)
 	set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "C:/Program Files/Fort SDK/lib/win32-msvc2017/boost")
 	set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "C:/Program Files/Fort SDK/lib/win32-msvc2017/boost/lib")
 endif()
@@ -32,6 +33,10 @@ find_package(Boost 1.40 COMPONENTS log)
 if (Boost_FOUND)
 	option (USE_BOOST_LOG "use boost log" ON)
 	message ("boost log ${USE_BOOST_LOG}")
+
+	set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lpthread -lboost_system")
+	add_definitions(-DBOOST_ERROR_CODE_HEADER_ONLY)
+	#ADD_DEFINITIONS(-DBOOST_LOG_DYN_LINK)
 endif()
 
 set (LOG_DIR "${CMAKE_CURRENT_BINARY_DIR}/log")
@@ -105,8 +110,13 @@ set (SOURCES
 set (STATIC_NAME _uir_static)
 set (SHARED_NAME _uir_shared)
 
-add_library ( ${SHARED_NAME} SHARED ${SOURCES})
+#add_library ( ${SHARED_NAME} SHARED ${SOURCES})
 add_library ( ${STATIC_NAME} STATIC ${SOURCES})
+
+if (USE_BOOST_LOG)
+	#target_link_libraries(${SHARED_NAME} LINK_PUBLIC ${Boost_LIBRARIES})
+	target_link_libraries(${STATIC_NAME} LINK_PUBLIC ${Boost_LIBRARIES})
+endif()
 
 set(HEADERS_DIR "./headers_dir")
 
