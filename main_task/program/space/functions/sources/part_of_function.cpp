@@ -25,13 +25,15 @@ bool PartOfFunction::init() {
 
 	Vector normA = earth::norm(A);
 
-	std::cout << "normA " << normA << " A " << A << std::endl;
+	my_log::log_it(my_log::level::info, __FUNCTION_NAME__, "normA "+normA.to_string()+" A "+A.to_string());
+	//std::cout << "normA " << normA << " A " << A << std::endl;
 
 	//Conversion con_start(&A, nullptr, &_direction, &OA);
 	Conversion* con_start;
 	INIT(con_start, Conversion, &A, nullptr, &_direction, &normA);
 	if (con_start == nullptr) {
-		std::cerr << "first Conversion faild" << std::endl;
+		//std::cerr << "first Conversion faild" << std::endl;
+		my_log::log_it(my_log::level::error, __FUNCTION_NAME__, "first Conversion faild");
 		return false;
 	}
 
@@ -51,7 +53,8 @@ bool PartOfFunction::init() {
 	Rotate* tmp_rotate = nullptr;
 	INIT(tmp_rotate, Rotate, con_start->to(A), con_start->to(_direction), distination, dist_vec, _velocity, con_start->from_matrix());
 	if (tmp_rotate == nullptr) {
-		std::cerr << "first rotate faild" << std::endl;
+		//std::cerr << "first rotate faild" << std::endl;
+		my_log::log_it(my_log::level::error, __FUNCTION_NAME__, "first rotate faild");
 		delete con_start;
 		return false;
 	} else {
@@ -81,13 +84,15 @@ bool PartOfFunction::init() {
 	Conversion* con_climb;
 	INIT(con_climb, Conversion, &B, nullptr, &tmp_direction, &tmp_direction_z);
 	if (con_climb == nullptr) {
-		std::cerr << "climb Conversion faild" << std::endl;
+		//std::cerr << "climb Conversion faild" << std::endl;
+		my_log::log_it(my_log::level::error, __FUNCTION_NAME__, "climb Conversion faild");
 		return false;
 	}
 	//std::cout << "init " << con_climb->init() << std::endl;
 	//std::cout << "OB " << OB << " to(" << con_climb->to(OB) << ") from(" << con_climb->from(OB) << ")" << std::endl;
 	//Vector H = OB.normolize() * (earth::H(E) - earth::H(B));
-	std::cout << "B " << earth::H(B) << " E " << earth::H(E) << std::endl;
+	//std::cout << "B " << earth::H(B) << " E " << earth::H(E) << std::endl;
+	my_log::log_it(my_log::level::info, __FUNCTION_NAME__, "B " + std::to_string(earth::H(B)) + " E " + std::to_string(earth::H(E)));
 	Vector H = normB.normolize() * (earth::H(E) - earth::H(B));
 	distination = con_climb->to(B) + 4 * R * oy + con_climb->to(H);
 
@@ -99,6 +104,7 @@ bool PartOfFunction::init() {
 	INIT(tmp_rotate, Rotate, con_climb->to(B), con_climb->to(tmp_direction), distination, dist_vec, _velocity, con_climb->from_matrix());
 	if (tmp_rotate == nullptr) {
 		std::cerr << "first rotate faild" << std::endl;
+		my_log::log_it(my_log::level::error, __FUNCTION_NAME__, "first rotate faild");
 		delete con_climb;
 		return false;
 	} else {
@@ -123,7 +129,8 @@ bool PartOfFunction::init() {
 	}
 
 
-	std::cout << earth::H(A) << " <= " << earth::H(B) << " < " << earth::H(C) << " = " << earth::H(D) << " >= " << earth::H(E) << std::endl;
+	//std::cout << earth::H(A) << " <= " << earth::H(B) << " < " << earth::H(C) << " = " << earth::H(D) << " >= " << earth::H(E) << std::endl;
+	my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, std::to_string(earth::H(A))+" <= "+std::to_string(earth::H(B))+" < "+std::to_string(earth::H(C))+" = "+std::to_string(earth::H(D))+" >= "+std::to_string(earth::H(E)));
 	//std::cout << A.radius() << " " << B.radius() << " " << C.radius() << " " << D.radius() << " " << E.radius() << std::endl;
 	
 	return true;

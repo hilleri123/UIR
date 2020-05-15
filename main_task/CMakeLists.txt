@@ -135,7 +135,7 @@ endif()
 
 
 
-find_package(Boost 1.40 COMPONENTS program_options)
+find_package(Boost 1.40 COMPONENTS program_options log)
 
 if (Boost_FOUND)
 

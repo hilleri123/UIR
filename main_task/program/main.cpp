@@ -10,6 +10,7 @@
 #include "csv_parser.h"
 #include "velocity.h"
 #include "sphere.h"
+#include "log.h"
 
 #include <boost/program_options.hpp>
 
@@ -91,16 +92,20 @@ int main(int argc, char** argv)
 	plot.close();
 #endif
 
-	std::cout << in << std::endl;
+	//std::cout << in << std::endl;
+	my_log::log_it(my_log::level::info, __FUNCTION_NAME__, in);
 	if (out.size() > 0) {
-		std::cout << out << std::endl;
+		//std::cout << out << std::endl;
+		my_log::log_it(my_log::level::info, __FUNCTION_NAME__, out);
 		stream.open(out);
 		if (!stream.is_open()) {
 			throw std::ofstream::failure("outfile not open");
 		}
 	}
-	std::cout << h << std::endl;
-	std::cout << a.max_time() << std::endl;
+	my_log::log_it(my_log::level::info, __FUNCTION_NAME__, "Height "+std::to_string(h));
+	my_log::log_it(my_log::level::info, __FUNCTION_NAME__, "Time "+std::to_string(a.max_time()));
+	//std::cout << h << std::endl;
+	//std::cout << a.max_time() << std::endl;
 
 
 	const Conversion flatting = earth::flatting_conv();

@@ -18,6 +18,7 @@
 #include "init.h"
 #include "bz_curve.h"
 #include "xy_circle.h"
+#include "log.h"
 
 
 class Rotate : base_init

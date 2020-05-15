@@ -9,15 +9,21 @@ namespace trivial=boost::log::trivial;
 namespace keywords=boost::log::keywords;
 namespace expr=boost::log::expressions;
 
+
+
 void my_log::init()
 {
+	static bool init_called = false;
+	if (init_called)
+		return;
+	init_called = true;
 	std::string file_name_template = "imit_%N.log";
-	logging::add_file_log(
 #ifdef LOG_DIR
-		keywords::file_name = LOG_DIR+file_name_template,
-#else
-		keywords::file_name = file_name_template,
+	file_name_template = std::string(LOG_DIR)+"/"+file_name_template;
 #endif
+	std::cout << "FILE_NAME_TEMPLATE '" << file_name_template << "'" << std::endl;
+	logging::add_file_log(
+		keywords::file_name = file_name_template,
 		keywords::rotation_size = 1024*1024*10/* 10Mb */,
 		keywords::format = (
 			expr::stream
@@ -39,7 +45,12 @@ void my_log::init()
 
 
 void my_log::log_it(my_log::level lvl, std::string sender, std::string message) {
+
+	message = "( "+sender+" ) \t"+message;
+
 #ifdef USE_BOOST_LOG
+	my_log::init();
+
 	trivial::severity_level boost_lvl = trivial::severity_level::info;
 #else
 	std::string str_lvl = "";
@@ -59,14 +70,6 @@ void my_log::log_it(my_log::level lvl, std::string sender, std::string message) 
 	switch (lvl) {
 	case my_log::level::trace:
 		MY_CASE(trivial::severity_level::trace, "trace")
-#if 0
-#ifdef USE_BOOST_LOG
-		boost_lvl = trivial::severity_level::trace;
-#else
-		str_lvl = "TRACE";
-#endif
-		break;
-#endif
 	case my_log::level::debug:
 		MY_CASE(trivial::severity_level::debug, "debug")
 	case my_log::level::info:
@@ -83,8 +86,11 @@ void my_log::log_it(my_log::level lvl, std::string sender, std::string message) 
 #ifdef USE_BOOST_LOG
 	static boost::log::sources::severity_logger<trivial::severity_level> lg;
 
+	BOOST_LOG_SEV(lg, boost_lvl) << message;
 #else
-	std::cout << "[" << str_lvl << "] " << message << std::endl;
+	static std::ofstream file(LOG_DIR+std::string("/imit.log"));
+	//std::cout << "[" << str_lvl << "] " << message << std::endl;
+	file << "[" << str_lvl << "] ( " << sender << " ) " << message << std::endl;
 #endif
 }
 
