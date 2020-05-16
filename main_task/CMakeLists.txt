@@ -19,12 +19,12 @@ endif()
 set (CMAKE_VERBOSE_MAKEFILE on)
 
 
-set (m_h_dir "program/headers")
-set (sf_h_dir "program/space/functions/headers")
-set (sg_h_dir "program/space/geometrics/headers")
-set (m_s_dir "program/sources")
-set (sf_s_dir "program/space/functions/sources")
-set (sg_s_dir "program/space/geometrics/sources")
+set (m_h_dir "${CMAKE_CURRENT_LIST_DIR}/program/headers")
+set (sf_h_dir "${CMAKE_CURRENT_LIST_DIR}/program/space/functions/headers")
+set (sg_h_dir "${CMAKE_CURRENT_LIST_DIR}/program/space/geometrics/headers")
+set (m_s_dir "${CMAKE_CURRENT_LIST_DIR}/program/sources")
+set (sf_s_dir "${CMAKE_CURRENT_LIST_DIR}/program/space/functions/sources")
+set (sg_s_dir "${CMAKE_CURRENT_LIST_DIR}/program/space/geometrics/sources")
 
 set (conf_dir "program/config")
 
