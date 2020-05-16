@@ -26,7 +26,7 @@ set (m_s_dir "${CMAKE_CURRENT_LIST_DIR}/program/sources")
 set (sf_s_dir "${CMAKE_CURRENT_LIST_DIR}/program/space/functions/sources")
 set (sg_s_dir "${CMAKE_CURRENT_LIST_DIR}/program/space/geometrics/sources")
 
-set (conf_dir "program/config")
+set (conf_dir "${CMAKE_CURRENT_LIST_DIR}/program/config")
 
 find_package(Boost 1.40 COMPONENTS log)
 
