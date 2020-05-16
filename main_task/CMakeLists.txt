@@ -51,7 +51,7 @@ set (HEADERS
 	${m_h_dir}/csv_parser.h
 	${m_h_dir}/function.h
 	${m_h_dir}/log.h
-	program/space/init.h
+	${CMAKE_CURRENT_LIST_DIR}/program/space/init.h
 	${sf_h_dir}/combinator.h
 	${sf_h_dir}/part_of_function.h
 	${sf_h_dir}/rotate.h
