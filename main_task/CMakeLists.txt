@@ -124,6 +124,7 @@ if (WIN32)
 
 	set(HEADERS_DIR "C:/Work/012/src/ric/traceeditor/include")
 
+	message(STATUS "path = '${CMAKE_CURRENT_LIST_DIR}/libs/' filename = '${STATIC_NAME}.lib'")
 	add_custom_command(TARGET ${STATIC_NAME} POST_BUILD
 		COMMAND "${CMAKE_COMMAND}" -E copy
 		"${CMAKE_CURRENT_BINARY_DIR}/${STATIC_NAME}.lib"
