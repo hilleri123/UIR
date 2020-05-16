@@ -18,6 +18,11 @@
 #include <boost/log/sources/severity_logger.hpp>
 #include <boost/log/sources/record_ostream.hpp>
 #include <boost/log/support/date_time.hpp>
+
+#else
+
+#include <fstream>
+
 #endif
 
 namespace my_log {
