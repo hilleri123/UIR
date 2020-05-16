@@ -39,6 +39,7 @@ if (Boost_FOUND)
 	#ADD_DEFINITIONS(-DBOOST_LOG_DYN_LINK)
 endif()
 
+file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/log")
 set (LOG_DIR "${CMAKE_CURRENT_BINARY_DIR}/log")
 
 configure_file(${conf_dir}/config.h.in ${conf_dir}/config.h)
@@ -153,7 +154,7 @@ foreach (myheader_path IN LISTS HEADERS)
 	message(STATUS "path = '${myheader_path}' filename = '${myheader}'")
 	add_custom_command(TARGET ${STATIC_NAME} POST_BUILD
 		COMMAND "${CMAKE_COMMAND}" -E copy
-		"${CMAKE_CURRENT_SOURCE_DIR}/${myheader_path}"
+		"${myheader_path}"
 		"${HEADERS_DIR}/${PROJECT_NAME}/"
 		COMMENT "Copying ${myheader_path}"
 		)
