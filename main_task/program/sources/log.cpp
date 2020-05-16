@@ -21,7 +21,7 @@ void my_log::init()
 #ifdef LOG_DIR
 	file_name_template = std::string(LOG_DIR)+"/"+file_name_template;
 #endif
-	std::cout << "FILE_NAME_TEMPLATE '" << file_name_template << "'" << std::endl;
+	//std::cout << "FILE_NAME_TEMPLATE '" << file_name_template << "'" << std::endl;
 	logging::add_file_log(
 		keywords::file_name = file_name_template,
 		keywords::rotation_size = 1024*1024*10/* 10Mb */,

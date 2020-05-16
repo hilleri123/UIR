@@ -20,7 +20,8 @@ Rotate::Rotate(Point start, Vector start_direction, Point distination, Vector en
 bool Rotate::init()
 {
 	if (!(equal(_end.z(), 0) && equal(_direction.z(), 0) && equal(_start.z(), 0) && equal(_start_direction.z(), 0))) {
-		std::cout << "z must be 0 " << _start << _start_direction << _end << _direction << std::endl;
+		//std::cout << "z must be 0 " << _start << _start_direction << _end << _direction << std::endl;
+		my_log::log_it(my_log::level::error, __FUNCTION_NAME__, "z must be 0"+_start.to_string()+_start_direction.to_string()+_end.to_string()+_direction.to_string());
 		return false;
 	}
 	Vector ox(Point(1,0,0));
@@ -122,8 +123,11 @@ bool Rotate::init()
 
 	//std::cout << "line " << std::get<0>(line) << " " << std::get<1>(line) << std::endl;
 
-	if (len < 0) 
-		std::cerr << "in Rotate len < 0" << std::endl;
+	if (len < 0) {
+		//std::cerr << "in Rotate len < 0" << std::endl;
+		my_log::log_it(my_log::level::error, __FUNCTION_NAME__, "in Rotate len < 0");
+		return false;
+	}
 
 	
 
