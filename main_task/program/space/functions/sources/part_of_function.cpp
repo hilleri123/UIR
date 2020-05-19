@@ -215,7 +215,7 @@ Point PartOfFunction::operator()(double time) const
 	}
 
 	double t = time;
-#define CHECK 1
+#define CHECK 0
 
 	if (t <= _start.max_time())
 #if CHECK
@@ -235,6 +235,7 @@ Point PartOfFunction::operator()(double time) const
 	else
 		t -= _climb.max_time();
 
+#if CHECK
 	for (auto i = _curves.begin(); i < _curves.end(); i++) {
 		assert(!equal(i->get_len(), 0));
 		//std::cout << "get_len(" << i->get_len() << ")" << std::endl;
@@ -246,6 +247,7 @@ Point PartOfFunction::operator()(double time) const
 
 	if (t <= _finish.max_time())
 		return _finish(t);
+#endif
 	
 	//std::size_t ind = static_cast<std::size_t>(time);
 	//return _curves.at(ind)(time - ind);

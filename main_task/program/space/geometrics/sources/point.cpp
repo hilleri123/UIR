@@ -72,7 +72,11 @@ bool Point::operator==(Point&& point) const
 bool Point::operator!=(Point&& point) const { return !this->operator==(point); }
 	
 std::string Point::to_string() const {
+#ifdef PRINT_USE_GEO
+	std::string res = "(" + std::to_string(radius()) + " " + std::to_string(latitude()) + " " + std::to_string(longitude()) + ")";
+#else
 	std::string res = "(" + std::to_string(_arr[0]) + " " + std::to_string(_arr[1]) + " " + std::to_string(_arr[2]) + ")";
+#endif
 	return res;
 }
 

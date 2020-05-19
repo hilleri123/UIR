@@ -30,6 +30,9 @@ set (conf_dir "${CMAKE_CURRENT_LIST_DIR}/program/config")
 
 find_package(Boost 1.40 COMPONENTS log)
 
+option (PRINT_USE_GEO "print geo points" ON)
+
+
 if (Boost_FOUND)
 	option (USE_BOOST_LOG "use boost log" ON)
 	message ("boost log ${USE_BOOST_LOG}")

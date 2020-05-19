@@ -55,9 +55,9 @@ namespace my_log {
 			#define __FUNCTION_NAME__ __FUNCTION__
 		#endif
 	#else
-		#ifdef __func__
+		//#ifdef __func__
 			#define __FUNCTION_NAME__ __func__
-		#endif
+		//#endif
 	#endif
 	#ifndef __FUNCTION_NAME__
 		#define __FUNCTION_NAME__ ""
