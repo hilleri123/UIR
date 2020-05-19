@@ -90,7 +90,8 @@ void my_log::log_it(my_log::level lvl, std::string sender, std::string message) 
 #else
 	static std::ofstream file(LOG_DIR+std::string("/imit.log"));
 	//std::cout << "[" << str_lvl << "] " << message << std::endl;
-	file << "[" << str_lvl << "] ( " << sender << " ) " << message << std::endl;
+	//file << "[" << str_lvl << "] ( " << sender << " ) " << message << std::endl;
+	file << "[" << str_lvl << "] " << message << std::endl;
 #endif
 }
 

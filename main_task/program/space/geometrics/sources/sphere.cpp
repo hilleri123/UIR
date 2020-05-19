@@ -287,6 +287,7 @@ std::vector<BzCurve> orthodoxy(const Point& first_point, const Point& second, Ve
 
 			double H = (curr.radius() - h1) + h2;
 			next.by_geo(H, lat2, curr.longitude() + L);
+			my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, "new point "+next.to_string());
 			//std::cout << "bz curve " << next << " h1(" << (curr.radius() - h1) << ") h2(" << (next.radius() - h2) << ")" << std::endl;
 			//z1 = z2;
 

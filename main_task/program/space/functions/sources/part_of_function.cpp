@@ -209,16 +209,21 @@ Point PartOfFunction::operator()(double time) const
 
 	double t = time;
 
+#ifndef CLOSE_START
 	if (t <= _start.max_time())
 		return _start(t);
 	else
 		t -= _start.max_time();
+#endif
 
+#ifndef CLOSE_CLIMB
 	if (t <= _climb.max_time())
 		return _climb(t);
 	else
 		t -= _climb.max_time();
+#endif
 
+#ifndef CLOSE_ORTH
 	for (auto i = _curves.begin(); i < _curves.end(); i++) {
 		assert(!equal(i->get_len(), 0));
 		//std::cout << "get_len(" << i->get_len() << ")" << std::endl;
@@ -227,8 +232,12 @@ Point PartOfFunction::operator()(double time) const
 		else
 			t -= i->get_len();
 	}
+#endif
+
+#ifndef CLOSE_FINSH
 	if (t <= _finish.max_time())
 		return _finish(t);
+#endif
 	
 	//std::size_t ind = static_cast<std::size_t>(time);
 	//return _curves.at(ind)(time - ind);
@@ -260,7 +269,8 @@ Point PartOfFunction::operator()(double time) const
 	//std::cout << "% " << (_velocity / _alpha / Vector::norm(first) * log(abs(1 + _alpha*time))) << " " << (time/(max_time() - _rotate.max_time()*(second^first))) << std::endl;
 	//std::cout << "f " << (Vector::norm(first) * _alpha * time) << std::endl;
 
-	return Point();
+	//return Point();
+	return _end;
 }
 
 double PartOfFunction::max_time() const
