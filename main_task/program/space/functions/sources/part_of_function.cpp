@@ -133,6 +133,13 @@ bool PartOfFunction::init() {
 	my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, std::to_string(earth::H(A))+" <= "+std::to_string(earth::H(B))+" < "+std::to_string(earth::H(C))+" = "+std::to_string(earth::H(D))+" >= "+std::to_string(earth::H(E)));
 	//std::cout << A.radius() << " " << B.radius() << " " << C.radius() << " " << D.radius() << " " << E.radius() << std::endl;
 	
+
+	my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, std::string("start ")+_start(0)+" "+_start(_start.max_time()));
+	my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, std::string("climb ")+_climb(0)+" "+_climb(_climb.max_time()));
+	for (auto i = _curves.begin(); i < _curves.end(); i++) {
+		my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, std::string("curve ")+(*i)(0)+" "+(*i)(i->get_len()));
+	}
+	
 	return true;
 #if 0
 	Point second = m_second;
@@ -209,21 +216,16 @@ Point PartOfFunction::operator()(double time) const
 
 	double t = time;
 
-#ifndef CLOSE_START
 	if (t <= _start.max_time())
 		return _start(t);
 	else
 		t -= _start.max_time();
-#endif
 
-#ifndef CLOSE_CLIMB
 	if (t <= _climb.max_time())
 		return _climb(t);
 	else
 		t -= _climb.max_time();
-#endif
 
-#ifndef CLOSE_ORTH
 	for (auto i = _curves.begin(); i < _curves.end(); i++) {
 		assert(!equal(i->get_len(), 0));
 		//std::cout << "get_len(" << i->get_len() << ")" << std::endl;
@@ -232,12 +234,9 @@ Point PartOfFunction::operator()(double time) const
 		else
 			t -= i->get_len();
 	}
-#endif
 
-#ifndef CLOSE_FINSH
 	if (t <= _finish.max_time())
 		return _finish(t);
-#endif
 	
 	//std::size_t ind = static_cast<std::size_t>(time);
 	//return _curves.at(ind)(time - ind);
