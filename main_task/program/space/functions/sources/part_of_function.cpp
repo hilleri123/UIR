@@ -134,10 +134,10 @@ bool PartOfFunction::init() {
 	//std::cout << A.radius() << " " << B.radius() << " " << C.radius() << " " << D.radius() << " " << E.radius() << std::endl;
 	
 
-	my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, std::string("start ")+_start(0)+" "+_start(_start.max_time()));
-	my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, std::string("climb ")+_climb(0)+" "+_climb(_climb.max_time()));
+	my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, std::string("start ")+_start(0).to_string()+" "+_start(_start.max_time()).to_string());
+	my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, std::string("climb ")+_climb(0).to_string()+" "+_climb(_climb.max_time()).to_string());
 	for (auto i = _curves.begin(); i < _curves.end(); i++) {
-		my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, std::string("curve ")+(*i)(0)+" "+(*i)(i->get_len()));
+		my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, std::string("curve ")+(*i)(0).to_string()+" "+(*i)(i->get_len()).to_string());
 	}
 	
 	return true;
@@ -215,14 +215,23 @@ Point PartOfFunction::operator()(double time) const
 	}
 
 	double t = time;
+#define CHECK 1
 
 	if (t <= _start.max_time())
+#if CHECK
+		return _start(0);
+#else
 		return _start(t);
+#endif
 	else
 		t -= _start.max_time();
 
 	if (t <= _climb.max_time())
+#if CHECK
+		return _climb(0);
+#else
 		return _climb(t);
+#endif
 	else
 		t -= _climb.max_time();
 
