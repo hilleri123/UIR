@@ -81,6 +81,15 @@ void const* Velocity::stats() const {
 	return _stats;
 }
 
+void Velocity::set_course(double course) {
+	_course = course;
+}
+
+double Velocity::course() const {
+	return _course;
+}
+
+
 Velocity::~Velocity()
 {}
 

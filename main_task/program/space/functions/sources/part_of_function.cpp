@@ -1,6 +1,12 @@
 
 #include "part_of_function.h"
 
+
+namespace timebackstep {
+	static double step = 0.01; 
+}
+
+
 PartOfFunction::PartOfFunction(const Point& first, const Point& second, const Velocity& v, const Vector& direction, const Vector& end_direction)
 	: _begin(first), _end(second), _velocity(v), _direction(direction), _end_direction(end_direction)
 {}
@@ -200,53 +206,66 @@ bool PartOfFunction::init() {
 	//return true;
 //}
 
-Point PartOfFunction::operator()(double time) const
+std::pair<Point, Velocity> PartOfFunction::operator()(double time) const
 {
+
 
 #if 0
 	std::cout << "time(" << time << ") max_time(" << max_time() << ") _start.max_time(" << _start.max_time() << ") _climb.max_time(" << _climb.max_time()
 	       	<< ") _finish.max_time(" << _finish.max_time() << ")" << std::endl;
 #endif
+	Velocity tmp_v = _velocity;
 
 	if (time > max_time()) {
-		return _end;
+		tmp_v.set_course(earth::course(_end, _end_direction));
+		return std::make_pair(_end, tmp_v);
 	} else if (time < 0) {
-		return _begin;
+		tmp_v.set_course(earth::course(_begin, _direction));
+		return std::make_pair(_begin, tmp_v);
 	}
 
 	double t = time;
+#define SET_COURSE(functr, t, v, dir) \
+	Vector _tmp_tmp_vector; \
+	if (t - timebackstep::step < 0) \
+		_tmp_tmp_vector = dir; \
+	else \
+		_tmp_tmp_vector = Vector(functr(t-timebackstep::step), functr(t)); \
+	v.set_course(earth::course(functr(t), _tmp_tmp_vector));
+
 #define CHECK 0
 
-	if (t <= _start.max_time())
+	if (t <= _start.max_time()) {
+		SET_COURSE(_start, t, tmp_v, _direction)
 #if CHECK
-		return _start(0);
-#else
-		return _start(t);
+		t = 0;
 #endif
-	else
+		return std::make_pair(_start(t), tmp_v);
+	} else
 		t -= _start.max_time();
 
-	if (t <= _climb.max_time())
+	if (t <= _climb.max_time()) {
+		SET_COURSE(_climb, t, tmp_v, _start.direction())
 #if CHECK
-		return _climb(0);
-#else
-		return _climb(t);
+		t = 0;
 #endif
-	else
+		return std::make_pair(_climb(t), tmp_v);
+	} else
 		t -= _climb.max_time();
 
 #if CHECK
 	for (auto i = _curves.begin(); i < _curves.end(); i++) {
 		assert(!equal(i->get_len(), 0));
 		//std::cout << "get_len(" << i->get_len() << ")" << std::endl;
-		if (t <= i->get_len())
-			return (*i)(t);
-		else
+		if (t <= i->get_len()) {
+			SET_COURSE((*i), t, tmp_v, _climb.direction())
+			return std::make_pair((*i)(t), tmp_v);
+		} else
 			t -= i->get_len();
 	}
 
 	if (t <= _finish.max_time())
-		return _finish(t);
+		return std::make_pair(__finish(t), tmp_v);
 #endif
 	
 	//std::size_t ind = static_cast<std::size_t>(time);
@@ -280,7 +299,9 @@ Point PartOfFunction::operator()(double time) const
 	//std::cout << "f " << (Vector::norm(first) * _alpha * time) << std::endl;
 
 	//return Point();
-	return _end;
+	
+#undef SET_COURSE
+	return std::make_pair(_end, tmp_v);
 }
 
 double PartOfFunction::max_time() const

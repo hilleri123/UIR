@@ -67,13 +67,13 @@ std::pair<Point, Velocity> Function::operator()(double time) const
 		if (Interval::in_interval(time, std::get<1>(*i))) {
 			//std::cout << "in interval " << std::get<1>(*i).begin() << std::endl;
 			const PartOfFunction& part = std::get<0>(*i);
-			//return std::get<0>(*i)(time - std::get<1>(*i).begin());
-			return std::make_pair(part(time - std::get<1>(*i).begin()), part.stats());
+			return part(time - std::get<1>(*i).begin());
+			//return std::make_pair(part(time - std::get<1>(*i).begin()), part.stats());
 		}
 	}
 	const PartOfFunction& part = std::get<0>(_function.back());
-	return std::make_pair(part(time), part.stats());
-	//return std::get<0>(_function.back())(time);
+	//return std::make_pair(part(time), part.stats());
+	return part(time);
 }
 
 Interval Function::interval(std::size_t i) const

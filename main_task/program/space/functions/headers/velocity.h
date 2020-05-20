@@ -80,10 +80,15 @@ public:
 	void set_stats(void const* ptr);
 	void const* stats() const;
 
+	void set_course(double curse);
+	double course() const;
+
 	~Velocity();
 protected:
 	double _velocity;
 	//angle _max_rotate;
 	double _max_rotate;
+	double _course;
+
 	void const* _stats = nullptr;
 };

@@ -31,6 +31,8 @@ namespace earth {
 	double H(Point p);
 
 	Point geo(double h, double lat, double lon);
+
+	double course(Point p, Vector vec);
 }
 
 

@@ -33,7 +33,7 @@ public:
 
 	virtual bool init() override;
 	
-	virtual Point operator()(double time) const;
+	virtual std::pair<Point, Velocity> operator()(double time) const;
 
 	virtual double max_time() const;
 

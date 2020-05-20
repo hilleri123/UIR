@@ -81,6 +81,34 @@ double earth::local_R(Point p) {
 	return local_R(p.latitude(), p.longitude());
 }
 
+double earth::course(Point p, Vector v) {
+	Point O(0,0,0);
+		
+	Vector south(O, Point(0,0,earth::radius()));
+	//Vector new_z(second, O);
+	Vector new_z = earth::norm(p);
+	Vector new_y = new_z * south;
+		
+	//Conversion conv(&second, nullptr, &new_y, &new_z);
+
+	Conversion* conv;
+	INIT(conv, Conversion, &p, nullptr, &new_y, &new_z);
+
+	Vector ox(Point(1,0,0));
+
+	v = conv->to(v);
+	v = Vector(Point(v.x(), v.y(), 0));
+
+	//Vector tmp(Point(cos(z2),sin(z2),0));
+	delete conv;
+
+	return ox^v;
+		
+}
+
+
+
+
 bool direct(const double& lat1, const double& z1, const double& s, double& lat2, double& L, double& z2) {
 
 	if (lat1 != lat1 || z1 != z1 || s != s) {
