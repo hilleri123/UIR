@@ -142,7 +142,7 @@ bool Rotate::init()
 		for (int i = 0; i < 4; i++) {
 			// 3 = 4 - 1
 			tmp_arr[i] = first(Point(0,0,0), tmp_angl + static_cast<double>(i)*delta/3);
-			my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, "first "+tmp_arr[i].to_string()+" /"+_matrix(tmp_arr[i]).to_string()+"/");
+			//my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, "first "+tmp_arr[i].to_string()+" /"+_matrix(tmp_arr[i]).to_string()+"/");
 			//std::cout << "i(" << i << ") tmp_angl(" << (tmp_angl + static_cast<double>(i)*delta/3) << ") " << tmp_arr[i] << std::endl;
 		}
 		BzCurve curve(tmp_arr);
@@ -157,7 +157,7 @@ bool Rotate::init()
 	Vector tmp_v(std::get<0>(line), std::get<1>(line));
 	for (int i = 0; i < 4; i++) {
 		tmp_arr[i] = std::get<0>(line) + tmp_v*(static_cast<double>(i)/3);
-		my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, "line "+tmp_arr[i].to_string()+" /"+_matrix(tmp_arr[i]).to_string()+"/");
+		//my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, "line "+tmp_arr[i].to_string()+" /"+_matrix(tmp_arr[i]).to_string()+"/");
 	}
 	BzCurve l_curve(tmp_arr);
 	l_curve *= _matrix;
@@ -176,7 +176,7 @@ bool Rotate::init()
 		for (int i = 0; i < 4; i++) {
 			// 3 = 4 - 1
 			tmp_arr[i] = second(std::get<1>(line), tmp_angl + static_cast<double>(i)*delta/3);
-			my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, "second "+tmp_arr[i].to_string()+" /"+_matrix(tmp_arr[i]).to_string()+"/");
+			//my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, "second "+tmp_arr[i].to_string()+" /"+_matrix(tmp_arr[i]).to_string()+"/");
 			//std::cout << "i(" << i << ") tmp_angl(" << (tmp_angl + static_cast<double>(i)*delta/3) << ") " << tmp_arr[i] << std::endl;
 		}
 		BzCurve curve(tmp_arr);

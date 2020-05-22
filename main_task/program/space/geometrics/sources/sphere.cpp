@@ -13,9 +13,9 @@ namespace sphere {
 	double f = 1./298.257223263;
 	double b = a - f * a;
 
-	double error = 0.001;
+	double error = 0.0001;
 
-	double split_distance = 100;
+	double split_distance = 10;
 
 
 	//double R_earth = R_EARTH;
@@ -112,16 +112,27 @@ double earth::course(Point p, Vector v) {
 bool direct(const double& lat1, const double& z1, const double& s, double& lat2, double& L, double& z2) {
 
 	if (lat1 != lat1 || z1 != z1 || s != s) {
-		std::cerr << "nan found lat1(" << lat1 << ") z1(" << z1 << ") s(" << s << ")" << std::endl;
+		//std::cerr << "nan found lat1(" << lat1 << ") z1(" << z1 << ") s(" << s << ")" << std::endl;
+		std::string tmp_str = "nan found lat1(" + std::to_string(lat1) + ") z1(" + std::to_string(z1) + ") s(" + std::to_string(s) + ")";
+		my_log::log_it(my_log::level::error, __FUNCTION_NAME__, tmp_str);
 		return false;
 	}
 
-	double U1 = atan( (1. - sphere::f) * tan(lat1) );
-	double o1 = atan( tan(U1) / cos(z1) );
-	double z = cos(U1) * sin(z1);
+	//double U1_2 = atan( (1. - sphere::f) * tan(lat1) );
+	double U1 = atan2( (1. - sphere::f) * sin(lat1), cos(lat1) );
+	//double o1_2 = atan( tan(U1) / cos(z1) );
+	double o1 = atan2( sin(U1) , cos(U1) * cos(z1) );
+	double z = asin(cos(U1) * sin(z1));	//!!!!!!!!!!!!!!!!!!!!!!!!!! +- pi    =>  cos(z) switches sign
+
+#if 0
+	std::string tmp_str = "direct U1(" + std::to_string(U1) + ") sinU1(" + std::to_string(sin(U1)) + ") cosU1(" + std::to_string(cos(U1))
+	       	+ ") U1_2(" + std::to_string(U1_2) + ") sinU1_2(" + std::to_string(sin(U1_2)) + ") cosU1_2(" + std::to_string(cos(U1_2))
+	       	+ ") o1(" + std::to_string(o1) + ") o1_2(" + std::to_string(o1_2) + ")";
+	my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, tmp_str);
+#endif
 
 	//u_2 = u^2
-	double u_2 = pow(cos(z1), 2.) * (pow(sphere::a, 2.) - pow(sphere::b, 2.)) / pow(sphere::b, 2.);
+	double u_2 = pow(cos(z), 2.) * (pow(sphere::a, 2.) - pow(sphere::b, 2.)) / pow(sphere::b, 2.);
 
 	double A = 1. + (u_2 / 16384.) * (4096. + u_2 * (-768. + u_2 * (320. - 175. * u_2)));
 	double B = (u_2 / 1024.) * (256. + u_2 * (-128. + u_2 * (74. - 47. * u_2)));
@@ -136,23 +147,43 @@ bool direct(const double& lat1, const double& z1, const double& s, double& lat2,
 	//std::cout << "u_2 " << u_2 << " A " << A << " B " << B << std::endl;
 	//int max = 0;
 
+#if 0
+	tmp_str = "direct2 lat1(" + std::to_string(lat1) + ") z1(" + std::to_string(z1) + ") s(" + std::to_string(s)
+	       	+ ") U1(" + std::to_string(U1) + ") o1(" + std::to_string(o1) + ") z(" + std::to_string(z)
+	       	+ ") u_2(" + std::to_string(u_2) + ") A(" + std::to_string(A) + ") B(" + std::to_string(B)
+		+ ") o(" + std::to_string(o) + ")";
+	my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, tmp_str);
+#endif
 	do {
 		om2 = 2. * o1 + o;
 		delta_o = B * sin(o) * (cos(om2) + B / 4. * (cos(o) * (-1. + 2. * pow(cos(om2), 2))
 				       	- B / 6. * cos(om2) * (-3. + 4. * pow(sin(o), 2)) * (-3. + 4. * pow(cos(om2), 2))));
-		o = s / (sphere::b * A) + delta_o;
+		//o = s / (sphere::b * A) + delta_o;
+		o += delta_o;
 
 		//std::cout << "fabs(delta_o) " << fabs(delta_o) << " o " << o << std::endl;
 		//max++;
 
 	} while (less(sphere::error, fabs(delta_o))/* && max < 10*/);
+	//my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, "o "+std::to_string(o)+" delta_o "+std::to_string(delta_o));
 
 	//---------------------------------------
 
+
+#if 0
+	tmp_str = "sin(lat1) = "+std::to_string(sin(lat1)) + " cos(lat1) = " + std::to_string(cos(lat1))+
+		+" sin(lat2) = "+ std::to_string((sin(U1) * cos(o) + cos(U1) * sin(o) * cos(z1))) +
+		+" cos(lat2) = " + std::to_string((1. - sphere::f) * pow( (pow(sin(z), 2) + pow( (sin(U1) * sin(o) - cos(U1) * cos(o) * cos(z1)) , 2)) , 0.5)) +
+		+" sin(lat2)1 = "+ std::to_string((sin(U1))/* / (1. - sphere::f)*/) +
+		//+" cos(lat2)1 = " + std::to_string(cos(U1) * (1. - sphere::f));
+		//+" cos(lat2)1 = " + std::to_string((1. - sphere::f) * pow( (pow(sin(z), 2) + pow( (- cos(U1)* cos(z1)) , 2)) , 0.5));
+		+" cos(lat2)1 = " + std::to_string((1. - sphere::f) * pow( (pow(sin(z), 2) + pow( (- cos(U1)* cos(z1)) , 2)) , 0.5));
+	my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, tmp_str);
+#endif
 	//lat2 = atan( (sin(U1) * cos(o) + cos(U1) * sin(o) * cos(z1))
-		       	// / ((1. - sphere::f) * pow( (pow(sin(z), 2) + pow( (sin(U1) * sin(o) - cos(U1) * cos(o) * cos(z1)) , 2)) , 0.5)) );
-	lat2 = atan2( sin(U1) * cos(o) + cos(U1) * sin(o) * cos(z1) ,
-		       	(1. - sphere::f) * pow( (pow(sin(z), 2) + pow( (sin(U1) * sin(o) - cos(U1) * cos(o) * cos(z1)) , 2)) , 0.5) );
+		       	  // / ((1. - sphere::f) * pow( (pow(sin(z), 2) + pow( (sin(U1) * sin(o) - cos(U1) * cos(o) * cos(z1)) , 2)) , 0.5)) );
+	lat2 = atan2( (sin(U1) * cos(o) + cos(U1) * sin(o) * cos(z1)) / (1. - sphere::f) ,
+		       	 pow( (pow(sin(z), 2) + pow( (sin(U1) * sin(o) - cos(U1) * cos(o) * cos(z1)) , 2)) , 0.5) );
 
 	//double k = atan( (sin(o) * sin(z1)) / (cos(U1) * cos(o) - sin(U1) * sin(o) * cos(z1)) );
 	double k = atan2( sin(o) * sin(z1) , cos(U1) * cos(o) - sin(U1) * sin(o) * cos(z1) );
@@ -170,15 +201,17 @@ bool direct(const double& lat1, const double& z1, const double& s, double& lat2,
 bool inverse(const double& lat1, const double& lat2, const double& L, double& s, double& z1, double& z2) {
 
 	if (lat1 != lat1 || lat2 != lat2 || L != L) {
-		std::cerr << "nan found lat1(" << lat1 << ") lat2(" << lat2 << ") L(" << L << ")" << std::endl;
+		//std::cerr << "nan found lat1(" << lat1 << ") lat2(" << lat2 << ") L(" << L << ")" << std::endl;
+		std::string tmp_str = "nan found lat1(" + std::to_string(lat1) + ") lat2(" + std::to_string(lat2) + ") L(" + std::to_string(L) + ")";
+		my_log::log_it(my_log::level::error, __FUNCTION_NAME__, tmp_str);
 		return false;
 	}
 	
 	double k = L;
 	double prev_k = 0;
 
-	double U1 = atan( (1. - sphere::f) * tan(lat1) );
-	double U2 = atan( (1. - sphere::f) * tan(lat2) );
+	double U1 = atan2( (1. - sphere::f) * sin(lat1), cos(lat1) );
+	double U2 = atan2( (1. - sphere::f) * sin(lat2), cos(lat2) );
 
 	//std::cout << "U1 " << U1 << " U2 " << U2 << std::endl;
 
@@ -238,6 +271,7 @@ std::vector<BzCurve> orthodoxy(const Point& first_point, const Point& second, Ve
 
 	std::vector<BzCurve> result;
 	//std::cout << "bz curve h1(" << (first_point.radius() - earth::local_R(first_point)) << ") h2(" << (second.radius() - earth::local_R(second)) << ")" << std::endl;
+	//my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, "first point "+first_point.to_string());
 
 	double lat1, lat2, L;
 	double s, z1, z2;
@@ -287,7 +321,14 @@ std::vector<BzCurve> orthodoxy(const Point& first_point, const Point& second, Ve
 			L = second.longitude() - curr.longitude();
 
 			if (!inverse(lat1, lat2, L, s, z1, z2)) {
-				std::cerr << "bool inverse(const double& lat1, const double& lat2, const double& L, double& s, double& z1, double& z2) failed" << std::endl;
+				//std::cerr << "bool inverse(const double& lat1, const double& lat2, const double& L, double& s, double& z1, double& z2) failed" << std::endl;
+				std::string tmp_str = "bool inverse(const double& lat1, const double& lat2, const double& L, double& s, double& z1, double& z2) failed";
+				my_log::log_it(my_log::level::error, __FUNCTION_NAME__, tmp_str);
+			}
+			{
+				std::string tmp_str = "inv lat1(" + std::to_string(lat1) + ") lat2(" + std::to_string(lat2) + ") L(" + std::to_string(L)
+				       	+ ") z1(" + std::to_string(z1) + ") z2(" + std::to_string(z2) + ") s(" + std::to_string(s) + ")";
+				my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, tmp_str);
 			}
 			//std::cout << "lat1 " << lat1 << " lat2 " << lat2 << " L " << L << " s " << s << std::endl;
 			//std::cout << "s " << s << " z1 " << z1 << " z2 " << z2 << std::endl;
@@ -301,7 +342,14 @@ std::vector<BzCurve> orthodoxy(const Point& first_point, const Point& second, Ve
 			//lat1 = curr.latitude();
 
 			if (!direct(lat1, z1, tmp_s, lat2, L, z2)) {
-				std::cerr << "bool direct(const double& lat1, const double& z1, const double& s, double& lat2, double& L, double& z2) failed" << std::endl;
+				//std::cerr << "bool direct(const double& lat1, const double& z1, const double& s, double& lat2, double& L, double& z2) failed" << std::endl;
+				std::string tmp_str = "bool direct(const double& lat1, const double& z1, const double& s, double& lat2, double& L, double& z2) failed";
+				my_log::log_it(my_log::level::error, __FUNCTION_NAME__, tmp_str);
+			}
+			{
+				std::string tmp_str = "dir lat1(" + std::to_string(lat1) + ") lat2(" + std::to_string(lat2) + ") L(" + std::to_string(L)
+				       	+ ") z1(" + std::to_string(z1) + ") z2(" + std::to_string(z2) + ") tmp_s(" + std::to_string(tmp_s) + ")";
+				my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, tmp_str);
 			}
 
 			//std::cout << "lat2 " << lat2 << " L " << L << " z2 " << z2 << std::endl;
@@ -315,7 +363,7 @@ std::vector<BzCurve> orthodoxy(const Point& first_point, const Point& second, Ve
 
 			double H = (curr.radius() - h1) + h2;
 			next.by_geo(H, lat2, curr.longitude() + L);
-			my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, "new point "+next.to_string());
+			//my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, "new point "+next.to_string());
 			//std::cout << "bz curve " << next << " h1(" << (curr.radius() - h1) << ") h2(" << (next.radius() - h2) << ")" << std::endl;
 			//z1 = z2;
 

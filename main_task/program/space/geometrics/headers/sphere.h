@@ -7,6 +7,7 @@
 #include "metrics.h"
 #include "trans_matrix.h"
 #include "bz_curve.h"
+#include "log.h"
 
 #include <cstdarg>
 #include <vector>
