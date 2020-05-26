@@ -12,7 +12,9 @@ std::vector<PartOfFunction>* combine(const std::vector<std::pair<Point, Velocity
 	my_log::log_it(my_log::level::info, __FUNCTION_NAME__, "Combine");
 	for (auto i = points.begin(); i < points.end(); i++) {
 		//std::cout << std::get<0>(*i) << " v(" << std::get<1>(*i).v() << ")" << std::endl;
-		my_log::log_it(my_log::level::info, __FUNCTION_NAME__, std::get<0>(*i).to_string() + " v(" + std::to_string(std::get<1>(*i).v()) + ")");
+		const Point& point = std::get<0>(*i);
+		std::string tmp = " H("+std::to_string(earth::H(point))+") lat("+std::to_string(point.latitude()*45/atan(1))+") long("+std::to_string(point.longitude()*45/atan(1))+")";
+		my_log::log_it(my_log::level::info, __FUNCTION_NAME__, point.to_string() + " v(" + std::to_string(std::get<1>(*i).v()) + ") "+tmp);
 	}
 
 	//auto direction = Vector(std::get<0>(*points.begin()), std::get<0>(*(points.begin()+1)));
