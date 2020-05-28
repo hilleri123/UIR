@@ -34,6 +34,7 @@ namespace earth {
 	Point geo(double h, double lat, double lon);
 
 	double course(Point p, Vector vec);
+	Vector course_to_vec(Point p, double course);
 }
 
 

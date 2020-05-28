@@ -93,17 +93,45 @@ double earth::course(Point p, Vector v) {
 
 	Conversion* conv;
 	INIT(conv, Conversion, &p, nullptr, &new_y, &new_z);
-
 	Vector ox(Point(1,0,0));
 
-	v = conv->to(v);
-	v = Vector(Point(v.x(), v.y(), 0));
+	if (conv != nullptr) {
 
-	//Vector tmp(Point(cos(z2),sin(z2),0));
-	delete conv;
+		v = conv->to(v);
+		v = Vector(Point(v.x(), v.y(), 0));
 
-	return ox^v;
+		//Vector tmp(Point(cos(z2),sin(z2),0));
+		delete conv;
+	} else {
+		my_log::log_it(my_log::level::error, __FUNCTION_NAME__, "conversion faild");
+		return 0;
+	}
+
+	return ox^v * copysign(1., v.y());
+}
+
+Vector earth::course_to_vec(Point p, double c) {
+	Point O(0,0,0);
 		
+	Vector south(O, Point(0,0,earth::radius()));
+	//Vector new_z(second, O);
+	Vector new_z = earth::norm(p);
+	Vector new_y = new_z * south;
+		
+	//Conversion conv(&second, nullptr, &new_y, &new_z);
+	Vector tmp(Point(cos(c),sin(c),0));
+
+	Conversion* conv;
+	INIT(conv, Conversion, &p, nullptr, &new_y, &new_z);
+
+	if (conv != nullptr) {
+		tmp = conv->from(tmp);
+		delete conv;
+	} else {
+		my_log::log_it(my_log::level::error, __FUNCTION_NAME__, "conversion faild");
+	}
+
+	return tmp;
 }
 
 
@@ -387,23 +415,24 @@ std::vector<BzCurve> orthodoxy(const Point& first_point, const Point& second, Ve
 	} while (more(s, 0));
 
 	if (direction != nullptr) {
-		Point O(0,0,0);
+		*direction = -1 * earth::course_to_vec(second, z2);
+		//Point O(0,0,0);
 		
-		Vector south(O, Point(0,0,earth::radius()));
+		//Vector south(O, Point(0,0,earth::radius()));
 		//Vector new_z(second, O);
-		Vector new_z = earth::norm(second);
-		Vector new_y = new_z * south;
+		//Vector new_z = earth::norm(second);
+		//Vector new_y = new_z * south;
 		
 		//Conversion conv(&second, nullptr, &new_y, &new_z);
 
-		Conversion* conv;
-		INIT(conv, Conversion, &second, nullptr, &new_y, &new_z);
+		//Conversion* conv;
+		//INIT(conv, Conversion, &second, nullptr, &new_y, &new_z);
 
-		Vector tmp(Point(cos(z2),sin(z2),0));
+		//Vector tmp(Point(cos(z2),sin(z2),0));
 
-		*direction = conv->from(tmp);
+		//*direction = conv->from(tmp);
 
-		delete conv;
+		//delete conv;
 		//std::cout << *direction << std::endl;
 	}
 		
