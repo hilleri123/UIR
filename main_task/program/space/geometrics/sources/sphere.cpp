@@ -415,7 +415,7 @@ std::vector<BzCurve> orthodoxy(const Point& first_point, const Point& second, Ve
 	} while (more(s, 0));
 
 	if (direction != nullptr) {
-		*direction = -1 * earth::course_to_vec(second, z2);
+		*direction = earth::course_to_vec(second, atan(1)*2-z2);
 		//Point O(0,0,0);
 		
 		//Vector south(O, Point(0,0,earth::radius()));
