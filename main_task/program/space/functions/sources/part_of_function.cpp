@@ -131,6 +131,7 @@ bool PartOfFunction::init() {
 	_curves = orthodoxy(C, D, &_end_direction);
 
 	for (auto i = _curves.begin(); i < _curves.end(); i++) {
+		assert(i->get_len() != 0);
 		i->set_scale(_velocity.v() / i->get_len());
 	}
 
@@ -233,27 +234,19 @@ std::pair<Point, Velocity> PartOfFunction::operator()(double time) const
 		_tmp_tmp_vector = Vector(functr(t-timebackstep::step), functr(t)); \
 	v.set_course(earth::course(functr(t), _tmp_tmp_vector));
 
-#define CHECK 0
 
 	if (t <= _start.max_time()) {
 		SET_COURSE(_start, t, tmp_v, _direction)
-#if CHECK
-		t = 0;
-#endif
 		return std::make_pair(_start(t), tmp_v);
 	} else
 		t -= _start.max_time();
 
 	if (t <= _climb.max_time()) {
 		SET_COURSE(_climb, t, tmp_v, _start.direction())
-#if CHECK
-		t = 0;
-#endif
 		return std::make_pair(_climb(t), tmp_v);
 	} else
 		t -= _climb.max_time();
 
-#if CHECK
 	for (auto i = _curves.begin(); i < _curves.end(); i++) {
 		assert(!equal(i->get_len(), 0));
 		//std::cout << "get_len(" << i->get_len() << ")" << std::endl;
@@ -264,9 +257,8 @@ std::pair<Point, Velocity> PartOfFunction::operator()(double time) const
 			t -= i->get_len();
 	}
 
-	if (t <= _finish.max_time())
-		return std::make_pair(__finish(t), tmp_v);
-#endif
+	//if (t <= _finish.max_time())
+		//return std::make_pair(__finish(t), tmp_v);
 	
 	//std::size_t ind = static_cast<std::size_t>(time);
 	//return _curves.at(ind)(time - ind);
