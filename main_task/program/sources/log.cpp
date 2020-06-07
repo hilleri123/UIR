@@ -30,8 +30,8 @@ void my_log::init()
 			//<< std::hex   //To print the LineID in Hexadecimal format
 			<< std::setw(8) << std::setfill('0') 
 			<< expr::attr< unsigned int >("LineID")
-			<< "\t"
-			<< expr::format_date_time<boost::posix_time::ptime>("TimeStamp","%d/%m/%Y %H:%M:%S")
+			<< "  "
+			<< expr::format_date_time<boost::posix_time::ptime>("TimeStamp","%d/%m/%Y %H:%M:%S.%f")
 			<< "\t: <" << logging::trivial::severity
 			<< "> \t" << expr::smessage
 			)
