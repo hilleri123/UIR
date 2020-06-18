@@ -429,7 +429,7 @@ std::vector<BzCurve> orthodoxy(const Point& first_point, const Point& second, Ve
 		//!!!!!!!!!!!!!!!
 		Vector vvv(first, second);
 		if (direction->x() * vvv.x() >= 0 && direction->y() * vvv.y() >= 0 && direction->z() * vvv.z() >= 0)
-			my_log::log_it(my_log::level::error, __FUNCTION_NAME__, "AAAAAAA d "+direction.to_string()+" vvv "+vvv.to_string()+" f "+first.to_string()+" s "+second.to_string());
+			my_log::log_it(my_log::level::error, __FUNCTION_NAME__, "AAAAAAA d "+direction->to_string()+" vvv "+vvv.to_string()+" f "+first.to_string()+" s "+second.to_string());
 
 
 		assert(equal(sin(earth::course(second, *direction)), sin(tmp_z2)) && equal(cos(earth::course(second, *direction)), cos(tmp_z2)));
