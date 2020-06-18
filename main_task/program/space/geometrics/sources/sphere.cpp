@@ -97,7 +97,9 @@ double earth::course(Point p, Vector v) {
 
 	if (conv != nullptr) {
 
+		my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, "Course ox("+conv->to(ox).to_string()+")");
 		v = conv->to(v);
+		my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, "Course v("+v.to_string()+") ^"+std::to_string((ox^v) * copysign(1., v.y())));
 		v = Vector(Point(v.x(), v.y(), 0));
 
 		//Vector tmp(Point(cos(z2),sin(z2),0));
@@ -107,7 +109,9 @@ double earth::course(Point p, Vector v) {
 		return 0;
 	}
 
-	return (ox^v) * copysign(1., v.y());
+	my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, "Course signs"+std::to_string(copysign(1., v.y()))
+			+" "+std::to_string(south^new_z));
+	return (ox^v) * copysign(1., v.y()) * copysign(1., 2*atan(1) - (south^new_z));
 }
 
 Vector earth::course_to_vec(Point p, double c) {

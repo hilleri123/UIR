@@ -87,8 +87,6 @@ bool Matrix::init()
 
 bool Matrix::operator==(const Matrix& m) const
 {
-	if (4 != 4)
-		throw std::invalid_argument("multiply matrix with different dimensions");
 	for (std::size_t i = 0; i < 4; i++) {
 		if (!equal(_matrix[i], m._matrix[i]))
 			return false;
@@ -103,8 +101,6 @@ bool Matrix::operator!=(const Matrix& m) const
 
 bool Matrix::operator==(Matrix&& m) const
 {
-	if (4 != 4)
-		throw std::invalid_argument("multiply matrix with different dimensions");
 	for (std::size_t i = 0; i < 4; i++) {
 		if (!equal(_matrix[i], m._matrix[i]))
 			return false;
@@ -127,14 +123,12 @@ Matrix& Matrix::operator*=(const Matrix& m)
 
 Matrix operator*(const Matrix& m1, const Matrix& m2)
 {
-	if (m1.size() != m2.size())
-		throw std::invalid_argument("multiply matrix with different dimensions");
 	Matrix res;
-	for (std::size_t i = 0; i < m1.size(); i++) {
-		std::slice row(i*m1.size(), m1.size(), 1);
-		for (std::size_t j = 0; j < m1.size(); j++) {
-			std::slice col(j, m1.size(), m1.size());
-			res._matrix[j + i*m1.size()] = (m1._matrix[ row ] * m2._matrix[ col ]).sum(); 
+	for (std::size_t i = 0; i < 4; i++) {
+		std::slice row(i*4, 4, 1);
+		for (std::size_t j = 0; j < 4; j++) {
+			std::slice col(j, 4, 4);
+			res._matrix[j + i*4] = (m1._matrix[ row ] * m2._matrix[ col ]).sum(); 
 		}
 	}
 	return res;
@@ -142,8 +136,6 @@ Matrix operator*(const Matrix& m1, const Matrix& m2)
 
 Point Matrix::operator()(Point point) const
 {
-	if (4 != 4)
-		throw std::invalid_argument("point and matrix have different dimensions");
 	std::valarray<double> vec = {point.x(), point.y(), point.z(), 1.};
 	//double s = (_matrix[ std::slice(3*4, 4, 1) ] * vec).sum(); 
 	//if (equal(s, 1))
@@ -157,8 +149,6 @@ Point Matrix::operator()(Point point) const
 
 Vector Matrix::operator()(Vector vector) const
 {
-	if (4 != 4)
-		throw std::invalid_argument("vector and matrix have different dimensions");
 	//std::valarray<double> vec = {vector.x(), vector.y(), vector.z(), 1.};
 	//double s = (_matrix[ std::slice(3*4, 4, 1) ] * vec).sum(); 
 	//if (equal(s, 1))
@@ -294,8 +284,8 @@ bool Conversion::init() {
 		for (auto j = i+1; j < axis.end(); j++) {
 			double angle = (**i)^(**j);
 			//std::cout << "angle " << **i << **j << " " << angle << " 2pi " << pi_2 << std::endl;
-			my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, "angle " + (*i)->to_string() + (*j)->to_string() + " " + std::to_string(angle) + " 2pi " + std::to_string(pi_2));
 			if (!equal(angle, pi_2)) {
+				my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, "angle " + (*i)->to_string() + (*j)->to_string() + " " + std::to_string(angle) + " 2pi " + std::to_string(pi_2));
 				//std::cout << "angle " << **i << **j << " " << angle << " 2pi " << pi_2 << std::endl;
 				//err = new std::invalid_argument("angle between axis != pi/2");
 				//std::cerr << "angle between axis != pi/2" << std::endl;

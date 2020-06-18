@@ -55,23 +55,43 @@ Function::Function(const std::vector<std::pair<Point, Velocity>>& points)
 	delete &trajectory;
 }
 	
+#ifdef OPTIM
+std::pair<Point, Velocity> Function::operator()(double time)
+#else
 std::pair<Point, Velocity> Function::operator()(double time) const
+#endif
 {
 	if (_function.size() == 0) {
 		//std::cerr << "null function" << std::endl;
 		my_log::log_it(my_log::level::fatal, __FUNCTION_NAME__, "null function");
 		return std::make_pair(Point(), Velocity());
 	}
+#ifdef OPTIM
+        if (Interval::in_interval(time, std::get<1>(*last))) {
+                const PartOfFunction& part = std::get<0>(*last);
+                return part(time - std::get<1>(*last).begin());
+        } else if (last+1 != _function.end())
+                if (Interval::in_interval(time, std::get<1>(*(last+1)))) {
+                    const PartOfFunction& part = std::get<0>(*(last+1));
+                    return part(time - std::get<1>(*(last+1)).begin());
+                }
+#endif
 	for (auto i = _function.begin(); i < _function.end(); i++) {
 		//std::cout << "check" << std::endl;
 		if (Interval::in_interval(time, std::get<1>(*i))) {
 			//std::cout << "in interval " << std::get<1>(*i).begin() << std::endl;
 			const PartOfFunction& part = std::get<0>(*i);
+#ifdef OPTIM
+                        last = i;
+#endif
 			return part(time - std::get<1>(*i).begin());
 			//return std::make_pair(part(time - std::get<1>(*i).begin()), part.stats());
 		}
 	}
 	const PartOfFunction& part = std::get<0>(_function.back());
+#ifdef OPTIM
+        last = i;
+#endif
 	//return std::make_pair(part(time), part.stats());
 	return part(time);
 }

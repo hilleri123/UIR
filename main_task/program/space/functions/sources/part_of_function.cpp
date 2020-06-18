@@ -3,7 +3,7 @@
 
 
 namespace timebackstep {
-	static double step = 0.001; 
+	static double step = 0.01; 
 }
 
 

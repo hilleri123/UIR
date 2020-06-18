@@ -35,11 +35,6 @@ namespace my_log {
 		fatal
 	};
 #ifdef USE_BOOST_LOG
-	//namespace logging = boost::log;
-	//namespace src = boost::log::sources;
-	//namespace trivial = boost::log::trivial;
-	//namespace keywords = boost::log::keywords;
-
 	void init();
 #else
 
@@ -53,11 +48,7 @@ namespace my_log {
 	#ifdef WIN32
 		#ifdef __FUNCTION__
 			#define __FUNCTION_NAME__ __FUNCTION__
-		#endif
-	//#else
-		//#ifdef __func__
-			//#define __FUNCTION_NAME__ __func__
-		//#endif
+                #endif
 	#endif
 	#ifndef __FUNCTION_NAME__
 		#define __FUNCTION_NAME__ __func__
