@@ -35,15 +35,12 @@ double Point::z() const { return _arr[2]; }
 
 double Point::latitude() const
 {
-	return atan(_arr[2] / sqrt(_arr[0]*_arr[0] + _arr[1]*_arr[1]));
+	return atan2(_arr[2], sqrt(pow(_arr[0], 2) + pow(_arr[1], 2)));
 }
 
 double Point::longitude() const 
 {
-	double phi = atan(_arr[1] / _arr[0]);
-	//if (less(_arr[0], 0))
-	if (_arr[0] < 0)
-		phi += 4*atan(1);
+	double phi = atan2(_arr[1], _arr[0]);
 	return phi;
 }
 double Point::radius() const 

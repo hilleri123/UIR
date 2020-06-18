@@ -109,9 +109,7 @@ double earth::course(Point p, Vector v) {
 		return 0;
 	}
 
-	my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, "Course signs"+std::to_string(copysign(1., v.y()))
-			+" "+std::to_string(south^new_z));
-	return (ox^v) * copysign(1., v.y()) * copysign(1., 2*atan(1) - (south^new_z));
+	return (ox^v) * copysign(1., v.y());
 }
 
 Vector earth::course_to_vec(Point p, double c) {
