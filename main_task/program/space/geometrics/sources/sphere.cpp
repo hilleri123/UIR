@@ -88,6 +88,9 @@ double earth::course(Point p, Vector v) {
 	//Vector new_z(second, O);
 	Vector new_z = earth::norm(p);
 	Vector new_y = new_z * south;
+
+	Vector new_x = new_y * new_z;
+	my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, "New ox "+new_x.normolize().to_string()+" new oy "+new_y.normolize().to_string()+" new oz "+new_z.to_string());
 		
 	//Conversion conv(&second, nullptr, &new_y, &new_z);
 
