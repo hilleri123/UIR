@@ -20,6 +20,9 @@ bool PartOfFunction::init() {
 	Point D;
 	const Point& E = _end;
 
+	//form sphere.h/sphere.cpp
+	//double lat1 = 0, lat2 = 0, L = 0, z1 = 0, z2 = 0, s = 0;
+
 	//double l = Vector(O, _begin)^Vector(O, _end)*(Point::norm(O, _begin));
 	Vector ox(Point(1,0,0));
 	Vector oy(Point(0,1,0));
@@ -31,7 +34,7 @@ bool PartOfFunction::init() {
 
 	Vector normA = earth::norm(A);
 
-	my_log::log_it(my_log::level::info, __FUNCTION_NAME__, "normA "+normA.to_string()+" A "+A.to_string());
+	//my_log::log_it(my_log::level::info, __FUNCTION_NAME__, "normA "+normA.to_string()+" A "+A.to_string());
 	//std::cout << "normA " << normA << " A " << A << std::endl;
 
 	//Conversion con_start(&A, nullptr, &_direction, &OA);
@@ -48,6 +51,31 @@ bool PartOfFunction::init() {
 
 
 	Point distination = con_start->to(E);
+	
+#if 0
+	lat1 = A.latitude();
+	lat2 = E.latitude();
+	L = E.longitude() - A.longitude();
+	if (!inverse(lat1, lat2, L, s, z1, z2))
+		my_log::log_it(my_log::level::error, __FUNCTION_NAME__, "inverse didnt work A -> E");
+	Vector dist_vec = earth::course_to_vec(distination, z1);
+	dist_vec *= 3 * R / Vector::norm(dist_vec);
+	distination = con_start->to(A) + dist_vec;
+
+	s = 3*R;
+	if (!direct(lat1, z1, s, lat2, L, z2))
+		my_log::log_it(my_log::level::error, __FUNCTION_NAME__, "direct didnt work A(R) ->(3R) E");
+	distination.by_geo(A.radius(), lat2, A.longitude()+L);
+	
+	lat1 = distination.latitude();
+	lat2 = E.latitude();
+	L = E.longitude() - distination.longitude();
+	if (!inverse(lat1, lat2, L, s, z1, z2))
+		my_log::log_it(my_log::level::error, __FUNCTION_NAME__, "inverse didnt work A -> E");
+	//Vector dist_vec = earth::course_to_vec(distination, z1);
+	dist_vec = earth::course_to_vec(distination, z1);
+#endif
+
 	distination = Point(distination.x(), distination.y(), 0);
 	Vector dist_vec = Vector(con_start->to(A), distination);
 	dist_vec *= 3 * R / Vector::norm(dist_vec);
@@ -57,6 +85,7 @@ bool PartOfFunction::init() {
 	//std::cout << "start " << A << con_start->to(A) << std::endl;
 	//_start = Rotate(con_start->to(A), con_start->to(_direction), distination, dist_vec, _velocity, con_start->from_matrix());
 	Rotate* tmp_rotate = nullptr;
+	//INIT(tmp_rotate, Rotate, con_start->to(A), con_start->to(_direction), con_start->to(distination), con_start->to(dist_vec), _velocity, con_start->from_matrix());
 	INIT(tmp_rotate, Rotate, con_start->to(A), con_start->to(_direction), distination, dist_vec, _velocity, con_start->from_matrix());
 	if (tmp_rotate == nullptr) {
 		//std::cerr << "first rotate faild" << std::endl;

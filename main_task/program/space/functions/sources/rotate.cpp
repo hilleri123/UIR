@@ -39,7 +39,8 @@ bool Rotate::init()
 	Vector move_vec(_start);
 	//std::cout << move_vec << std::endl;
 	
-	double angle = _start_direction^oy;
+	//double angle = _start_direction^oy;
+	double angle = atan2(_start_direction.x(), _start_direction.y());
 
 	Matrix move_mat_fore, move_mat_back;
 	Matrix::multiplay_foreward_backward(move_mat_fore, move_mat_back, Matrix::move, &move_vec);
