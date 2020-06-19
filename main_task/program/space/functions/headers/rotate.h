@@ -19,6 +19,7 @@
 #include "bz_curve.h"
 #include "xy_circle.h"
 #include "log.h"
+#include "sphere.h"
 
 
 class Rotate : base_init

@@ -62,6 +62,9 @@ bool Rotate::init()
 	//std::cout << "rotate" << std::endl << _end << " " << end_direction << std::endl << _matrix << std::endl << m << std::endl;
 	///////////////////////////////////
 
+	my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, "START ROTATE "+_matrix(_start).to_string()+" "
+			+std::to_string(earth::course(_matrix(_start),_matrix(_start_direction)))
+			+" END ROTATE "+_matrix(_end).to_string()+" "+std::to_string(earth::course(_matrix(_end),_matrix(_direction))));
 
 	_R = _velocity.v() / _velocity.max_rotate();
 

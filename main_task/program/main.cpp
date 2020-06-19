@@ -19,7 +19,7 @@ int main(int argc, char** argv)
 {	
 	namespace po = boost::program_options;
 
-	double h = 10;
+	double h = 1;
 	std::string in;
 	std::string out;
 	//char* in = argv[1];
@@ -126,7 +126,8 @@ int main(int argc, char** argv)
 			//stream << time << " " << a(time).x() << " " << a(time).y() << " " << a(time).z() << std::endl;
 			//stream << a(time).x() << " " << a(time).y() << " " << a(time).z() << std::endl;
 			//stream << time << " " << point.radius() << " " << point.latitude() << " " << point.longitude() << " " << velocity << std::endl;
-			stream << time << " H(" << r << ") lat(" << lat << ") lon(" << lon << ") v(" << velocity << ") c(" << velocity.course() << ")" << std::endl;
+			stream << time << " H(" << r << ") lat(" << lat << ") lon(" << lon << ") v(" << velocity.v() << ", " << (velocity.max_rotate() * h)
+			       	<< ") c(" << velocity.course() << ")" << std::endl;
 			//stream << time << " " << a(time).radius() << " " << a(time).latitude() << " " << a(time).longitude() << std::endl;
 		} else {
 			//std::cout << time << " " << a(time).x() << " " << a(time).y() << " " << a(time).z() << std::endl;
