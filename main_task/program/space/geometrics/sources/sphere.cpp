@@ -473,8 +473,8 @@ std::vector<BzCurve> orthodoxy(const Point& first_point, const Point& second, Ve
 		//std::cout << "course " << earth::course(second, *direction) << " z2 " << tmp_z2 << std::endl;
 		//std::cout << "sin " << sin(earth::course(second, *direction)) << " z " <<  sin(tmp_z2) << " cos " << cos(earth::course(second, *direction)) << " z " << cos(tmp_z2) << std::endl;
 
-		//std::string tmp_str = "dir course " + std::to_string(earth::course(second, *direction)) + " z2 course " + std::to_string(tmp_z2);
-		//my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, tmp_str);
+		std::string tmp_str = "dir course " + std::to_string(2*atan(1) - earth::course(second, *direction)) + " z2 course " + std::to_string(tmp_z2);
+		my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, tmp_str);
 		//std::cout << tmp_str << std::endl;
 		assert(equal(sin(earth::course(second, *direction)), sin(tmp_z2)) && equal(cos(earth::course(second, *direction)), cos(tmp_z2)));
 		//Point O(0,0,0);
