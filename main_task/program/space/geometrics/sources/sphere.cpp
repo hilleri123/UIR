@@ -115,19 +115,27 @@ double earth::course(Point p, Vector v) {
 	}
 
 	//return atan2(v.y(), v.x());
-#endif
-	Point&& tmp_p = v+p;
+#else
+
+	//v = v.normolize();
+	Point&& tmp_p = v.normolize()*(sphere::split_distance/10)+p;
 	double lat1 = p.latitude(), lat2 = tmp_p.latitude(), L = tmp_p.longitude() - p.longitude(), z1 = 0, z2 = 0, s = 0;
 	if (inverse(lat1, lat2, L, s, z1, z2)) {
+		std::string tmp_str = "inv lat1(" + std::to_string(lat1) + ") lat2(" + std::to_string(lat2) + ") L(" + std::to_string(L)
+			+ ") z1(" + std::to_string(z1) + ") z2(" + std::to_string(z2) + ") s(" + std::to_string(s) + ")";
+		my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, tmp_str);
+		std::cout << p << " " << tmp_p << " ... " << tmp_str << std::endl;
+		std::cout << "Course old("<<std::to_string(atan2(v.y(), v.x()))<<") new("<<std::to_string(z1)<<") s("<<s<<")"<<std::endl;
 		my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, "Course old("+std::to_string(atan2(v.y(), v.x()))+") new("+std::to_string(z1)+")");
 		return z1;
 	} else
 		my_log::log_it(my_log::level::error, __FUNCTION_NAME__, "inverse faild");
+#endif
 	return atan2(v.y(), v.x());
 }
 
 Vector earth::course_to_vec(Point p, double c) {
-#if 0
+#if 1
 	Point O(0,0,0);
 		
 	Vector south(O, Point(0,0,earth::radius()));
@@ -149,7 +157,7 @@ Vector earth::course_to_vec(Point p, double c) {
 	}
 
 	return tmp;
-#endif
+#else
 	Vector res;
 	double lat1 = p.latitude(), lat2 = 0, L = 0, z1 = c, z2 = 0, s = sphere::split_distance/10.;
 	
@@ -158,11 +166,22 @@ Vector earth::course_to_vec(Point p, double c) {
 		Point tmp(p.radius(), lat2, p.longitude()+L);
 		res = Vector(p, tmp);
 		Vector new_y = new_z * res;
-		res = new_y * new_z;
+		Conversion* conv;
+		INIT(conv, Conversion, &p, nullptr, &new_y, &new_z);
+	
+		if (conv != nullptr) {
+			res = conv->from(Vector(Point(1, 0, 0)));
+			delete conv;
+		} else {
+			my_log::log_it(my_log::level::error, __FUNCTION_NAME__, "conversion faild");
+		}
+
+		//res = new_y * new_z;
 		//return res;
 	} else
 		my_log::log_it(my_log::level::error, __FUNCTION_NAME__, "direct faild");
 	return res;
+#endif
 }
 
 
@@ -447,11 +466,15 @@ std::vector<BzCurve> orthodoxy(const Point& first_point, const Point& second, Ve
 	} while (more(s, 0));
 
 	if (direction != nullptr) {
-		double tmp_z2 = atan(1)*2 - z2;
+		//double tmp_z2 = atan(1)*2 - z2;
+		double tmp_z2 = z2;
 		*direction = earth::course_to_vec(second, tmp_z2);
 		//std::cout << "course " << earth::course(second, *direction) << " z2 " << tmp_z2 << std::endl;
 		//std::cout << "sin " << sin(earth::course(second, *direction)) << " z " <<  sin(tmp_z2) << " cos " << cos(earth::course(second, *direction)) << " z " << cos(tmp_z2) << std::endl;
 
+		//std::string tmp_str = "dir course " + std::to_string(earth::course(second, *direction)) + " z2 course " + std::to_string(tmp_z2);
+		//my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, tmp_str);
+		//std::cout << tmp_str << std::endl;
 		assert(equal(sin(earth::course(second, *direction)), sin(tmp_z2)) && equal(cos(earth::course(second, *direction)), cos(tmp_z2)));
 		//Point O(0,0,0);
 		
