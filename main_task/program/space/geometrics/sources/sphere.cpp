@@ -131,12 +131,13 @@ double earth::course(Point p, Vector v) {
 	} else
 		my_log::log_it(my_log::level::error, __FUNCTION_NAME__, "inverse faild");
 #endif
-	return atan2(v.y(), v.x());
+	return 2*atan(1) - atan2(v.y(), v.x());
 }
 
 Vector earth::course_to_vec(Point p, double c) {
 #if 1
 	Point O(0,0,0);
+	c = 2*atan(1) - c;
 		
 	Vector south(O, Point(0,0,earth::radius()));
 	//Vector new_z(second, O);
