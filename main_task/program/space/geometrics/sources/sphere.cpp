@@ -15,7 +15,7 @@ namespace sphere {
 
 	double error = 0.0001;
 
-	double split_distance = 10;
+	double split_distance = 10.;
 
 
 	//double R_earth = R_EARTH;
@@ -82,6 +82,7 @@ double earth::local_R(Point p) {
 }
 
 double earth::course(Point p, Vector v) {
+#if 1
 	Point O(0,0,0);
 		
 	Vector south(O, Point(0,0,earth::radius()));
@@ -113,10 +114,20 @@ double earth::course(Point p, Vector v) {
 		return 0;
 	}
 
+	//return atan2(v.y(), v.x());
+#endif
+	Point&& tmp_p = v+p;
+	double lat1 = p.latitude(), lat2 = tmp_p.latitude(), L = tmp_p.longitude() - p.longitude(), z1 = 0, z2 = 0, s = 0;
+	if (inverse(lat1, lat2, L, s, z1, z2)) {
+		my_log::log_it(my_log::level::debug, __FUNCTION_NAME__, "Course old("+std::to_string(atan2(v.y(), v.x()))+") new("+std::to_string(z1)+")");
+		return z1;
+	} else
+		my_log::log_it(my_log::level::error, __FUNCTION_NAME__, "inverse faild");
 	return atan2(v.y(), v.x());
 }
 
 Vector earth::course_to_vec(Point p, double c) {
+#if 0
 	Point O(0,0,0);
 		
 	Vector south(O, Point(0,0,earth::radius()));
@@ -138,6 +149,20 @@ Vector earth::course_to_vec(Point p, double c) {
 	}
 
 	return tmp;
+#endif
+	Vector res;
+	double lat1 = p.latitude(), lat2 = 0, L = 0, z1 = c, z2 = 0, s = sphere::split_distance/10.;
+	
+	if (direct(lat1, z1, s, lat2, L, z2)) {
+		Vector new_z = earth::norm(p);
+		Point tmp(p.radius(), lat2, p.longitude()+L);
+		res = Vector(p, tmp);
+		Vector new_y = new_z * res;
+		res = new_y * new_z;
+		//return res;
+	} else
+		my_log::log_it(my_log::level::error, __FUNCTION_NAME__, "direct faild");
+	return res;
 }
 
 
